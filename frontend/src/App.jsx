@@ -6,6 +6,7 @@ import './App.css'
 import UpdateProduct from './components/UpdateProduct'
 import Home from './pages/Home'
 import ProductForm from './components/ProductForm'
+import Login from './pages/Login'
 
 const navItems = [
   { label: 'Home', to: '/' },
@@ -41,6 +42,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/add" element={<ProductForm />} />
         <Route path="/products" element={<ProductList />} />
         <Route path="/product/:id" element={<ProductDetails />} />

@@ -584,6 +584,184 @@ img {
   font-family: Georgia, "Times New Roman", serif;
 }
 
+.login-shell {
+  display: flex;
+  align-items: center;
+}
+
+.login-layout {
+  display: grid;
+  grid-template-columns: 1.05fr 0.75fr;
+  align-items: center;
+  gap: clamp(48px, 9vw, 132px);
+  padding: 30px 0 54px;
+}
+
+.login-editorial h1 {
+  margin: 24px 0 18px;
+  color: #f2f0ea;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(4rem, 7vw, 7rem);
+  font-weight: 500;
+  line-height: 0.92;
+}
+
+.login-intro,
+.login-panel__copy {
+  color: #858585;
+  font-size: 0.98rem;
+  line-height: 1.8;
+}
+
+.login-intro {
+  max-width: 360px;
+  margin: 0;
+}
+
+.login-still-life {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 410px);
+  height: 210px;
+  margin-top: 38px;
+  overflow: hidden;
+  border: 1px solid #292929;
+  background: linear-gradient(115deg, #171717 0%, #22201c 52%, #121212 100%);
+}
+
+.login-still-life__label,
+.login-still-life__caption {
+  position: absolute;
+  z-index: 1;
+  color: #d7d0c4;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.login-still-life__label {
+  top: 16px;
+  left: 18px;
+}
+
+.login-still-life__caption {
+  right: 18px;
+  bottom: 16px;
+  color: #c8a96b;
+}
+
+.login-still-life__object {
+  width: 118px;
+  height: 142px;
+  border: 1px solid rgba(242, 240, 234, 0.14);
+  background: linear-gradient(145deg, #d5c8ae 0%, #9b8b70 48%, #40392e 100%);
+  box-shadow: 22px 15px 0 -9px rgba(200, 169, 107, 0.22);
+  transform: rotate(8deg);
+}
+
+.login-panel {
+  width: 100%;
+  max-width: 470px;
+  justify-self: end;
+  border: 1px solid #292929;
+  background: #111111;
+  padding: clamp(26px, 4vw, 42px);
+}
+
+.login-panel h2 {
+  margin: 14px 0 4px;
+  color: #f2f0ea;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.8rem;
+  font-weight: 500;
+}
+
+.login-panel__copy {
+  margin: 0 0 30px;
+  font-size: 0.88rem;
+}
+
+.login-field {
+  margin-bottom: 20px;
+}
+
+.login-field label {
+  display: block;
+  margin-bottom: 9px;
+  color: #d7d0c4;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.login-field input {
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid #333333;
+  border-radius: 0;
+  outline: none;
+  background: #0d0d0d;
+  color: #f2f0ea;
+  padding: 0.85rem 0.95rem;
+  transition: border-color 0.2s ease;
+}
+
+.login-field input::placeholder {
+  color: #686868;
+}
+
+.login-field input:focus {
+  border-color: #c8a96b;
+}
+
+.login-submit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 8px;
+  border: 1px solid #c8a96b;
+  border-radius: 0;
+  background: #c8a96b;
+  color: #0a0a0a;
+  padding: 0 18px;
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.login-submit:hover {
+  background: transparent;
+  color: #c8a96b;
+}
+
+.login-submit span {
+  font-size: 1.1rem;
+}
+
+.login-register {
+  margin: 24px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid #292929;
+  color: #858585;
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+
+.login-register a {
+  color: #d7d0c4;
+  text-decoration-color: #c8a96b;
+  text-underline-offset: 4px;
+}
+
+.login-register a:hover {
+  color: #c8a96b;
+}
+
 @media (max-width: 900px) {
   .site-header__inner {
     padding: 0 18px;
@@ -598,6 +776,15 @@ img {
     grid-template-columns: 1fr;
   }
 
+  .login-layout {
+    grid-template-columns: 1fr 0.9fr;
+    gap: 34px;
+  }
+
+  .login-editorial h1 {
+    font-size: clamp(3.8rem, 8vw, 5.5rem);
+  }
+
   .feature-item--large {
     grid-row: auto;
   }
@@ -606,6 +793,32 @@ img {
 @media (max-width: 640px) {
   .page-shell {
     padding: 18px 16px 44px;
+  }
+
+  .login-layout {
+    grid-template-columns: 1fr;
+    gap: 34px;
+    padding-top: 22px;
+  }
+
+  .login-editorial h1 {
+    margin: 18px 0 12px;
+    font-size: clamp(3.5rem, 16vw, 5rem);
+  }
+
+  .login-still-life {
+    height: 160px;
+    margin-top: 24px;
+  }
+
+  .login-still-life__object {
+    width: 84px;
+    height: 104px;
+  }
+
+  .login-panel {
+    justify-self: stretch;
+    padding: 26px 22px;
   }
 
   .site-actions {
