@@ -4,10 +4,13 @@ import productRoute from './route/productRoute.js'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import userRoute from './route/userRoute.js'
+import cookieParser from "cookie-parser"
 
 const app=express()
 dotenv.config()
 connectDB()
+
+app.use(cookieParser())
 app.use(cors(process.env.BAESE_URI))
 app.use(express.json())
 
