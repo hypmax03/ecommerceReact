@@ -11,8 +11,8 @@ dotenv.config()
 connectDB()
 
 app.use(cookieParser())
-app.use(cors(process.env.BAESE_URI))
-app.use(express.json())
+app.use(cors({ origin: true, credentials: true }))
+app.use(express.json({ limit: "7mb" }))
 
 app.use('/product',productRoute)
 app.use('/user',userRoute)

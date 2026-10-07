@@ -6,9 +6,8 @@ export const authMiddleware=async(req,res,next)=>{
     
     try{
         const token=req.cookies.accessToken;
-    console.log(req.cookies);
         if(!token){
-            res.status(401).json({
+            return res.status(401).json({
                 message:"Access token required"
             })
         }
@@ -17,8 +16,8 @@ export const authMiddleware=async(req,res,next)=>{
         next()
     }
     catch(err){
-        res.status(500).json({
-            message:"Server error",
+        res.status(401).json({
+            message:"Invalid or expired access token",
             err:err.message
         })
     }
