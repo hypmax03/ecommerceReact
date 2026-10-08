@@ -1,52 +1,165 @@
 @import "tailwindcss";
 
-body {
-  margin: 0;
+@theme {
+  --font-serif: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+  --font-display: "Playfair Display", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-handwriting: "Caveat", "La Belle Aurore", cursive;
+  --font-note: "La Belle Aurore", "Caveat", cursive;
+  --font-mono: "Space Mono", monospace;
   
-}
-.login-success-popup {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 18px;
-  background: rgba(16, 16, 16, 0.96);
-  color: #f2f0ea;
-  border: 1px solid rgba(200, 169, 107, 0.7);
-  border-radius: 10px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(200, 169, 107, 0.15);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-weight: 600;
-  backdrop-filter: blur(8px);
-  animation: popup 0.28s ease;
+  --color-paper-base: #FAF7F2;
+  --color-paper-cream: #F5EFE6;
+  --color-paper-warm: #EFE8DC;
+  --color-paper-card: #FDFCF9;
+  --color-ink-dark: #191817;
+  --color-ink-charcoal: #2C2A29;
+  --color-ink-muted: #7A756F;
+  --color-ink-faded: #A8A39D;
+  --color-tape: rgba(228, 219, 196, 0.75);
+  --color-accent-terracotta: #A66551;
+  --color-accent-olive: #6B705C;
 }
 
-.login-success-popup::before {
-  content: "✓";
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: rgba(200, 169, 107, 0.15);
-  border: 1px solid rgba(200, 169, 107, 0.45);
-  color: #c8a96b;
-  font-size: 0.8rem;
-}
-
-@keyframes popup {
-  from {
-    opacity: 0;
-    transform: translateY(-12px) scale(0.98);
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+  
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+    color: var(--color-ink-dark);
+    background-color: var(--color-paper-base);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    min-height: 100vh;
+    background-color: var(--color-paper-base);
+    background-image: radial-gradient(rgba(44, 42, 41, 0.04) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+
+  ::selection {
+    background-color: #2C2A29;
+    color: #FAF7F2;
+  }
+}
+
+/* Handwritten font utility */
+.font-handwriting {
+  font-family: var(--font-handwriting);
+}
+
+.font-note {
+  font-family: var(--font-note);
+}
+
+.font-mono-label {
+  font-family: var(--font-mono);
+}
+
+/* Scrapbook Tape Styling */
+.washi-tape {
+  background: rgba(232, 222, 198, 0.78);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), inset 0 0 4px rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(1px);
+  border-left: 2px dashed rgba(200, 185, 155, 0.6);
+  border-right: 2px dashed rgba(200, 185, 155, 0.6);
+}
+
+.washi-tape-dark {
+  background: rgba(44, 42, 41, 0.75);
+  color: #FAF7F2;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  border-left: 2px dashed rgba(255, 255, 255, 0.3);
+  border-right: 2px dashed rgba(255, 255, 255, 0.3);
+}
+
+/* Polaroid Photo Styling */
+.polaroid-frame {
+  background: #FFFFFF;
+  padding: 12px 12px 36px 12px;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.polaroid-frame:hover {
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Paper Stamp / Badge */
+.paper-stamp {
+  border: 1px solid rgba(44, 42, 41, 0.25);
+  background: #FDFCF9;
+  font-family: var(--font-mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* Hand-drawn Doodles & Underlines */
+.hand-drawn-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.hand-drawn-underline::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  bottom: -2px;
+  height: 2px;
+  background-color: currentColor;
+  opacity: 0.7;
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  transform: rotate(-0.5deg);
+}
+
+/* Custom Journal Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D1C9BC;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A8A39D;
+}
+
+/* Hide scrollbar for horizontal scroll sections */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Reduced Motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+    transform: none !important;
   }
 }

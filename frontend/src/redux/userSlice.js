@@ -62,6 +62,13 @@ const userSlice = createSlice({
       state.error = null;
       state.message = "";
     },
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
+    logoutUser: (state) => {
+      state.user = null;
+      localStorage.removeItem("user");
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -107,5 +114,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearUserFeedback } = userSlice.actions;
+export const { clearUserFeedback, setUser, logoutUser } = userSlice.actions;
 export default userSlice.reducer;

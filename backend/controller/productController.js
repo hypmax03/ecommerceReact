@@ -22,26 +22,39 @@ export const seedFashionProducts = async (req, res) => {
 export const productController = async (req, res) => {
   try {
     const { description, stock, gender, category, price, name } = req.body;
-    const image = req.file;
+    const image = req.files;
     if (!image) {
       return res.status(400).json({
         message: "Image is required",
       });
     }
 
-    const result = await cloudinary.uploader.upload(
-      `data:${image.mimetype};base64,${image.buffer.toString("base64")}`,
-      {
-        folder: "products",
-      },
-    );
+    // const result = await cloudinary.uploader.upload(
+    //   `data:${image.mimetype};base64,${image.buffer.toString("base64")}`,
+    //   {
+    //     folder: "products",
+    //   },
+    // );
+
+    const imageUrls=[];
+
+    for(const image of req.files){
+      const result=await cloudinary.uploader.upload(
+        `data:${image.mimetype};base64,${image.buffer.toString("base64")}`,
+        {
+          folder:"products"
+        }
+      )
+      imageUrls.push(result.secure_url);
+    }
+
     const product = {
       name,
       price,
       description,
       category,
       stock,
-      image: result.secure_url,
+      images:imageUrls,
     };
 
     let newProduct = await Product.create(product);

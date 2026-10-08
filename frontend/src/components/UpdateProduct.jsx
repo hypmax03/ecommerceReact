@@ -1,279 +1,441 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useLocation, useNavigate, Link } from "react-router-dom";
-import { updateProduct } from "../redux/productSlice";
-import {
-  WOMEN_CATEGORIES,
-  MEN_CATEGORIES,
-  GENDERS
-} from "../data/fashionProducts";
-
-const SAMPLE_IMAGE_PRESETS = [
-  // Women
-  { label: 'Silk Gown (W)', gender: 'Women', category: 'Evening Gowns', url: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=900&q=80' },
-  { label: 'Summer Dress (W)', gender: 'Women', category: 'Summer Dresses', url: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=900&q=80' },
-  { label: 'Black Velvet (W)', gender: 'Women', category: 'Cocktail Dresses', url: 'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=900&q=80' },
-  { label: 'Red Satin (W)', gender: 'Women', category: 'Evening Gowns', url: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=900&q=80' },
-  { label: 'Boho Maxi (W)', gender: 'Women', category: 'Bohemian', url: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=900&q=80' },
-  // Men
-  { label: 'Wool Suit (M)', gender: 'Men', category: 'Suits & Tailoring', url: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=900&q=80' },
-  { label: 'Overcoat (M)', gender: 'Men', category: 'Outerwear & Coats', url: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=900&q=80' },
-  { label: 'Tuxedo (M)', gender: 'Men', category: 'Suits & Tailoring', url: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=900&q=80' },
-  { label: 'Linen Shirt (M)', gender: 'Men', category: 'Linen & Shirts', url: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=80' },
-  { label: 'Velvet Smoking (M)', gender: 'Men', category: 'Blazers & Jackets', url: 'https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=900&q=80' },
-  { label: 'Leather Jacket (M)', gender: 'Men', category: 'Blazers & Jackets', url: 'https://images.unsplash.com/photo-1520975954732-35dd22299614?auto=format&fit=crop&w=900&q=80' },
-]
+import React, { useState, useEffect, useMemo } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { ArrowLeft, ArrowUpRight } from 'iconoir-react';
+import { updateProduct } from '../redux/productSlice';
+import Tape from './Tape';
+import { ALL_CATEGORIES } from '../data/fashionProducts';
 
 const UpdateProduct = () => {
   const location = useLocation();
-  const product = location.state?.product;
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const product = location.state?.product;
+  const reduxProducts = useSelector((state) => state.product?.products || []);
+
   const [formData, setFormData] = useState({
-    name: product?.name || '',
-    price: product?.price || '',
-    gender: product?.gender || 'Women',
-    category: product?.category || 'Evening Gowns',
-    stock: product?.stock !== undefined ? product.stock : '',
-    image: product?.image || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=900&q=80',
-    description: product?.description || '',
+    name: '',
+    price: '',
+    category: 'Evening Gowns',
+    gender: 'Women',
+    image: '',
+    hoverImage: '',
+    description: '',
+    material: '',
+    madeIn: 'Como, Italy',
   });
 
-  const [saving, setSaving] = useState(false);
+  const [customCategories, setCustomCategories] = useState([]);
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+  const [newCategoryInput, setNewCategoryInput] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'gender') {
-      const defaultCat = value === 'Men' ? 'Suits & Tailoring' : 'Evening Gowns'
-      setFormData({
-        ...formData,
-        gender: value,
-        category: defaultCat,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
+  const availableCategories = useMemo(() => {
+    const defaultCats = ALL_CATEGORIES.filter((c) => c !== 'All');
+    const productCats = reduxProducts.map((p) => p.category).filter(Boolean);
+    const currentCat = product?.category ? [product.category] : [];
+    return Array.from(new Set([...defaultCats, ...currentCat, ...customCategories, ...productCats]));
+  }, [customCategories, reduxProducts, product]);
+
+  const [primaryUploadMode, setPrimaryUploadMode] = useState('file'); // 'file' | 'url'
+  const [hoverUploadMode, setHoverUploadMode] = useState('url'); // 'file' | 'url'
+  const [isDraggingPrimary, setIsDraggingPrimary] = useState(false);
+  const [isDraggingHover, setIsDraggingHover] = useState(false);
+
+  const handleFileUpload = (file, fieldName) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file (JPG, PNG, WEBP, etc.)');
+      return;
     }
-  };
-
-  const handleSelectPreset = (preset) => {
-    setFormData({
-      ...formData,
-      image: preset.url,
-      gender: preset.gender,
-      category: preset.category,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-
-    const updatedProduct = {
-      _id: product?._id || product?.id,
-      name: formData.name.trim(),
-      price: Number(formData.price),
-      gender: formData.gender,
-      category: formData.category,
-      stock: Number(formData.stock),
-      image: formData.image.trim(),
-      description: formData.description.trim(),
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData((prev) => ({ ...prev, [fieldName]: reader.result }));
     };
+    reader.readAsDataURL(file);
+  };
 
-    try {
-      await dispatch(updateProduct(updatedProduct)).unwrap();
-      navigate(`/products?gender=${updatedProduct.gender}`);
-    } catch (error) {
-      console.log(error);
-      navigate('/products');
-    } finally {
-      setSaving(false);
+  const handleCategoryChange = (e) => {
+    const value = e.target.value;
+    if (value === '__CREATE_NEW__') {
+      setIsCreatingCategory(true);
+    } else {
+      setIsCreatingCategory(false);
+      setFormData((prev) => ({ ...prev, category: value }));
     }
   };
+
+  const handleAddCustomCategory = () => {
+    const trimmed = newCategoryInput.trim();
+    if (!trimmed) return;
+    if (!customCategories.includes(trimmed)) {
+      setCustomCategories((prev) => [...prev, trimmed]);
+    }
+    setFormData((prev) => ({ ...prev, category: trimmed }));
+    setIsCreatingCategory(false);
+    setNewCategoryInput('');
+  };
+
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        name: product.name || '',
+        price: product.price || '',
+        category: product.category || 'Evening Gowns',
+        gender: product.gender || 'Women',
+        image: product.image || '',
+        hoverImage: product.hoverImage || '',
+        description: product.description || '',
+        material: product.material || '',
+        madeIn: product.madeIn || 'Como, Italy',
+      });
+    }
+  }, [product]);
 
   if (!product) {
     return (
-      <div className="page-shell">
-        <div className="page-container">
-          <div className="empty-state">
-            <h2>No piece selected to edit.</h2>
-            <p style={{ marginTop: '8px', color: '#cbd5e1' }}>
-              Please select a design from the collection to update its details.
-            </p>
-            <div style={{ marginTop: '20px' }}>
-              <Link to="/products" className="primary-btn">
-                ← Go to Collection
-              </Link>
-            </div>
-          </div>
-        </div>
+      <div className="min-h-screen pt-36 pb-20 px-6 text-center bg-[#FAF7F2]">
+        <h2 className="font-serif text-2xl">No design selected for modification.</h2>
+        <Link to="/products" className="font-mono text-xs text-[#A66551] underline mt-3 inline-block">
+          Return to Catalog
+        </Link>
       </div>
     );
   }
 
-  const activeCategories =
-    formData.gender === 'Men'
-      ? MEN_CATEGORIES.filter((c) => c !== 'All')
-      : WOMEN_CATEGORIES.filter((c) => c !== 'All');
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const finalCategory = isCreatingCategory && newCategoryInput.trim()
+      ? newCategoryInput.trim()
+      : formData.category;
+
+    const updated = {
+      ...product,
+      ...formData,
+      category: finalCategory,
+      price: Number(formData.price),
+    };
+    dispatch(updateProduct(updated));
+    navigate(`/product/${product._id || product.id}`);
+  };
 
   return (
-    <div className="page-shell">
-      <div className="page-container form-container-wrapper">
-        <div className="form-card">
-          <div className="form-header">
-            <span className="brand-badge">ATELIER CATALOG</span>
-            <h2>Update Fashion Design</h2>
-            <p style={{ color: '#a0a0a0', fontSize: '0.85rem', marginTop: '4px' }}>
-              Modify details, pricing, inventory, or imagery for this design.
-            </p>
+    <main className="min-h-screen bg-[#FAF7F2] pt-28 sm:pt-36 pb-24 px-6 sm:px-8 lg:px-12">
+      <div className="max-w-3xl mx-auto">
+        <Link
+          to={`/product/${product._id || product.id}`}
+          className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#7A756F] hover:text-[#191817] mb-6"
+        >
+          <ArrowLeft width={14} height={14} />
+          <span>BACK TO PIECE</span>
+        </Link>
+
+        <div className="bg-[#FDFCF9] p-8 sm:p-12 border border-[#2C2A29]/15 shadow-xl relative">
+          <div className="absolute -top-3.5 left-10 pointer-events-none">
+            <Tape rotate="1deg" variant="dark" text="UPDATE SPECIFICATION" width="w-44" />
           </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>Piece Name *</label>
-              <input
-                type="text"
-                name="name"
-                required
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter piece name"
-              />
+          <div className="border-b border-[#2C2A29]/15 pb-6 mb-8">
+            <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#7A756F] block mb-1">
+              MODIFY DOCKET • REF {product._id || product.id}
+            </span>
+            <h1 className="font-serif text-3xl sm:text-4xl text-[#191817] font-normal">
+              Update Piece Details
+            </h1>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] block mb-1.5">
+                  GARMENT NAME
+                </label>
+                <input
+                  type="text"
+                  required
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full bg-[#FAF7F2] border border-[#2C2A29]/20 px-3.5 py-2.5 font-serif text-base text-[#191817] focus:outline-none focus:border-[#191817]"
+                />
+              </div>
+
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] block mb-1.5">
+                  PRICE (INR ₹)
+                </label>
+                <input
+                  type="number"
+                  required
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  className="w-full bg-[#FAF7F2] border border-[#2C2A29]/20 px-3.5 py-2.5 font-mono text-sm text-[#191817] focus:outline-none focus:border-[#191817]"
+                />
+              </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>Department / Gender *</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] block mb-1.5">
+                  ATELIER GENDER
+                </label>
                 <select
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="fashion-select"
+                  className="w-full bg-[#FAF7F2] border border-[#2C2A29]/20 px-3.5 py-2.5 font-mono text-xs uppercase tracking-wider text-[#191817] focus:outline-none"
                 >
                   <option value="Women">Women's Atelier</option>
                   <option value="Men">Men's Sartorial</option>
-                  <option value="Unisex">Unisex Couture</option>
+                  <option value="Unisex">Unisex</option>
                 </select>
               </div>
 
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>Silhouette / Category *</label>
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F]">
+                    CATEGORY
+                  </label>
+                  {!isCreatingCategory && (
+                    <button
+                      type="button"
+                      onClick={() => setIsCreatingCategory(true)}
+                      className="font-mono text-[9px] uppercase tracking-wider text-[#A66551] hover:text-[#191817] underline cursor-pointer"
+                    >
+                      + Custom Category
+                    </button>
+                  )}
+                </div>
+
                 <select
                   name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="fashion-select"
+                  value={isCreatingCategory ? '__CREATE_NEW__' : formData.category}
+                  onChange={handleCategoryChange}
+                  className="w-full bg-[#FAF7F2] border border-[#2C2A29]/20 px-3.5 py-2.5 font-mono text-xs uppercase tracking-wider text-[#191817] focus:outline-none focus:border-[#191817]"
                 >
-                  {activeCategories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                  <option value="Bespoke Design">Other Silhouette</option>
+                  <option value="__CREATE_NEW__">✦ + CREATE NEW CATEGORY...</option>
+                  <optgroup label="AVAILABLE CATEGORIES">
+                    {availableCategories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </optgroup>
                 </select>
+
+                {isCreatingCategory && (
+                  <div className="mt-2.5 p-3 bg-[#F5EFE6] border border-[#2C2A29]/20 shadow-inner">
+                    <span className="font-mono text-[9px] uppercase tracking-wider text-[#7A756F] block mb-1.5">
+                      Enter Custom Category Name
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={newCategoryInput}
+                        onChange={(e) => setNewCategoryInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddCustomCategory();
+                          }
+                        }}
+                        placeholder="e.g. Resort Wear, Bridal Couture..."
+                        className="flex-1 bg-[#FAF7F2] border border-[#2C2A29]/30 px-3 py-2 font-mono text-xs text-[#191817] focus:outline-none focus:border-[#191817]"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddCustomCategory}
+                        className="bg-[#191817] text-[#FAF7F2] hover:bg-[#2C2A29] px-3.5 py-2 font-mono text-[10px] uppercase tracking-widest font-bold transition-colors"
+                      >
+                        CONFIRM
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCreatingCategory(false);
+                          setNewCategoryInput('');
+                        }}
+                        className="bg-transparent hover:bg-[#2C2A29]/10 border border-[#2C2A29]/30 text-[#191817] px-3 py-2 font-mono text-[10px] uppercase tracking-widest transition-colors"
+                      >
+                        CANCEL
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>Price (₹) *</label>
-                <input
-                  type="number"
-                  name="price"
-                  required
-                  min="1"
-                  value={formData.price}
-                  onChange={handleChange}
-                  placeholder="Enter price"
-                />
-              </div>
-
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>Stock Quantity *</label>
-                <input
-                  type="number"
-                  name="stock"
-                  required
-                  min="0"
-                  value={formData.stock}
-                  onChange={handleChange}
-                  placeholder="Enter stock quantity"
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>Image URL (Royalty-free Unsplash Link) *</label>
-              <input
-                type="url"
-                name="image"
-                required
-                value={formData.image}
-                onChange={handleChange}
-                placeholder="https://images.unsplash.com/..."
-              />
-              <div className="image-presets-row">
-                <span style={{ fontSize: '0.7rem', color: '#888', width: '100%', marginBottom: '4px' }}>
-                  Quick Pick Royalty-Free Presets:
-                </span>
-                {SAMPLE_IMAGE_PRESETS.map((preset) => (
+            {/* PRIMARY IMAGE / COVER */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F]">
+                  PRIMARY GARMENT IMAGE <span className="text-[#A66551]">*</span>
+                </label>
+                <div className="flex items-center gap-1 bg-[#ECE8DF] p-0.5 border border-[#2C2A29]/15">
                   <button
-                    key={preset.label}
                     type="button"
-                    className="preset-btn"
-                    onClick={() => handleSelectPreset(preset)}
+                    onClick={() => setPrimaryUploadMode('file')}
+                    className={`font-mono text-[9px] uppercase tracking-wider px-2.5 py-0.5 transition-colors ${
+                      primaryUploadMode === 'file'
+                        ? 'bg-[#191817] text-[#FAF7F2] font-bold'
+                        : 'text-[#7A756F] hover:text-[#191817]'
+                    }`}
                   >
-                    {preset.label}
+                    Upload File
                   </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Live Image Preview */}
-            {formData.image && (
-              <div className="image-preview-box">
-                <span className="preview-label">Live Preview:</span>
-                <div className="preview-media">
-                  <img
-                    src={formData.image}
-                    alt="Preview"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                    onLoad={(e) => {
-                      e.target.style.display = 'block';
-                    }}
-                  />
+                  <button
+                    type="button"
+                    onClick={() => setPrimaryUploadMode('url')}
+                    className={`font-mono text-[9px] uppercase tracking-wider px-2.5 py-0.5 transition-colors ${
+                      primaryUploadMode === 'url'
+                        ? 'bg-[#191817] text-[#FAF7F2] font-bold'
+                        : 'text-[#7A756F] hover:text-[#191817]'
+                    }`}
+                  >
+                    Image URL
+                  </button>
                 </div>
               </div>
-            )}
 
-            <div className="form-group">
-              <label>Description &amp; Fabric Specifications</label>
+              {primaryUploadMode === 'file' ? (
+                <div>
+                  <input
+                    type="file"
+                    id="update-primary-image-upload"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files?.[0]) handleFileUpload(e.target.files[0], 'image');
+                      e.target.value = '';
+                    }}
+                    className="hidden"
+                  />
+
+                  {formData.image ? (
+                    <div className="p-3 bg-[#F5EFE6] border border-[#2C2A29]/20 flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <img
+                          src={formData.image}
+                          alt="Primary preview"
+                          className="w-14 h-18 object-cover border border-[#2C2A29]/20 shadow-xs bg-[#ECE8DF] flex-shrink-0"
+                        />
+                        <div className="min-w-0">
+                          <span className="font-mono text-[10px] uppercase tracking-wider text-[#191817] font-bold block">
+                            ✓ Current Image Attached
+                          </span>
+                          <span className="font-mono text-[9px] text-[#7A756F] truncate block">
+                            {formData.image.startsWith('data:') ? 'Local file uploaded via browser' : formData.image}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <label
+                          htmlFor="update-primary-image-upload"
+                          className="font-mono text-[9px] uppercase tracking-wider bg-[#FAF7F2] hover:bg-[#ECE8DF] text-[#191817] border border-[#2C2A29]/20 px-2.5 py-1.5 cursor-pointer"
+                        >
+                          Change
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, image: '' }))}
+                          className="font-mono text-[9px] uppercase tracking-wider text-[#A66551] hover:text-[#7D3E2F] px-2 py-1.5"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <label
+                      htmlFor="update-primary-image-upload"
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setIsDraggingPrimary(true);
+                      }}
+                      onDragLeave={() => setIsDraggingPrimary(false)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setIsDraggingPrimary(false);
+                        if (e.dataTransfer.files?.[0]) {
+                          handleFileUpload(e.dataTransfer.files[0], 'image');
+                        }
+                      }}
+                      className={`border-2 border-dashed p-6 text-center cursor-pointer transition-colors block ${
+                        isDraggingPrimary
+                          ? 'border-[#191817] bg-[#ECE8DF]'
+                          : 'border-[#2C2A29]/20 hover:border-[#191817] bg-[#FDFCF9]'
+                      }`}
+                    >
+                      <div className="space-y-1">
+                        <span className="font-mono text-xs uppercase tracking-wider text-[#191817] font-bold block">
+                          ↑ Browse or Drop New Garment Image
+                        </span>
+                        <span className="font-sans text-[11px] text-[#7A756F] block">
+                          Supports JPG, PNG, WEBP, AVIF
+                        </span>
+                      </div>
+                    </label>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <input
+                    type="url"
+                    required={!formData.image}
+                    name="image"
+                    value={formData.image}
+                    onChange={handleChange}
+                    placeholder="https://images.unsplash.com/photo-..."
+                    className="w-full bg-[#FAF7F2] border border-[#2C2A29]/20 px-3.5 py-2.5 font-mono text-xs text-[#191817] focus:outline-none focus:border-[#191817]"
+                  />
+                  {formData.image && (
+                    <div className="mt-2 flex items-center gap-3 p-2 bg-[#F5EFE6] border border-[#2C2A29]/15">
+                      <img
+                        src={formData.image}
+                        alt="URL Preview"
+                        className="w-10 h-12 object-cover border border-[#2C2A29]/20 bg-[#ECE8DF]"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                      <span className="font-mono text-[9px] text-[#7A756F]">URL Image Preview Loaded</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] block mb-1.5">
+                EDITORIAL DESCRIPTION
+              </label>
               <textarea
+                rows={3}
+                required
                 name="description"
-                rows="3"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Describe the silhouette, fabric specifications, and styling..."
+                className="w-full bg-[#FAF7F2] border border-[#2C2A29]/20 px-3.5 py-2.5 font-sans text-xs text-[#191817] focus:outline-none focus:border-[#191817]"
               />
             </div>
 
-            <div className="form-actions-row">
-              <button type="submit" className="primary-btn" disabled={saving}>
-                {saving ? "Saving Changes..." : "Save & Update Piece"}
-              </button>
-              <Link to="/products" className="secondary-btn">
-                Cancel
-              </Link>
-            </div>
+            <button
+              type="submit"
+              className="w-full bg-[#191817] hover:bg-[#2C2A29] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest py-4 flex items-center justify-center gap-2 shadow-lg transition-colors font-bold"
+            >
+              <span>SAVE UPDATED SPECIFICATION</span>
+              <ArrowUpRight width={14} height={14} />
+            </button>
           </form>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

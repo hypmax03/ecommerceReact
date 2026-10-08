@@ -1,326 +1,231 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteProduct, getProduct } from "../redux/productSlice";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import {
-  GENDERS,
-  WOMEN_CATEGORIES,
-  MEN_CATEGORIES,
-  ALL_CATEGORIES
-} from "../data/fashionProducts";
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { motion } from 'framer-motion';
+import { Filter, ArrowUpRight, Refresh } from 'iconoir-react';
+import ProductCard from './ProductCard';
+import Tape from './Tape';
+import HandwrittenNote from './HandwrittenNote';
+import { ALL_CATEGORIES, GENDERS } from '../data/fashionProducts';
+import { getProduct } from '../redux/productSlice';
 
-function ProductList() {
-  const { products, loading, error } = useSelector((state) => state.product);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+const ProductList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const dispatch = useDispatch();
+  const { products, loading } = useSelector((state) => state.product || { products: [] });
 
-  const [selectedGender, setSelectedGender] = useState(
-    searchParams.get("gender") || "All"
-  );
-  const [selectedCategory, setSelectedCategory] = useState(
-    searchParams.get("category") || "All"
-  );
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("featured");
+  const genderParam = searchParams.get('gender') || 'All';
+  const categoryParam = searchParams.get('category') || 'All';
+  const sortParam = searchParams.get('sort') || 'featured';
+
+  const [selectedGender, setSelectedGender] = useState(genderParam);
+  const [selectedCategory, setSelectedCategory] = useState(categoryParam);
+  const [sortBy, setSortBy] = useState(sortParam);
+  const [showFiltersMobile, setShowFiltersMobile] = useState(false);
 
   useEffect(() => {
     dispatch(getProduct());
   }, [dispatch]);
 
-  // Sync state when URL params change
   useEffect(() => {
-    const gender = searchParams.get("gender");
-    const category = searchParams.get("category");
-    if (gender) setSelectedGender(gender);
-    if (category) setSelectedCategory(category);
-    if (!gender && !category) {
-      // If neither is present, reset if they were previously forced
-      if (!searchParams.has("gender")) setSelectedGender("All");
-      if (!searchParams.has("category")) setSelectedCategory("All");
-    }
+    setSelectedGender(searchParams.get('gender') || 'All');
+    setSelectedCategory(searchParams.get('category') || 'All');
   }, [searchParams]);
 
-  const handleGenderChange = (gender) => {
-    setSelectedGender(gender);
-    setSelectedCategory("All");
-    const nextParams = {};
-    if (gender !== "All") nextParams.gender = gender;
-    setSearchParams(nextParams);
+  const updateFilters = (gender, category, sort) => {
+    const params = {};
+    if (gender && gender !== 'All') params.gender = gender;
+    if (category && category !== 'All') params.category = category;
+    if (sort && sort !== 'featured') params.sort = sort;
+    setSearchParams(params);
   };
 
-  const handleCategoryChange = (cat) => {
-    setSelectedCategory(cat);
-    const nextParams = {};
-    if (selectedGender !== "All") nextParams.gender = selectedGender;
-    if (cat !== "All") nextParams.category = cat;
-    setSearchParams(nextParams);
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this piece from the catalog?")) {
-      dispatch(deleteProduct(id));
-    }
-  };
-
-  // Determine available categories based on selected gender
-  const availableCategories = useMemo(() => {
-    if (selectedGender === "Women") return WOMEN_CATEGORIES;
-    if (selectedGender === "Men") return MEN_CATEGORIES;
-    return ALL_CATEGORIES;
-  }, [selectedGender]);
+  const allCategories = useMemo(() => {
+    const defaultCats = ALL_CATEGORIES.filter((c) => c !== 'All');
+    const productCats = products.map((p) => p.category).filter(Boolean);
+    return Array.from(new Set([...defaultCats, ...productCats]));
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
-    if (!Array.isArray(products)) return [];
+    let result = [...products];
 
-    let list = products.filter((p) => {
-      // Match Gender
-      const matchGender =
-        selectedGender === "All" ||
-        (selectedGender === "Women" && (p.gender === "Women" || !p.gender)) ||
-        (p.gender && p.gender.toLowerCase() === selectedGender.toLowerCase());
-
-      // Match Category
-      const matchCat =
-        selectedCategory === "All" ||
-        (p.category && p.category.toLowerCase() === selectedCategory.toLowerCase());
-
-      // Match Search Query
-      const matchSearch =
-        !searchQuery.trim() ||
-        (p.name && p.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (p.category && p.category.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()));
-
-      return matchGender && matchCat && matchSearch;
-    });
-
-    // Sorting
-    if (sortBy === "price-low") {
-      list = [...list].sort((a, b) => (a.price || 0) - (b.price || 0));
-    } else if (sortBy === "price-high") {
-      list = [...list].sort((a, b) => (b.price || 0) - (a.price || 0));
-    } else if (sortBy === "name-asc") {
-      list = [...list].sort((a, b) => a.name.localeCompare(b.name));
+    if (selectedGender !== 'All') {
+      result = result.filter((p) => p.gender === selectedGender);
     }
 
-    return list;
-  }, [products, selectedGender, selectedCategory, searchQuery, sortBy]);
+    if (selectedCategory !== 'All') {
+      result = result.filter((p) => p.category === selectedCategory);
+    }
 
-  if (loading && (!products || products.length === 0)) {
-    return (
-      <div className="page-shell">
-        <div className="page-container">
-          <div className="glass-panel hero-panel">
-            <h2>Loading atelier catalog...</h2>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    if (sortBy === 'price-low') {
+      result.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-high') {
+      result.sort((a, b) => b.price - a.price);
+    } else if (sortBy === 'newest') {
+      result.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+    }
+
+    return result;
+  }, [products, selectedGender, selectedCategory, sortBy]);
 
   return (
-    <div className="page-shell">
-      <div className="page-container">
-        {/* Header Section */}
-        <div className="section-header">
-          <div>
-            <span className="brand-badge">
-              {selectedGender === "Women"
-                ? "WOMEN'S ATELIER"
-                : selectedGender === "Men"
-                ? "MEN'S SARTORIAL"
-                : "HAUTE COLLECTION"}
-            </span>
-            <h2>
-              {selectedGender === "Women"
-                ? "Couture Silhouettes & Dresses"
-                : selectedGender === "Men"
-                ? "Bespoke Menswear & Tailoring"
-                : "All Couture & Sartorial Pieces"}
-            </h2>
+    <main className="min-h-screen bg-[#FAF7F2] pt-28 sm:pt-36 pb-24 px-6 sm:px-8 lg:px-12">
+      <div className="max-w-7xl mx-auto">
+        {/* Page Header */}
+        <div className="border-b border-[#2C2A29]/15 pb-8 mb-10 relative">
+          <div className="absolute -top-3 right-6 pointer-events-none hidden sm:block">
+            <Tape rotate="2deg" variant="kraft" text="GARMENT ARCHIVE" width="w-36" />
           </div>
-          <div className="header-actions">
-            <Link to="/add" className="primary-btn" style={{ padding: '0.75rem 1.2rem' }}>
-              + Add New Design
+
+          <div className="flex items-center gap-2 mb-2">
+            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#7A756F]">
+              INDEX NO. 01 • PERMANENT &amp; LIMITED EDITIONS
+            </span>
+            <span className="font-handwriting text-base text-[#A66551]">
+              (all 24 pieces documented)
+            </span>
+          </div>
+
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal text-[#191817]">
+                THE GARMENT CATALOG
+              </h1>
+              <p className="font-sans text-sm text-[#5C5751] font-light mt-2 max-w-xl">
+                Bespoke tailoring, Mulberry silk evening pieces, and luxury Italian knitwear cut to order.
+              </p>
+            </div>
+
+            <Link
+              to="/add"
+              className="inline-flex items-center gap-2 bg-[#EFE8DC] hover:bg-[#E3D5B8] text-[#191817] font-mono text-xs uppercase tracking-widest px-4 py-2.5 border border-[#D1C9BC] transition-colors"
+            >
+              <span>+ ADD NEW DESIGN</span>
+              <ArrowUpRight width={12} height={12} />
             </Link>
           </div>
         </div>
 
-        {/* Gender Tabs */}
-        <div className="gender-tabs-bar">
-          {GENDERS.map((gender) => (
-            <button
-              key={gender}
-              type="button"
-              className={`gender-tab-btn ${selectedGender === gender ? 'active' : ''}`}
-              onClick={() => handleGenderChange(gender)}
-            >
-              {gender === "All" ? "All Collections" : gender === "Women" ? "Women's Collection" : "Men's Collection"}
-            </button>
-          ))}
-        </div>
-
-        {/* Filter and Search Bar */}
-        <div className="filter-controls-bar">
-          <div className="filter-top-row">
-            <div className="search-box">
-              <input
-                type="text"
-                placeholder="Search by name, fabric, or silhouette..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="fashion-search-input"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  className="clear-search-btn"
-                  onClick={() => setSearchQuery("")}
-                >
-                  ×
-                </button>
-              )}
-            </div>
-
-            <div className="sort-box">
-              <label>Sort By:</label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="fashion-select sort-select"
-              >
-                <option value="featured">Featured Pieces</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="name-asc">Design Name A–Z</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="category-pill-group">
-            {availableCategories.map((cat) => (
+        {/* Filter Bar & Controls */}
+        <div className="bg-[#F5EFE6] p-4 border border-[#2C2A29]/15 mb-10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+          {/* Gender Filter Buttons */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] mr-1 hidden sm:inline">
+              ATELIER:
+            </span>
+            {GENDERS.map((gender) => (
               <button
-                key={cat}
+                key={gender}
                 type="button"
-                onClick={() => handleCategoryChange(cat)}
-                className={`category-pill ${selectedCategory === cat ? 'active' : ''}`}
+                onClick={() => {
+                  setSelectedGender(gender);
+                  setSelectedCategory('All');
+                  updateFilters(gender, 'All', sortBy);
+                }}
+                className={`font-mono text-xs uppercase tracking-wider px-3 py-1.5 border transition-colors ${
+                  selectedGender === gender
+                    ? 'bg-[#191817] text-[#FAF7F2] border-[#191817] font-bold shadow-sm'
+                    : 'bg-[#FAF7F2] text-[#191817] border-[#2C2A29]/20 hover:border-[#191817]'
+                }`}
               >
-                {cat}
+                {gender === 'All' ? 'ALL ATELIERS' : gender === 'Women' ? 'WOMEN’S' : 'MEN’S'}
               </button>
             ))}
           </div>
+
+          {/* Category Dropdown & Sort */}
+          <div className="flex items-center gap-3">
+            <select
+              value={selectedCategory}
+              onChange={(e) => {
+                setSelectedCategory(e.target.value);
+                updateFilters(selectedGender, e.target.value, sortBy);
+              }}
+              className="bg-[#FAF7F2] border border-[#2C2A29]/20 px-3 py-1.5 font-mono text-xs text-[#191817] focus:outline-none uppercase tracking-wider"
+            >
+              <option value="All">ALL CATEGORIES</option>
+              {allCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat.toUpperCase()}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={sortBy}
+              onChange={(e) => {
+                setSortBy(e.target.value);
+                updateFilters(selectedGender, selectedCategory, e.target.value);
+              }}
+              className="bg-[#FAF7F2] border border-[#2C2A29]/20 px-3 py-1.5 font-mono text-xs text-[#191817] focus:outline-none uppercase tracking-wider"
+            >
+              <option value="featured">SORT: FEATURED</option>
+              <option value="newest">SORT: NEW ARRIVALS</option>
+              <option value="price-low">PRICE: LOW TO HIGH</option>
+              <option value="price-high">PRICE: HIGH TO LOW</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Count Summary */}
+        <div className="flex items-center justify-between text-xs font-mono text-[#7A756F] mb-6">
+          <span>
+            DOCUMENTED: {filteredProducts.length} {filteredProducts.length === 1 ? 'PIECE' : 'PIECES'}
+          </span>
+          {(selectedGender !== 'All' || selectedCategory !== 'All') && (
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedGender('All');
+                setSelectedCategory('All');
+                setSortBy('featured');
+                setSearchParams({});
+              }}
+              className="text-[#A66551] hover:underline font-bold"
+            >
+              RESET ALL FILTERS ✕
+            </button>
+          )}
         </div>
 
         {/* Product Grid */}
         {filteredProducts.length === 0 ? (
-          <div className="empty-state">
-            <h3 style={{ margin: 0, fontSize: '1.5rem' }}>No pieces match your selection.</h3>
-            <p style={{ marginTop: '8px', color: '#cbd5e1' }}>
-              {searchQuery || selectedCategory !== "All" || selectedGender !== "All"
-                ? "Try adjusting your gender, category, or search filters."
-                : "Add a new design piece to get started."}
-            </p>
-            <div style={{ marginTop: '20px', display: 'flex', gap: '12px', justifyContent: 'center' }}>
-              <button
-                onClick={() => { setSelectedGender("All"); setSelectedCategory("All"); setSearchQuery(""); setSearchParams({}); }}
-                className="secondary-btn"
-              >
-                Reset All Filters
-              </button>
-              <Link to="/add" className="primary-btn">
-                Add New Design
-              </Link>
-            </div>
+          <div className="py-24 text-center bg-[#FDFCF9] border border-dashed border-[#2C2A29]/20 p-8">
+            <h3 className="font-serif text-2xl text-[#191817]">No pieces matched your curation.</h3>
+            <HandwrittenNote
+              text="“try selecting ‘All Ateliers’ or resetting your category filter”"
+              color="text-[#7A756F]"
+              className="mt-2"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedGender('All');
+                setSelectedCategory('All');
+                setSearchParams({});
+              }}
+              className="mt-6 bg-[#191817] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest px-6 py-3"
+            >
+              SHOW ALL 24 PIECES
+            </button>
           </div>
         ) : (
-          <div className="product-grid">
-            {filteredProducts.map((product) => {
-              const fallbackImg =
-                "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80";
-              const imgSrc = product.image && product.image.trim() ? product.image : fallbackImg;
-
-              return (
-                <div key={product._id || product.id} className="product-card">
-                  <Link to={`/product/${product._id || product.id}`} className="product-card__img-container">
-                    <img
-                      src={imgSrc}
-                      alt={product.name}
-                      className="product-card__image"
-                      loading="lazy"
-                      onError={(e) => {
-                        e.target.src = fallbackImg;
-                      }}
-                    />
-                    <div className="product-card__badges-row">
-                      <span className="product-card__gender-badge">
-                        {product.gender || "Women"}
-                      </span>
-                      <span className="product-card__category-badge">
-                        {product.category || 'Atelier'}
-                      </span>
-                    </div>
-                  </Link>
-
-                  <div className="product-card__content">
-                    <h3 className="product-card__title">
-                      <Link to={`/product/${product._id || product.id}`}>
-                        {product.name}
-                      </Link>
-                    </h3>
-
-                    {product.description && (
-                      <p className="product-card__snippet">
-                        {product.description}
-                      </p>
-                    )}
-
-                    <div className="meta-row">
-                      <span>Price</span>
-                      <strong className="product-card__price">
-                        ₹{product.price ? product.price.toLocaleString('en-IN') : '0'}
-                      </strong>
-                    </div>
-
-                    <div className="meta-row">
-                      <span>Availability</span>
-                      <strong className={product.stock > 0 ? "stock-in" : "stock-out"}>
-                        {product.stock > 0 ? `${product.stock} in stock` : "Sold Out"}
-                      </strong>
-                    </div>
-
-                    <div className="card-actions">
-                      <Link
-                        to={`/product/${product._id || product.id}`}
-                        className="card-btn primary"
-                        style={{ flex: 1.2 }}
-                      >
-                        View Piece
-                      </Link>
-                      <button
-                        onClick={() => navigate('/updateproduct', { state: { product } })}
-                        className="card-btn warn"
-                        title="Edit design"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(product._id || product.id)}
-                        className="card-btn danger"
-                        title="Delete design"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            {filteredProducts.map((product, idx) => (
+              <motion.div
+                key={product._id || product.id || idx}
+                initial={{ opacity: 0, y: 25 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: (idx % 8) * 0.06 }}
+              >
+                <ProductCard product={product} index={idx} priority={idx < 4} />
+              </motion.div>
+            ))}
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
-}
+};
 
 export default ProductList;

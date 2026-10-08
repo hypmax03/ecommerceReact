@@ -5,7 +5,7 @@ const route = express.Router()
 
 route.post('/seed', seedFashionProducts)
 route.get('/seed', seedFashionProducts)
-route.post('/add',upload.single("images"),productController)
+route.post('/add',upload.array("images",5),productController)
 route.get('/', getProduct)
 route.get('/:id', getProductById)
 route.put('/update/:id', updateProduct)     

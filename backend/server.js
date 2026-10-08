@@ -18,5 +18,4 @@ app.use('/product',productRoute)
 app.use('/user',userRoute)
 
 app.listen(3000,()=>{
-    console.log('server running ...')
-})
+    console.log("🦖...")})

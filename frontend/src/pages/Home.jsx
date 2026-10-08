@@ -1,201 +1,143 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { motion } from 'framer-motion';
+import { ArrowUpRight } from 'iconoir-react';
+import HeroScrapbook from '../components/HeroScrapbook';
+import CollectionMoodboard from '../components/CollectionMoodboard';
+import EditorialSection from '../components/EditorialSection';
+import ArchiveSection from '../components/ArchiveSection';
+import HorizontalCollection from '../components/HorizontalCollection';
+import ProductCard from '../components/ProductCard';
+import Tape from '../components/Tape';
+import HandwrittenNote from '../components/HandwrittenNote';
 
 const Home = () => {
-  const { products } = useSelector((state) => state.product)
+  const { products } = useSelector((state) => state.product || { products: [] });
+  const [selectedGenderTab, setSelectedGenderTab] = useState('All');
 
-  // Filter top women's and men's products for showcase
-  const womenItems = products.filter((p) => p.gender === 'Women' || !p.gender).slice(0, 3)
-  const menItems = products.filter((p) => p.gender === 'Men').slice(0, 3)
+  const filteredProducts = products.filter((p) => {
+    if (selectedGenderTab === 'All') return true;
+    return p.gender === selectedGenderTab;
+  }).slice(0, 8);
 
   return (
-    <main className="page-shell">
-      <div className="page-container">
-        {/* Editorial Hero Section */}
-        <section className="editorial-hero">
-          <div className="editorial-copy">
-            <p className="eyebrow">HAUTE COUTURE &amp; BESPOKE TAILORING</p>
-            <h1>
-              TIMELESS
-              <span>ELEGANCE.</span>
-              WOMEN &amp; MEN.
-            </h1>
-            <p className="lead">
-              Distinctive evening gowns, fine summer silhouettes, Super 130s Italian wool suits, and cashmere overcoats designed for refined living.
-            </p>
+    <main className="w-full bg-[#FAF7F2]">
+      {/* 1. Scrapbook Hero Section */}
+      <HeroScrapbook />
 
-            <div className="cta-row">
-              <Link to="/products?gender=Women" className="primary-btn">
-                WOMEN'S ATELIER →
-              </Link>
-              <Link to="/products?gender=Men" className="secondary-btn">
-                MEN'S SARTORIAL →
-              </Link>
-              <Link to="/add" className="ghost-btn">
-                + ADD DESIGN
-              </Link>
-            </div>
+      {/* 2. Collection Moodboard (Overlapping Photos, Polaroids, Detail Shots) */}
+      <CollectionMoodboard />
 
-            <div className="stat-row">
-              <div>
-                <strong>{products.length || '24+'}</strong>
-                <span>Couture Designs</span>
-              </div>
-              <div>
-                <strong>02</strong>
-                <span>Ateliers (M &amp; W)</span>
-              </div>
-              <div>
-                <strong>₹2,899</strong>
-                <span>Starting at</span>
-              </div>
-            </div>
-          </div>
+      {/* 3. Broken-Grid Editorial Section ("WHAT WE KEEP.") */}
+      <EditorialSection />
 
-          <div className="editorial-visual editorial-visual--dual">
-            <div className="dual-visual-card">
-              <img
-                src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80"
-                alt="Women Couture Dress"
-                className="hero-dress-img"
-              />
-              <span className="visual-tag">WOMEN / ATELIER</span>
-            </div>
-            <div className="dual-visual-card dual-visual-card--offset">
-              <img
-                src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80"
-                alt="Men Bespoke Suit"
-                className="hero-dress-img"
-              />
-              <span className="visual-tag">MEN / SARTORIAL</span>
-            </div>
-          </div>
-        </section>
+      {/* 4. "FROM THE ARCHIVE" Polaroid Section */}
+      <ArchiveSection />
 
-        {/* Dual Gateways Section: Women vs Men */}
-        <section className="atelier-gateways">
-          <div className="gateway-card">
-            <div className="gateway-bg-wrap">
-              <img
-                src="https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=80"
-                alt="Women's Collection"
-                className="gateway-bg-img"
-              />
-              <div className="gateway-overlay" />
-            </div>
-            <div className="gateway-content">
-              <span className="gateway-tag">COLLECTION 01</span>
-              <h2>Women's Haute Silhouettes</h2>
-              <p>Silk evening gowns, smocked prairie dresses, and fluid party maxis.</p>
-              <Link to="/products?gender=Women" className="gateway-btn">
-                EXPLORE WOMEN'S →
-              </Link>
-            </div>
-          </div>
+      {/* 5. Horizontal Scrapbook Scroll (LOOK 01 - 05) */}
+      <HorizontalCollection />
 
-          <div className="gateway-card">
-            <div className="gateway-bg-wrap">
-              <img
-                src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=80"
-                alt="Men's Collection"
-                className="gateway-bg-img"
-              />
-              <div className="gateway-overlay" />
-            </div>
-            <div className="gateway-content">
-              <span className="gateway-tag">COLLECTION 02</span>
-              <h2>Men's Bespoke Sartorial</h2>
-              <p>Double-breasted Italian wool suits, cashmere overcoats, and flax linen.</p>
-              <Link to="/products?gender=Men" className="gateway-btn">
-                EXPLORE MEN'S →
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Women's Featured Arrivals */}
-        <section className="featured-section">
-          <div className="section-heading split-heading">
+      {/* 6. Featured Catalog Pinboard */}
+      <section className="py-24 sm:py-32 px-6 sm:px-8 lg:px-12 bg-[#FAF7F2] border-b border-[#2C2A29]/10 relative">
+        <div className="max-w-7xl mx-auto">
+          {/* Header with Gender Filter Tabs */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 pb-6 border-b border-[#2C2A29]/15">
             <div>
-              <p className="eyebrow">WOMEN'S HIGHLIGHTS</p>
-              <h2>Sculpted couture &amp; evening wear.</h2>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#7A756F]">
+                  CURATED CATALOG • SECTION 06
+                </span>
+                <span className="font-handwriting text-base text-[#A66551]">
+                  (selected for everyday wearing)
+                </span>
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#191817]">
+                FEATURED ATELIER PIECES
+              </h2>
             </div>
-            <Link to="/products?gender=Women" className="text-link">
-              VIEW ALL WOMEN'S →
-            </Link>
+
+            {/* Filter Tabs */}
+            <div className="flex items-center gap-2 mt-4 md:mt-0 flex-wrap">
+              {['All', 'Women', 'Men'].map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setSelectedGenderTab(tab)}
+                  className={`font-mono text-xs uppercase tracking-widest px-3.5 py-1.5 border transition-all ${
+                    selectedGenderTab === tab
+                      ? 'bg-[#191817] text-[#FAF7F2] border-[#191817] font-bold shadow-sm'
+                      : 'bg-[#FDFCF9] text-[#7A756F] border-[#2C2A29]/20 hover:border-[#191817] hover:text-[#191817]'
+                  }`}
+                >
+                  {tab === 'All' ? 'ALL PIECES (24)' : tab === 'Women' ? 'WOMEN’S ATELIER' : 'MEN’S SARTORIAL'}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="feature-grid">
-            {womenItems.map((item, index) => (
-              <article
-                key={item._id || index}
-                className={`feature-item ${index === 0 ? 'feature-item--large' : ''}`}
+          {/* Product Grid with Scrapbook cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            {filteredProducts.map((product, idx) => (
+              <motion.div
+                key={product._id || product.id || idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.6, delay: (idx % 4) * 0.1 }}
               >
-                <Link to={`/product/${item._id}`} className="feature-media-link">
-                  <div className="feature-media-wrap">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="feature-dress-img"
-                      loading="lazy"
-                    />
-                  </div>
-                </Link>
-                <div className="feature-meta">
-                  <div>
-                    <span>00{index + 1} • {item.category}</span>
-                    <h3>{item.name}</h3>
-                  </div>
-                  <p>₹{item.price?.toLocaleString('en-IN')}</p>
-                </div>
-              </article>
+                <ProductCard product={product} index={idx} priority={idx < 4} />
+              </motion.div>
             ))}
           </div>
-        </section>
 
-        {/* Men's Featured Arrivals */}
-        <section className="featured-section" style={{ paddingTop: '54px' }}>
-          <div className="section-heading split-heading">
-            <div>
-              <p className="eyebrow">MEN'S HIGHLIGHTS</p>
-              <h2>Bespoke suits, overcoats &amp; linen.</h2>
-            </div>
-            <Link to="/products?gender=Men" className="text-link">
-              VIEW ALL MEN'S →
+          {/* Bottom Catalog Action Link */}
+          <div className="mt-16 text-center">
+            <Link
+              to="/products"
+              className="group inline-flex items-center gap-3 bg-[#191817] text-[#FAF7F2] font-mono text-xs uppercase tracking-[0.2em] px-8 py-4 shadow-lg hover:bg-[#2C2A29] transition-transform hover:-translate-y-0.5"
+            >
+              <span>VIEW ENTIRE 24-PIECE ARCHIVE</span>
+              <ArrowUpRight width={14} height={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
+            <div className="mt-3">
+              <HandwrittenNote
+                text="“new fabric editions are added to the journal every month”"
+                color="text-[#7A756F]"
+                className="text-sm"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. Scrapbook Studio Invitation Box */}
+      <section className="py-20 px-6 sm:px-8 lg:px-12 bg-[#F5EFE6]">
+        <div className="max-w-4xl mx-auto bg-[#FDFCF9] p-8 sm:p-12 border border-[#2C2A29]/15 shadow-[0_12px_40px_rgba(0,0,0,0.06)] relative text-center">
+          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 pointer-events-none">
+            <Tape rotate="1deg" variant="kraft" text="ATELIER VISIT" width="w-36" />
           </div>
 
-          <div className="feature-grid">
-            {menItems.map((item, index) => (
-              <article
-                key={item._id || index}
-                className={`feature-item ${index === 0 ? 'feature-item--large' : ''}`}
-              >
-                <Link to={`/product/${item._id}`} className="feature-media-link">
-                  <div className="feature-media-wrap">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="feature-dress-img"
-                      loading="lazy"
-                    />
-                  </div>
-                </Link>
-                <div className="feature-meta">
-                  <div>
-                    <span>00{index + 1} • {item.category}</span>
-                    <h3>{item.name}</h3>
-                  </div>
-                  <p>₹{item.price?.toLocaleString('en-IN')}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      </div>
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#7A756F] block mb-2">
+            PRIVATE APPOINTMENTS • MILAN &amp; PARIS
+          </span>
+          <h3 className="font-serif text-3xl sm:text-4xl text-[#191817] font-normal mb-4">
+            Experience the Fabrics in Person
+          </h3>
+          <p className="font-sans text-sm text-[#5C5751] font-light max-w-lg mx-auto leading-relaxed mb-6">
+            We welcome clients to our private showroom atelier to inspect physical swatch rolls, discuss custom measurements with our master tailors, and enjoy an espresso.
+          </p>
+
+          <Link
+            to="/about"
+            className="font-mono text-xs uppercase tracking-widest text-[#191817] font-bold border-b border-[#191817] pb-1 hover:text-[#A66551] hover:border-[#A66551] transition-colors"
+          >
+            REQUEST A PRIVATE ATELIER APPOINTMENT →
+          </Link>
+        </div>
+      </section>
     </main>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
