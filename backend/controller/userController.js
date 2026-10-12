@@ -53,20 +53,29 @@ export const registerUser = async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    const isProduction =
+      process.env.NODE_ENV === "production" ||
+      process.env.RENDER === "true" ||
+      req.secure ||
+      req.headers["x-forwarded-proto"] === "https";
+
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false,
+      secure: Boolean(isProduction),
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 15 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
+      secure: Boolean(isProduction),
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(201).json({
       message: "User registered successfully",
+      token: accessToken,
       user: {
         id: newUser._id,
         name: newUser.name,
@@ -113,20 +122,29 @@ export const loginUser = async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    const isProduction =
+      process.env.NODE_ENV === "production" ||
+      process.env.RENDER === "true" ||
+      req.secure ||
+      req.headers["x-forwarded-proto"] === "https";
+
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false,
+      secure: Boolean(isProduction),
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 15 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
+      secure: Boolean(isProduction),
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
       message: "Login Successful",
+      token: accessToken,
       user: {
         id: user._id,
         name: user.name,

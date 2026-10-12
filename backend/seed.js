@@ -246,6 +246,6 @@ const seedProducts = async () => {
   }
 };
 
-if (process.argv[1].includes("seed.js")) {
+if (process.argv[1] && process.argv[1].includes("seed.js")) {
   seedProducts();
 }

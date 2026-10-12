@@ -1,8 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../api/apiClient";
+
+const getSavedUser = () => {
+  try {
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : null;
+  } catch {
+    return null;
+  }
+};
 
 const initialState = {
-  user: null,
+  user: getSavedUser(),
   loading: false,
   error: null,
   message: "",
@@ -15,9 +24,13 @@ export const registerUser = createAsyncThunk(
   "user/registerUser",
   async (user, { rejectWithValue }) => {
     try {
-      const res = await axios.post("/api/user/register", user, {
-        withCredentials: true,
-      });
+      const res = await api.post("/api/user/register", user);
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+      }
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      }
       return { message: res.data.message, user: res.data.user };
     } catch (error) {
       return rejectWithValue(getErrorMessage(error));
@@ -29,9 +42,13 @@ export const loginUser = createAsyncThunk(
   "user/loginUser",
   async (user, { rejectWithValue }) => {
     try {
-      const res = await axios.post("/api/user/login", user, {
-        withCredentials: true,
-      });
+      const res = await api.post("/api/user/login", user);
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+      }
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      }
       return { message: res.data.message, user: res.data.user };
     } catch (error) {
       return rejectWithValue(getErrorMessage(error));
@@ -43,12 +60,15 @@ export const getUser = createAsyncThunk(
   "user/getUser",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get("/api/user/profile", {
-        withCredentials: true,
-      });
+      const res = await api.get("/api/user/profile");
+      if (res.data?.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      }
       return res.data.user;
     } catch (error) {
       if (error.response?.status === 401) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
         return null;
       }
       return rejectWithValue(getErrorMessage(error));
@@ -66,10 +86,16 @@ const userSlice = createSlice({
     },
     setUser: (state, action) => {
       state.user = action.payload;
+      if (action.payload) {
+        localStorage.setItem("user", JSON.stringify(action.payload));
+      } else {
+        localStorage.removeItem("user");
+      }
     },
     logoutUser: (state) => {
       state.user = null;
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {
@@ -113,7 +139,7 @@ const userSlice = createSlice({
       .addCase(getUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
-      })
+      });
   },
 });
 

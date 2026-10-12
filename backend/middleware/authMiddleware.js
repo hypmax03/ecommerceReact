@@ -24,7 +24,7 @@ export const authMiddleware = async (req, res, next) => {
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_ACCESS_SECRET || "default_jwt_secret_vericourt"
+      process.env.JWT_ACCESS_SECRET || "default_jwt_secret_elora"
     );
     req.user = decoded;
     next();
@@ -42,7 +42,7 @@ export const optionalAuth = async (req, res, next) => {
     if (token) {
       const decoded = jwt.verify(
         token,
-        process.env.JWT_ACCESS_SECRET || "default_jwt_secret_vericourt"
+        process.env.JWT_ACCESS_SECRET || "default_jwt_secret_elora"
       );
       req.user = decoded;
     }
@@ -64,7 +64,7 @@ export const adminMiddleware = async (req, res, next) => {
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_ACCESS_SECRET || "default_jwt_secret_vericourt"
+      process.env.JWT_ACCESS_SECRET || "default_jwt_secret_elora"
     );
 
     // Verify role in token or database

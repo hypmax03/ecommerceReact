@@ -1,13 +1,15 @@
 import mongoose from "mongoose"
-import Product from "../model/productSchema.js"
-import { fashionProducts } from "../seed.js"
 
 const connectDB = async () => {
     try {
+        if (!process.env.MONGO_URI) {
+            console.error("Warning: MONGO_URI environment variable is not defined.")
+            return
+        }
         await mongoose.connect(process.env.MONGO_URI)
-        console.log("db connected")
+        console.log("MongoDB connected successfully")
     } catch (error) {
-        console.log("DB connection error:", error)
+        console.error("MongoDB connection error:", error.message)
     }
 }
 

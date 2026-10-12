@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../api/apiClient";
 
 const initialState = {
   products: [],
@@ -20,7 +20,7 @@ export const getProduct = createAsyncThunk(
   async (params = {}) => {
     const query = new URLSearchParams(params).toString();
     const url = `/api/product/${query ? `?${query}` : ""}`;
-    const response = await axios.get(url, { withCredentials: true });
+    const response = await api.get(url);
     return response.data.products;
   }
 );
@@ -29,9 +29,7 @@ export const getAdminDashboard = createAsyncThunk(
   "product/getAdminDashboard",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/api/product/admin/dashboard", {
-        withCredentials: true,
-      });
+      const response = await api.get("/api/product/admin/dashboard");
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
@@ -43,11 +41,7 @@ export const approveProduct = createAsyncThunk(
   "product/approveProduct",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
-        `/api/product/approve/${id}`,
-        {},
-        { withCredentials: true }
-      );
+      const response = await api.put(`/api/product/approve/${id}`, {});
       return response.data.product;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
@@ -59,11 +53,7 @@ export const rejectProduct = createAsyncThunk(
   "product/rejectProduct",
   async ({ id, reason }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
-        `/api/product/reject/${id}`,
-        { reason },
-        { withCredentials: true }
-      );
+      const response = await api.put(`/api/product/reject/${id}`, { reason });
       return response.data.product;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
@@ -75,11 +65,7 @@ export const addProduct = createAsyncThunk(
   "product/addProduct",
   async (productData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "/api/product/add",
-        productData,
-        { withCredentials: true }
-      );
+      const response = await api.post("/api/product/add", productData);
       return response.data.newProduct || response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
@@ -91,9 +77,7 @@ export const getProductById = createAsyncThunk(
   "product/getProductById",
   async (id) => {
     try {
-      const response = await axios.get(`/api/product/${id}`, {
-        withCredentials: true,
-      });
+      const response = await api.get(`/api/product/${id}`);
       return response.data?.product || response.data || null;
     } catch {
       return null;
@@ -105,9 +89,7 @@ export const deleteProduct = createAsyncThunk(
   "product/deleteProduct",
   async (id, { rejectWithValue }) => {
     try {
-      await axios.delete(`/api/product/delete/${id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/api/product/delete/${id}`);
       return id;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
@@ -119,10 +101,9 @@ export const updateProduct = createAsyncThunk(
   "product/updateProduct",
   async (product, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
+      const response = await api.put(
         `/api/product/update/${product._id || product.id}`,
-        product,
-        { withCredentials: true }
+        product
       );
       return response.data?.updatedProduct || response.data || product;
     } catch (err) {
