@@ -19,11 +19,24 @@ const HeroScrapbook = () => {
     offset: ['start start', 'end start'],
   });
 
-  const mainProduct = products && products.length > 0 ? products[0] : null;
-  const secondProduct = products && products.length > 1 ? products[1] : null;
+  const fallbackHero1 = 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=900&q=80';
+  const fallbackHero2 = 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80';
 
-  const mainImgUrl = mainProduct?.images?.[0] || mainProduct?.image;
-  const secondImgUrl = secondProduct?.images?.[0] || secondProduct?.image;
+  const mainProduct = (products && products.length > 0) ? products[0] : {
+    name: 'Bias-Cut Silk Evening Gown',
+    category: 'EVENINGWEAR',
+    price: 6499,
+    image: fallbackHero1,
+  };
+  const secondProduct = (products && products.length > 1) ? products[1] : {
+    name: 'Bespoke Sartorial Blazer',
+    category: 'MENSWEAR',
+    price: 8999,
+    image: fallbackHero2,
+  };
+
+  const mainImgUrl = mainProduct?.images?.[0] || mainProduct?.image || fallbackHero1;
+  const secondImgUrl = secondProduct?.images?.[0] || secondProduct?.image || fallbackHero2;
 
   // Parallax layers
   const mainImageY = useTransform(scrollYProgress, [0, 1], ['0%', shouldReduceMotion ? '0%' : '8%']);
@@ -138,6 +151,10 @@ const HeroScrapbook = () => {
                       <img
                         src={mainImgUrl}
                         alt={mainProduct.name}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = fallbackHero1;
+                        }}
                         className="w-full h-full object-cover object-center filter contrast-[1.02] hover:scale-105 transition-transform duration-700"
                       />
                     </Link>

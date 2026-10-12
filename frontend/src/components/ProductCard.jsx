@@ -83,6 +83,10 @@ const ProductCard = ({ product, index = 0, priority = false }) => {
             src={productImage}
             alt={product.name}
             loading={priority ? 'eager' : 'lazy'}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = fallbackImage;
+            }}
             className={`w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-105 ${
               productHoverImage && isHovered ? 'opacity-0' : 'opacity-100'
             }`}
@@ -94,6 +98,9 @@ const ProductCard = ({ product, index = 0, priority = false }) => {
               src={productHoverImage}
               alt={`${product.name} alternate view`}
               loading="lazy"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
               className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-105 ${
                 isHovered ? 'opacity-100' : 'opacity-0'
               }`}

@@ -5,7 +5,13 @@ import { fashionProducts } from "../seed.js";
 export const seedFashionProducts = async (req, res) => {
   try {
     await Product.deleteMany({});
-    const products = await Product.insertMany(fashionProducts);
+    const preparedProducts = fashionProducts.map((p) => ({
+      ...p,
+      status: "approved",
+      images: p.images && p.images.length ? p.images : [p.image],
+      image: p.image || (p.images && p.images[0]) || "",
+    }));
+    const products = await Product.insertMany(preparedProducts);
     res.status(200).json({
       message: "Fashion dress catalog seeded successfully",
       count: products.length,
