@@ -25,6 +25,21 @@ export const seedFashionProducts = async (req, res) => {
   }
 };
 
+export const clearAllProducts = async (req, res) => {
+  try {
+    const result = await Product.deleteMany({});
+    res.status(200).json({
+      message: `Cleared ${result.deletedCount} products from catalog. Ready for manual upload.`,
+      count: 0,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to clear products",
+      error: error.message,
+    });
+  }
+};
+
 export const productController = async (req, res) => {
   try {
     const {

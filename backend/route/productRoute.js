@@ -5,6 +5,7 @@ import {
   getProductById,
   productController,
   seedFashionProducts,
+  clearAllProducts,
   updateProduct,
   getAdminProductDashboard,
   approveProduct,
@@ -30,5 +31,7 @@ route.put("/approve/:id", adminMiddleware, approveProduct);
 route.put("/reject/:id", adminMiddleware, rejectProduct);
 route.put("/update/:id", adminMiddleware, updateProduct);
 route.delete("/delete/:id", adminMiddleware, deleteProduct);
+route.delete("/clear", adminMiddleware, clearAllProducts);
+route.post("/clear", adminMiddleware, clearAllProducts);
 
 export default route;

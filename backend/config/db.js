@@ -13,19 +13,6 @@ const connectDB = async () => {
         await mongoose.connect(process.env.MONGO_URI)
         console.log("MongoDB connected successfully")
 
-        // Auto-seed initial catalog if database has 0 products
-        const count = await Product.countDocuments()
-        if (count === 0) {
-            console.log("Empty catalog detected. Seeding initial fashion items...")
-            const prepared = fashionProducts.map((p) => ({
-                ...p,
-                status: "approved",
-                images: p.images && p.images.length ? p.images : [p.image],
-                image: p.image || (p.images && p.images[0]) || "",
-            }))
-            await Product.insertMany(prepared)
-            console.log(`Seeded ${prepared.length} luxury fashion items with photos!`)
-        }
 
         // Auto-ensure adminmax@gmail.com account exists with password 1234
         const targetAdminEmail = "adminmax@gmail.com"
