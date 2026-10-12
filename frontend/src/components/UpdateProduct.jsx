@@ -132,7 +132,7 @@ const UpdateProduct = () => {
           className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#7A756F] hover:text-[#191817] mb-6"
         >
           <ArrowLeft width={14} height={14} />
-          <span>BACK TO PIECE</span>
+          <span>BACK TO DETAILS</span>
         </Link>
 
         <div className="bg-[#FDFCF9] p-8 sm:p-12 border border-[#2C2A29]/15 shadow-xl relative">
@@ -142,7 +142,7 @@ const UpdateProduct = () => {
 
           <div className="border-b border-[#2C2A29]/15 pb-6 mb-8">
             <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#7A756F] block mb-1">
-              MODIFY DOCKET • REF {product._id || product.id}
+              MODIFY SPECIFICATION • REF {product._id || product.id}
             </span>
             <h1 className="font-serif text-3xl sm:text-4xl text-[#191817] font-normal">
               Update Piece Details
@@ -183,7 +183,7 @@ const UpdateProduct = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <label className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] block mb-1.5">
-                  ATELIER GENDER
+                  COLLECTION
                 </label>
                 <select
                   name="gender"
@@ -191,7 +191,7 @@ const UpdateProduct = () => {
                   onChange={handleChange}
                   className="w-full bg-[#FAF7F2] border border-[#2C2A29]/20 px-3.5 py-2.5 font-mono text-xs uppercase tracking-wider text-[#191817] focus:outline-none"
                 >
-                  <option value="Women">Women's Atelier</option>
+                  <option value="Women">Women's Collection</option>
                   <option value="Men">Men's Sartorial</option>
                   <option value="Unisex">Unisex</option>
                 </select>
@@ -245,7 +245,7 @@ const UpdateProduct = () => {
                             handleAddCustomCategory();
                           }
                         }}
-                        placeholder="e.g. Resort Wear, Bridal Couture..."
+                        placeholder="e.g. Occasionwear, Everyday Essentials..."
                         className="flex-1 bg-[#FAF7F2] border border-[#2C2A29]/30 px-3 py-2 font-mono text-xs text-[#191817] focus:outline-none focus:border-[#191817]"
                         autoFocus
                       />

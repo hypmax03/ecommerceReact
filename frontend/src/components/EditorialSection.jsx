@@ -104,20 +104,20 @@ const EditorialSection = () => {
             {/* Journal Article Body */}
             <div className="space-y-4 font-sans text-sm sm:text-base text-[#5C5751] font-light leading-relaxed">
               <p>
-                We craft garments for India's leading cultural icons and discerning clients who reject the fleeting noise of seasonal trends. Whether it is Deepika Padukone on the Cannes red carpet or Shah Rukh Khan in a bespoke black tie tuxedo, our pieces are tailored to convey quiet sovereignty.
+                We create garments for discerning individuals who value enduring design and uncompromised craft. Our collections reject the fleeting noise of fast-fashion cycles in favor of precision tailoring, considered silhouettes, and noble natural fibers.
               </p>
               <p>
-                Cut exclusively from historical mills in Biella, Como, and Kashmir, every seam is finished by master tailors with natural silk thread and horn buttons that develop a patina over decades.
+                Sourced exclusively from heritage mills in Biella, Como, and Lyon, every piece is finished by master artisans with French seams, natural silk thread, and horn buttons designed to wear beautifully over time.
               </p>
             </div>
 
             {/* Handwritten Quote Block */}
             <div className="mt-8 p-4 bg-[#F5EFE6] border-l-2 border-[#191817] shadow-sm">
               <p className="font-serif italic text-lg text-[#191817] leading-snug">
-                “True luxury is understated grace. When I walk onto a global stage, the weight of the handloom silk and bespoke drape provides complete poise.”
+                “True luxury is quiet. It is defined by the integrity of the weave, the balance of the cut, and how naturally a garment moves with you.”
               </p>
               <span className="font-mono text-[10px] uppercase tracking-widest text-[#7A756F] block mt-2">
-                — DEEPIKA PADUKONE / CANNES DIARY
+                — ATELIER MANIFESTO / ISSUE NO. 26
               </span>
             </div>
 

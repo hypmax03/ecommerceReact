@@ -35,26 +35,26 @@ const Cart = () => {
           </div>
 
           <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#7A756F] block mb-1">
-            CLIENT ORDER CONFIRMED
+            ORDER CONFIRMED
           </span>
           <h2 className="font-serif text-3xl text-[#191817] font-normal mb-3">
-            Thank You for Collecting.
+            Thank You for Your Order.
           </h2>
 
           <p className="font-sans text-xs sm:text-sm text-[#5C5751] font-light leading-relaxed mb-6">
-            Your garment docket has been transmitted to our master tailors. Each piece will be hand-pressed, inspected, and dispatched in recycled paper boxes with personalized handwritten notes.
+            Your order has been confirmed. Each piece will be carefully inspected, hand-pressed, and dispatched in recyclable packaging with garment care instructions.
           </p>
 
           <div className="p-4 bg-[#F5EFE6] border border-[#2C2A29]/10 text-left font-mono text-xs space-y-1 mb-6">
-            <p><strong>ESTIMATED COURIER:</strong> 2–4 Business Days</p>
-            <p><strong>CLIENT CONCIERGE:</strong> concierge@ateliervéricourt.com</p>
+            <p><strong>ESTIMATED DELIVERY:</strong> 2–4 Business Days</p>
+            <p><strong>CLIENT SERVICES:</strong> concierge@elora.com</p>
           </div>
 
           <Link
             to="/products"
             className="inline-block bg-[#191817] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest px-8 py-3.5 shadow-md hover:bg-[#2C2A29] transition-colors"
           >
-            RETURN TO JOURNAL
+            RETURN TO COLLECTIONS
           </Link>
         </div>
       </main>
@@ -69,14 +69,14 @@ const Cart = () => {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#7A756F]">
-                PAGE 07 • SARTORIAL ORDER DOCKET
+                PAGE 07 • ORDER SUMMARY
               </span>
               <span className="font-handwriting text-base text-[#A66551]">
-                ({totalCount} {totalCount === 1 ? 'item' : 'items'} in docket)
+                ({totalCount} {totalCount === 1 ? 'item' : 'items'} in bag)
               </span>
             </div>
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#191817]">
-              YOUR SARTORIAL BAG
+              YOUR SHOPPING BAG
             </h1>
           </div>
 
@@ -96,7 +96,7 @@ const Cart = () => {
             </div>
             <h3 className="font-serif text-2xl text-[#191817]">Your bag is currently empty.</h3>
             <HandwrittenNote
-              text="“no pieces collected yet for this docket”"
+              text="“no pieces collected yet for this order”"
               color="text-[#7A756F]"
             />
             <div className="pt-4">
@@ -104,7 +104,7 @@ const Cart = () => {
                 to="/products"
                 className="bg-[#191817] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest px-8 py-3.5 inline-block"
               >
-                OPEN GARMENT CATALOG
+                EXPLORE COLLECTIONS
               </Link>
             </div>
           </div>
@@ -136,7 +136,7 @@ const Cart = () => {
                         {item.name}
                       </Link>
                       <p className="font-mono text-xs text-[#7A756F] mt-1">
-                        SIZE: {item.size} • COLOR: {item.color}
+                        SIZE: {item.size} • COLOURWAY: {item.color}
                       </p>
                     </div>
                   </div>
@@ -180,11 +180,11 @@ const Cart = () => {
             {/* Right Summary Docket */}
             <div className="lg:col-span-4 bg-[#F5EFE6] p-6 sm:p-8 border border-[#2C2A29]/15 shadow-sm space-y-6 relative">
               <div className="absolute -top-3 left-8 pointer-events-none">
-                <Tape rotate="1deg" variant="dark" text="DISPATCH SUMMARY" width="w-36" />
+                <Tape rotate="1deg" variant="dark" text="ORDER SUMMARY" width="w-36" />
               </div>
 
               <h3 className="font-serif text-2xl text-[#191817] font-normal border-b border-[#2C2A29]/15 pb-3">
-                ORDER DOCKET
+                ORDER SUMMARY
               </h3>
 
               <div className="space-y-2 font-mono text-xs text-[#5C5751]">
@@ -193,12 +193,12 @@ const Cart = () => {
                   <span>₹{subtotal.toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>EXPRESS COURIER</span>
+                  <span>EXPRESS DELIVERY</span>
                   <span>{shipping === 0 ? 'COMPLIMENTARY' : '₹250'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>PACKAGING</span>
-                  <span>RECYCLED GIFT BOX (FREE)</span>
+                  <span>RECYCLABLE GIFT BOX (FREE)</span>
                 </div>
                 <div className="pt-3 border-t border-dashed border-[#2C2A29]/15 flex justify-between font-bold text-sm text-[#191817]">
                   <span>TOTAL ESTIMATED</span>
@@ -223,14 +223,14 @@ const Cart = () => {
                   type="submit"
                   className="w-full bg-[#191817] hover:bg-[#2C2A29] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest py-4 flex items-center justify-center gap-2 shadow-md transition-colors font-bold"
                 >
-                  <span>COMPLETE SARTORIAL ORDER</span>
+                  <span>COMPLETE ORDER</span>
                   <ArrowUpRight width={14} height={14} />
                 </button>
               </form>
 
               <div className="text-center">
                 <HandwrittenNote
-                  text="“dispatched in 24 hours with trackable courier”"
+                  text="“dispatched within 24 hours with tracked delivery”"
                   color="text-[#7A756F]"
                   className="text-xs"
                 />

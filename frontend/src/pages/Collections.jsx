@@ -1,115 +1,147 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
-import { ArrowUpRight } from 'iconoir-react';
+import { ArrowUpRight, Plus } from 'iconoir-react';
 import Tape from '../components/Tape';
-import Polaroid from '../components/Polaroid';
 import HandwrittenNote from '../components/HandwrittenNote';
-import { CAMPAIGN_LOOKS } from '../data/fashionProducts';
+import ProductCard from '../components/ProductCard';
+import { getProduct } from '../redux/productSlice';
 
 const Collections = () => {
+  const dispatch = useDispatch();
+  const { products, loading } = useSelector((state) => state.product || { products: [] });
+  const { user } = useSelector((state) => state.user || { user: null });
+  const isAdmin = user?.role === 'admin' || user?.email?.toLowerCase().includes('admin');
+
+  useEffect(() => {
+    dispatch(getProduct({ status: 'approved' }));
+  }, [dispatch]);
+
+  // Group approved products dynamically by Category
+  const categories = Array.from(new Set(products.map((p) => p.category).filter(Boolean)));
+
   return (
     <main className="min-h-screen bg-[#FAF7F2] pt-28 sm:pt-36 pb-24 px-6 sm:px-8 lg:px-12">
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="border-b border-[#2C2A29]/15 pb-8 mb-12 relative">
           <div className="absolute -top-3 right-8 pointer-events-none hidden sm:block">
-            <Tape rotate="-2deg" variant="kraft" text="CHAPTER ARCHIVES" width="w-40" />
+            <Tape rotate="-2deg" variant="kraft" text="CURATED ARCHIVE" width="w-40" />
           </div>
 
           <div className="flex items-center gap-2 mb-2">
             <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#7A756F]">
-              JOURNAL VOLUME IV • CAMPAIGN DOSSIERS
+              ATELIER INDEX • LIVE COLLECTION DOSSIERS
             </span>
             <span className="font-handwriting text-base text-[#A66551]">
-              (editorial pinboard)
+              (curated by atelier directors)
             </span>
           </div>
 
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal text-[#191817]">
-            COLLECTIONS &amp; CAMPAIGNS
-          </h1>
-          <p className="font-sans text-sm text-[#5C5751] font-light mt-2 max-w-xl">
-            A visual documentation of seasonal chapters, location lookbooks, and textile studies curated by our creative directors.
-          </p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal text-[#191817]">
+                COLLECTIONS &amp; CAMPAIGNS
+              </h1>
+              <p className="font-sans text-sm text-[#5C5751] font-light mt-2 max-w-xl">
+                A visual documentation of live approved garment chapters and textile studies.
+              </p>
+            </div>
+
+            <Link
+              to="/add"
+              className="inline-flex items-center gap-2 bg-[#191817] text-[#FAF7F2] hover:bg-[#2C2A29] font-mono text-xs uppercase tracking-widest px-5 py-3 transition-colors shadow-sm self-start md:self-auto"
+            >
+              <Plus width={14} height={14} />
+              <span>{isAdmin ? 'ADMIN: ADD GARMENT' : 'SUBMIT GARMENT'}</span>
+            </Link>
+          </div>
         </div>
 
-        {/* Moodboard Campaign Stories Grid */}
-        <div className="space-y-20">
-          {CAMPAIGN_LOOKS.map((campaign, idx) => (
-            <motion.div
-              key={campaign.id}
-              initial={{ opacity: 0, y: 35 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-[#FDFCF9] p-6 sm:p-10 border border-[#2C2A29]/15 shadow-sm relative"
-            >
-              {/* Top Tape Accent */}
-              <div className="absolute -top-3.5 left-10 pointer-events-none">
-                <Tape
-                  rotate={idx % 2 === 0 ? '-3deg' : '2deg'}
-                  variant={idx % 2 === 0 ? 'kraft' : 'dark'}
-                  text={`CHAPTER 0${idx + 1}`}
-                  width="w-28"
-                />
-              </div>
+        {/* Dynamic Collections / Products Display */}
+        {products.length === 0 ? (
+          <div className="bg-[#FDFCF9] border border-dashed border-[#2C2A29]/20 p-12 sm:p-16 text-center shadow-sm relative my-8">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 pointer-events-none">
+              <Tape rotate="1deg" variant="kraft" text="EMPTY COLLECTION REGISTRY" />
+            </div>
 
-              {/* Photo Area */}
-              <div className={`lg:col-span-6 ${idx % 2 === 1 ? 'lg:order-2' : ''}`}>
-                <div className="aspect-[16/11] bg-[#ECE8DF] overflow-hidden border border-[#2C2A29]/10 relative group">
-                  <img
-                    src={campaign.image}
-                    alt={campaign.title}
-                    className="w-full h-full object-cover object-center filter contrast-[1.02] group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute top-3 left-3 bg-[#191817] text-[#FAF7F2] font-mono text-[8px] uppercase tracking-widest px-2 py-0.5">
-                    {campaign.tag}
+            <h3 className="font-serif text-3xl text-[#191817] font-normal mb-3">
+              No garments registered in the collection yet.
+            </h3>
+            <p className="font-sans text-sm text-[#5C5751] max-w-md mx-auto font-light leading-relaxed mb-6">
+              All previous demo images have been cleared. As an administrator, you can now add authentic garments with custom photography, pricing, and textile specifications.
+            </p>
+
+            <HandwrittenNote
+              text="“new collections will automatically assemble here once products are created in the admin portal”"
+              color="text-[#A66551]"
+              rotate="-0.5deg"
+              className="mb-8"
+            />
+
+            <div className="flex flex-wrap justify-center items-center gap-4">
+              <Link
+                to="/add"
+                className="inline-flex items-center gap-2 bg-[#191817] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest px-6 py-3.5 shadow-md hover:bg-[#2C2A29]"
+              >
+                <span>+ ADD FIRST GARMENT</span>
+                <ArrowUpRight width={14} height={14} />
+              </Link>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="inline-flex items-center gap-2 bg-[#EFE8DC] text-[#191817] font-mono text-xs uppercase tracking-widest px-6 py-3.5 border border-[#D1C9BC] hover:bg-[#E3D5B8]"
+                >
+                  <span>ADMIN DASHBOARD</span>
+                </Link>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-16">
+            {categories.map((category, catIdx) => {
+              const catProducts = products.filter((p) => p.category === category);
+              return (
+                <div key={category} className="bg-[#FDFCF9] p-6 sm:p-10 border border-[#2C2A29]/15 shadow-sm relative">
+                  <div className="absolute -top-3.5 left-8 pointer-events-none">
+                    <Tape
+                      rotate={catIdx % 2 === 0 ? '-2deg' : '2deg'}
+                      variant={catIdx % 2 === 0 ? 'kraft' : 'dark'}
+                      text={`CHAPTER 0${catIdx + 1} • ${category.toUpperCase()}`}
+                    />
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between mb-8 pb-4 border-b border-[#2C2A29]/10 pt-2">
+                    <div>
+                      <h2 className="font-serif text-2xl sm:text-3xl text-[#191817] font-normal">
+                        {category}
+                      </h2>
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-[#7A756F]">
+                        {catProducts.length} {catProducts.length === 1 ? 'PIECE' : 'PIECES'} CATALOGUED
+                      </span>
+                    </div>
+
+                    <Link
+                      to={`/products?category=${category}`}
+                      className="font-mono text-xs uppercase tracking-wider text-[#191817] hover:text-[#A66551] inline-flex items-center gap-1 transition-colors mt-2 sm:mt-0"
+                    >
+                      <span>VIEW FULL CHAPTER</span>
+                      <ArrowUpRight width={12} height={12} />
+                    </Link>
+                  </div>
+
+                  {/* Grid of products belonging to this collection */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
+                    {catProducts.map((product, pIdx) => (
+                      <ProductCard key={product._id || product.id} product={product} index={pIdx} />
+                    ))}
                   </div>
                 </div>
-              </div>
-
-              {/* Narrative Story */}
-              <div className={`lg:col-span-6 space-y-4 ${idx % 2 === 1 ? 'lg:order-1' : ''}`}>
-                <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-[#7A756F]">
-                  LOOKBOOK NO. 0{idx + 1}
-                </span>
-                <h2 className="font-serif text-3xl sm:text-4xl text-[#191817] font-normal leading-tight">
-                  {campaign.title}
-                </h2>
-                <p className="font-sans text-sm text-[#5C5751] font-light leading-relaxed">
-                  {campaign.subtitle}
-                </p>
-
-                <div className="pt-2">
-                  <HandwrittenNote
-                    text={
-                      idx === 0
-                        ? '“monochrome layering for sudden rain”'
-                        : idx === 1
-                        ? '“hand-stitched lapels by master Marco”'
-                        : idx === 2
-                        ? '“washed French flax, unlined & breezy”'
-                        : '“fluid pure silk for nightfall”'
-                    }
-                    color="text-[#A66551]"
-                    rotate={idx % 2 === 0 ? '-1deg' : '1deg'}
-                  />
-                </div>
-
-                <div className="pt-4">
-                  <Link
-                    to={campaign.link}
-                    className="inline-flex items-center gap-2 bg-[#191817] text-[#FAF7F2] hover:bg-[#2C2A29] font-mono text-xs uppercase tracking-widest px-6 py-3 transition-colors shadow-sm"
-                  >
-                    <span>EXPLORE CHAPTER GARMENTS</span>
-                    <ArrowUpRight width={14} height={14} />
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </main>
   );

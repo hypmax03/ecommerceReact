@@ -20,17 +20,22 @@ const ProductDetails = () => {
   // Find product in local list or fallback
   const product = products.find((p) => (p._id || p.id) === id) || products[0];
 
+  const defaultImg =
+    product.images?.[0] ||
+    product.image ||
+    'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=1200&q=85';
+
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const [activeImage, setActiveImage] = useState('');
+  const [activeImage, setActiveImage] = useState(defaultImg);
   const [openAccordion, setOpenAccordion] = useState('provenance');
 
   useEffect(() => {
     if (product) {
       setSelectedSize(product.sizes ? product.sizes[0] : 'M');
       setSelectedColor(product.colors ? product.colors[0]?.name : 'Signature');
-      setActiveImage(product.image);
+      setActiveImage(product.images?.[0] || product.image || defaultImg);
       setQuantity(1);
       window.scrollTo(0, 0);
     }
@@ -48,9 +53,9 @@ const ProductDetails = () => {
   }
 
   const galleryImages = [
+    ...(product.images && product.images.length > 0 ? product.images : []),
     product.image,
-    product.hoverImage || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=85',
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85',
+    product.hoverImage,
   ].filter(Boolean);
 
   const handleAddToCart = () => {
@@ -81,11 +86,11 @@ const ProductDetails = () => {
             className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#7A756F] hover:text-[#191817] transition-colors"
           >
             <ArrowLeft width={14} height={14} />
-            <span>BACK TO GARMENT CATALOG</span>
+            <span>BACK TO COLLECTIONS</span>
           </Link>
 
           <span className="font-mono text-[9px] uppercase tracking-widest text-[#7A756F]">
-            PLATE REF: {product._id || product.id}
+            REF: {product._id || product.id}
           </span>
         </div>
 
@@ -97,7 +102,7 @@ const ProductDetails = () => {
             {/* Primary Large Image with Tape Pin */}
             <div className="bg-[#FDFCF9] p-4 sm:p-5 border border-[#2C2A29]/15 shadow-md relative">
               <div className="absolute -top-3.5 left-12 z-20 pointer-events-none">
-                <Tape rotate="-2deg" variant="kraft" text="PRIMARY PLATE" width="w-32" />
+                <Tape rotate="-2deg" variant="kraft" text="EDITORIAL PLATE" width="w-32" />
               </div>
 
               <div className="aspect-[3/4] overflow-hidden bg-[#ECE8DF]">
@@ -109,7 +114,7 @@ const ProductDetails = () => {
               </div>
 
               <div className="mt-3 flex items-center justify-between text-[9px] font-mono text-[#7A756F] border-t border-dashed border-[#2C2A29]/10 pt-2 uppercase">
-                <span>{product.edition || 'PERMANENT ARCHIVE'}</span>
+                <span>{product.edition || 'PERMANENT COLLECTION'}</span>
                 <span className="font-handwriting text-sm text-[#A66551]">natural studio lighting</span>
               </div>
             </div>
@@ -143,8 +148,8 @@ const ProductDetails = () => {
             <div className="pt-6 hidden sm:block">
               <Polaroid
                 image={product.hoverImage || product.image}
-                caption={`${product.name} — atelier fitting`}
-                subCaption={`Handcrafted in ${product.madeIn || 'Como, Italy'}`}
+                caption={`${product.name}`}
+                subCaption={`Crafted in ${product.madeIn || 'Como, Northern Italy'}`}
                 rotate="1deg"
                 tapeText="DETAIL SWATCH"
                 tapeVariant="dark"
@@ -157,13 +162,18 @@ const ProductDetails = () => {
             {/* Header / Brand & Name */}
             <div className="bg-[#FDFCF9] p-6 sm:p-8 border border-[#2C2A29]/15 shadow-sm space-y-4">
               <div>
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#7A756F]">
-                    {product.category} • {product.gender || 'UNISEX'}
-                  </span>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#7A756F]">
+                      {product.category} • {product.gender || 'UNISEX'}
+                    </span>
+                    <span className="font-mono text-[9px] bg-[#EFE8DC] border border-[#D1C9BC] px-2 py-0.5 text-[#191817] font-medium tracking-wider">
+                      STUDIO ARCHIVE
+                    </span>
+                  </div>
                   {product.isNew && (
-                    <span className="font-mono text-[8px] bg-[#191817] text-[#FAF7F2] px-2 py-0.5 uppercase tracking-widest">
-                      NEW EDITION
+                    <span className="font-mono text-[8px] bg-[#191817] text-[#FAF7F2] px-2 py-0.5 uppercase tracking-widest font-semibold">
+                      NEW ARRIVAL
                     </span>
                   )}
                 </div>
@@ -177,7 +187,7 @@ const ProductDetails = () => {
                     ₹{product.price?.toLocaleString('en-IN')}
                   </span>
                   <span className="font-mono text-[10px] text-[#7A756F] uppercase">
-                    (INCL. ALL TAXES &amp; DUTIES)
+                    (INCL. ALL TAXES)
                   </span>
                 </div>
               </div>
@@ -192,7 +202,7 @@ const ProductDetails = () => {
                 <div className="pt-2">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F]">
-                      FABRIC DYE: <strong className="text-[#191817]">{selectedColor}</strong>
+                      COLOURWAY: <strong className="text-[#191817]">{selectedColor}</strong>
                     </span>
                   </div>
                   <div className="flex items-center gap-2.5">
@@ -227,7 +237,7 @@ const ProductDetails = () => {
                     SELECT SIZE
                   </span>
                   <span className="font-handwriting text-sm text-[#A66551]">
-                    (true to bespoke measurements)
+                    (regular tailored fit)
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -278,7 +288,7 @@ const ProductDetails = () => {
                   className="flex-1 bg-[#191817] hover:bg-[#2C2A29] text-[#FAF7F2] font-mono text-xs uppercase tracking-[0.2em] h-12 flex items-center justify-center gap-2.5 shadow-lg transition-transform hover:-translate-y-0.5"
                 >
                   <ShoppingBag width={15} height={15} />
-                  <span>ADD PIECE TO BAG</span>
+                  <span>ADD TO SHOPPING BAG</span>
                 </button>
               </div>
 
@@ -289,14 +299,14 @@ const ProductDetails = () => {
                   state={{ product }}
                   className="hover:underline"
                 >
-                  [ EDIT PIECE SPECIFICATIONS ]
+                  [ EDIT SPECIFICATIONS ]
                 </Link>
                 <button
                   type="button"
                   onClick={handleDelete}
                   className="text-red-700 hover:underline"
                 >
-                  [ ARCHIVE DELETE ]
+                  [ REMOVE PIECE ]
                 </button>
               </div>
             </div>
@@ -310,14 +320,14 @@ const ProductDetails = () => {
                   onClick={() => setOpenAccordion(openAccordion === 'provenance' ? '' : 'provenance')}
                   className="w-full flex items-center justify-between font-mono text-xs uppercase tracking-wider text-[#191817] font-bold text-left"
                 >
-                  <span>01 / TEXTILE PROVENANCE &amp; ORIGIN</span>
+                  <span>01 / FABRIC COMPOSITION &amp; PROVENANCE</span>
                   <span>{openAccordion === 'provenance' ? '−' : '+'}</span>
                 </button>
                 {openAccordion === 'provenance' && (
                   <div className="mt-3 pt-3 border-t border-dashed border-[#2C2A29]/10 font-sans text-xs text-[#5C5751] space-y-1.5 leading-relaxed">
                     <p><strong>Origin:</strong> {product.madeIn || 'Como & Biella, Northern Italy'}</p>
-                    <p><strong>Fiber:</strong> {product.material || 'Super 130s Extra-Fine Italian Wool'}</p>
-                    <p><strong>Fit:</strong> {product.fit || 'Bespoke architectural drape, true to measurement'}</p>
+                    <p><strong>Material:</strong> {product.material || 'Super 130s Extra-Fine Italian Wool'}</p>
+                    <p><strong>Silhouette:</strong> {product.fit || 'Bespoke tailored fit, true to size'}</p>
                   </div>
                 )}
               </div>
@@ -329,14 +339,14 @@ const ProductDetails = () => {
                   onClick={() => setOpenAccordion(openAccordion === 'care' ? '' : 'care')}
                   className="w-full flex items-center justify-between font-mono text-xs uppercase tracking-wider text-[#191817] font-bold text-left"
                 >
-                  <span>02 / GARMENT CARE &amp; CONSERVATION</span>
+                  <span>02 / CARE &amp; MAINTENANCE</span>
                   <span>{openAccordion === 'care' ? '−' : '+'}</span>
                 </button>
                 {openAccordion === 'care' && (
                   <div className="mt-3 pt-3 border-t border-dashed border-[#2C2A29]/10 font-sans text-xs text-[#5C5751] space-y-1.5 leading-relaxed">
-                    <p>• Specialist green dry clean only for virgin wool and silk blends.</p>
-                    <p>• Store on wide wooden cedar hangers to preserve shoulder structure.</p>
-                    <p>• Steam gently between wears to release natural travel creases.</p>
+                    <p>• Specialist dry clean only for wool, silk, and structured suiting.</p>
+                    <p>• Store on wide cedar hangers to maintain silhouette architecture.</p>
+                    <p>• Steam gently between wears to refresh natural fibers.</p>
                   </div>
                 )}
               </div>
@@ -348,14 +358,14 @@ const ProductDetails = () => {
                   onClick={() => setOpenAccordion(openAccordion === 'shipping' ? '' : 'shipping')}
                   className="w-full flex items-center justify-between font-mono text-xs uppercase tracking-wider text-[#191817] font-bold text-left"
                 >
-                  <span>03 / COMPLIMENTARY COURIER &amp; PACKAGING</span>
+                  <span>03 / COMPLIMENTARY DELIVERY &amp; RETURNS</span>
                   <span>{openAccordion === 'shipping' ? '−' : '+'}</span>
                 </button>
                 {openAccordion === 'shipping' && (
                   <div className="mt-3 pt-3 border-t border-dashed border-[#2C2A29]/10 font-sans text-xs text-[#5C5751] space-y-1.5 leading-relaxed">
-                    <p>• Complimentary express dispatch on all orders over ₹8,000.</p>
-                    <p>• Hand-packed in reusable recycled paper boxes with cedar moth repellent.</p>
-                    <p>• 14-day physical returns and size swaps accommodated seamlessly.</p>
+                    <p>• Complimentary express delivery on all orders over ₹8,000.</p>
+                    <p>• Hand-packed in reusable recycled garment boxes.</p>
+                    <p>• 14-day physical returns and size exchanges accommodated.</p>
                   </div>
                 )}
               </div>

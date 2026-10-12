@@ -22,6 +22,8 @@ import About from './pages/About';
 import Cart from './pages/Cart';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Account from './pages/Account';
+import AdminDashboard from './pages/AdminDashboard';
 
 // Redux
 import { getUser } from './redux/userSlice';
@@ -37,6 +39,8 @@ function ScrollToTop() {
 
 function App() {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/dashboard');
 
   useEffect(() => {
     dispatch(getUser());
@@ -62,8 +66,10 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/account" element={<Login />} />
+          <Route path="/account" element={<Account />} />
           <Route path="/add" element={<ProductForm />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/dashboard" element={<AdminDashboard />} />
           <Route path="/updateproduct" element={<UpdateProduct />} />
         </Routes>
       </div>
@@ -74,8 +80,8 @@ function App() {
       <QuickViewModal />
       <ToastNotification />
 
-      {/* Final Journal Page Footer */}
-      <Footer />
+      {/* Footer rendered on public pages only (hidden on admin dashboard) */}
+      {!isAdminRoute && <Footer />}
     </div>
   );
 }

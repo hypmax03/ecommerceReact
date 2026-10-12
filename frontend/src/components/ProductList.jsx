@@ -24,7 +24,7 @@ const ProductList = () => {
   const [showFiltersMobile, setShowFiltersMobile] = useState(false);
 
   useEffect(() => {
-    dispatch(getProduct());
+    dispatch(getProduct({ status: 'approved' }));
   }, [dispatch]);
 
   useEffect(() => {
@@ -79,20 +79,20 @@ const ProductList = () => {
 
           <div className="flex items-center gap-2 mb-2">
             <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#7A756F]">
-              INDEX NO. 01 • PERMANENT &amp; LIMITED EDITIONS
+              COLLECTION INDEX • CURRENT LOOKBOOK &amp; ESSENTIALS
             </span>
             <span className="font-handwriting text-base text-[#A66551]">
-              (all 24 pieces documented)
+              (considered styles for the modern wardrobe)
             </span>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal text-[#191817]">
-                THE GARMENT CATALOG
+                EXPLORE COLLECTIONS
               </h1>
               <p className="font-sans text-sm text-[#5C5751] font-light mt-2 max-w-xl">
-                Bespoke tailoring, Mulberry silk evening pieces, and luxury Italian knitwear cut to order.
+                Thoughtfully selected styles for a modern wardrobe, crafted from noble natural fibers and bespoke tailoring traditions.
               </p>
             </div>
 
@@ -100,7 +100,7 @@ const ProductList = () => {
               to="/add"
               className="inline-flex items-center gap-2 bg-[#EFE8DC] hover:bg-[#E3D5B8] text-[#191817] font-mono text-xs uppercase tracking-widest px-4 py-2.5 border border-[#D1C9BC] transition-colors"
             >
-              <span>+ ADD NEW DESIGN</span>
+              <span>+ REGISTER PRODUCT</span>
               <ArrowUpRight width={12} height={12} />
             </Link>
           </div>
@@ -111,7 +111,7 @@ const ProductList = () => {
           {/* Gender Filter Buttons */}
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] mr-1 hidden sm:inline">
-              ATELIER:
+              COLLECTION:
             </span>
             {GENDERS.map((gender) => (
               <button
@@ -128,7 +128,7 @@ const ProductList = () => {
                     : 'bg-[#FAF7F2] text-[#191817] border-[#2C2A29]/20 hover:border-[#191817]'
                 }`}
               >
-                {gender === 'All' ? 'ALL ATELIERS' : gender === 'Women' ? 'WOMEN’S' : 'MEN’S'}
+                {gender === 'All' ? 'ALL COLLECTIONS' : gender === 'Women' ? 'WOMEN’S' : 'MEN’S'}
               </button>
             ))}
           </div>
@@ -143,7 +143,7 @@ const ProductList = () => {
               }}
               className="bg-[#FAF7F2] border border-[#2C2A29]/20 px-3 py-1.5 font-mono text-xs text-[#191817] focus:outline-none uppercase tracking-wider"
             >
-              <option value="All">ALL CATEGORIES</option>
+              <option value="All">EXPLORE CATEGORIES</option>
               {allCategories.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat.toUpperCase()}
@@ -189,11 +189,29 @@ const ProductList = () => {
         </div>
 
         {/* Product Grid */}
-        {filteredProducts.length === 0 ? (
+        {products.length === 0 ? (
+          <div className="py-24 text-center bg-[#FDFCF9] border border-dashed border-[#2C2A29]/20 p-8">
+            <h3 className="font-serif text-2xl text-[#191817]">No pieces registered in the catalog yet.</h3>
+            <HandwrittenNote
+              text="“use the registry to add your first handcrafted fashion piece”"
+              color="text-[#7A756F]"
+              className="mt-2"
+            />
+            <div className="mt-6">
+              <Link
+                to="/add"
+                className="inline-flex items-center gap-2 bg-[#191817] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest px-6 py-3.5 shadow hover:bg-[#2C2A29] transition-colors"
+              >
+                <span>+ REGISTER FIRST PIECE</span>
+                <ArrowUpRight width={14} height={14} />
+              </Link>
+            </div>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="py-24 text-center bg-[#FDFCF9] border border-dashed border-[#2C2A29]/20 p-8">
             <h3 className="font-serif text-2xl text-[#191817]">No pieces matched your curation.</h3>
             <HandwrittenNote
-              text="“try selecting ‘All Ateliers’ or resetting your category filter”"
+              text="“try selecting ‘All Collections’ or resetting your category filter”"
               color="text-[#7A756F]"
               className="mt-2"
             />
@@ -204,9 +222,9 @@ const ProductList = () => {
                 setSelectedCategory('All');
                 setSearchParams({});
               }}
-              className="mt-6 bg-[#191817] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest px-6 py-3"
+              className="mt-6 bg-[#191817] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest px-6 py-3 cursor-pointer"
             >
-              SHOW ALL 24 PIECES
+              CLEAR ALL FILTERS
             </button>
           </div>
         ) : (

@@ -15,8 +15,10 @@ export const registerUser = createAsyncThunk(
   "user/registerUser",
   async (user, { rejectWithValue }) => {
     try {
-      const res = await axios.post("http://localhost:3000/user/register", user);
-      return res.data.message;
+      const res = await axios.post("/api/user/register", user, {
+        withCredentials: true,
+      });
+      return { message: res.data.message, user: res.data.user };
     } catch (error) {
       return rejectWithValue(getErrorMessage(error));
     }
@@ -27,7 +29,7 @@ export const loginUser = createAsyncThunk(
   "user/loginUser",
   async (user, { rejectWithValue }) => {
     try {
-      const res = await axios.post("http://localhost:3000/user/login", user, {
+      const res = await axios.post("/api/user/login", user, {
         withCredentials: true,
       });
       return { message: res.data.message, user: res.data.user };
@@ -41,7 +43,7 @@ export const getUser = createAsyncThunk(
   "user/getUser",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get("http://localhost:3000/user/profile", {
+      const res = await axios.get("/api/user/profile", {
         withCredentials: true,
       });
       return res.data.user;
@@ -79,7 +81,8 @@ const userSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.message = action.payload;
+        state.message = action.payload.message;
+        state.user = action.payload.user;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;

@@ -10,8 +10,8 @@ import HandwrittenNote from './HandwrittenNote';
 const curatedTags = [
   'Mulberry Silk',
   'Cashmere Overcoat',
-  'Neapolitan Wool Suit',
-  'French Flax Linen',
+  'Virgin Wool Suit',
+  'Flax Linen',
   'Velvet Mini',
   'Organza Gown',
 ];

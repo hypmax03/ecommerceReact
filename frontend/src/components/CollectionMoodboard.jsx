@@ -10,35 +10,35 @@ const moodboardItems = [
   {
     id: 'prod_w01',
     type: 'large-photo',
-    title: 'The Deepika Aurelia Silk Draped Column Gown',
+    title: 'Bias-Cut Silk Evening Gown — Obsidian Black',
     price: '₹6,499',
-    tag: '01 / DEEPIKA PADUKONE',
-    note: '“worn at Cannes Film Festival”',
+    tag: '01 / OCCASIONWEAR',
+    note: '“pure 28 momme mulberry silk”',
     noteArrow: 'down',
     image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85',
     rotate: '-1.5deg',
     colSpan: 'lg:col-span-5',
-    tapeText: 'DEEPIKA CANNES',
+    tapeText: 'SILK ATELIER',
   },
   {
     id: 'prod_m01',
     type: 'polaroid',
-    title: 'The Ranveer Double-Breasted Wool Suit',
+    title: 'Double-Breasted Wool Suit — Charcoal Mélange',
     price: '₹9,999',
-    tag: '02 / RANVEER SINGH',
-    note: 'Ranveer’s Filmfare fitting',
+    tag: '02 / SARTORIAL',
+    note: 'Super 130s Italian wool',
     image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=85',
-    caption: 'Mumbai, 10:45 AM — Loro Piana wool',
+    caption: 'Tailoring Studio, 10:45 AM — Loro Piana wool',
     rotate: '3deg',
     colSpan: 'lg:col-span-4',
   },
   {
     id: 'prod_m03',
     type: 'detail-card',
-    title: 'The Shah Rukh Khan Grosgrain Tuxedo',
+    title: 'Bespoke Grosgrain Shawl Tuxedo — Midnight Obsidian',
     price: '₹11,499',
-    tag: '03 / SHAH RUKH KHAN',
-    note: 'King Khan black tie →',
+    tag: '03 / FORMALWEAR',
+    note: 'midnight black tie →',
     noteArrow: 'right',
     image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=85',
     rotate: '-2.5deg',
@@ -47,35 +47,35 @@ const moodboardItems = [
   {
     id: 'prod_w02',
     type: 'polaroid',
-    title: 'The Kareena Royal Blazer Dress',
+    title: 'Tailored Double-Breasted Blazer Dress — Raw Umber',
     price: '₹5,999',
-    tag: '04 / KAREENA KAPOOR KHAN',
-    note: 'Begum of Pataudi elegance',
+    tag: '04 / TAILORING',
+    note: 'sculpted virgin wool silhouette',
     image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=85',
-    caption: 'Bandra Atelier — sample fit',
+    caption: 'Milan Atelier — master sample fit',
     rotate: '-2deg',
     colSpan: 'lg:col-span-4',
   },
   {
     id: 'prod_m02',
     type: 'large-photo',
-    title: 'The Ranbir Kensington Cashmere Overcoat',
+    title: 'Classic Fit Pure Cashmere Overcoat — Camel Tan',
     price: '₹8,999',
-    tag: '05 / RANBIR KAPOOR',
+    tag: '05 / OUTERWEAR',
     note: '“unlined Mongolian cashmere”',
     noteArrow: 'up-right',
     image: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=1000&q=85',
     rotate: '1.5deg',
     colSpan: 'lg:col-span-5',
-    tapeText: 'RANBIR ARCHIVE',
+    tapeText: 'CASHMERE',
   },
   {
     id: 'prod_w03',
     type: 'detail-card',
-    title: 'The Sobhita Nocturne Plush Velvet Mini',
+    title: 'Draped Velvet Cocktail Mini Dress — Midnight Bordeaux',
     price: '₹5,299',
-    tag: '06 / SOBHITA DHULIPALA',
-    note: 'Venice premiere night',
+    tag: '06 / OCCASIONWEAR',
+    note: 'silk-blend velvet drape',
     image: 'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=800&q=85',
     rotate: '2deg',
     colSpan: 'lg:col-span-3',
@@ -135,7 +135,7 @@ const CollectionMoodboard = () => {
 
             {/* Render item as Polaroid or Photo card */}
             {item.type === 'polaroid' ? (
-              <Link to={`/product/${item.id}`} className="block">
+              <Link to="/products" className="block">
                 <Polaroid
                   image={item.image}
                   caption={item.title}
@@ -146,7 +146,7 @@ const CollectionMoodboard = () => {
               </Link>
             ) : (
               <Link
-                to={`/product/${item.id}`}
+                to="/products"
                 style={{ transform: `rotate(${item.rotate})` }}
                 className="block bg-[#FDFCF9] p-3.5 sm:p-4 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-[#2C2A29]/10 relative transition-transform duration-300 hover:scale-[1.02] hover:rotate-0 group"
               >

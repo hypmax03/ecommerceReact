@@ -6,10 +6,11 @@ import { Search, ShoppingBag, User, Menu, Xmark, ArrowRight } from 'iconoir-reac
 import { toggleCart, toggleSearch } from '../redux/cartSlice';
 
 const navLinks = [
-  { label: 'SHOP', to: '/products' },
-  { label: 'COLLECTION', to: '/collections' },
+  { label: 'COLLECTIONS', to: '/products' },
+  { label: 'LOOKBOOK', to: '/collections' },
   { label: 'ABOUT', to: '/about' },
   { label: 'ARCHIVE', to: '/archive' },
+  { label: 'CURATOR ADMIN', to: '/admin' },
 ];
 
 const Navbar = () => {
@@ -49,11 +50,11 @@ const Navbar = () => {
             <Link
               to="/"
               className="inline-flex flex-col group focus:outline-none"
-              aria-label="Atelier Journal Homepage"
+              aria-label="ELORA Homepage"
             >
               <div className="flex items-center gap-2">
-                <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#191817] group-hover:opacity-80 transition-opacity">
-                  ATELIER JOURNAL
+                <span className="font-serif text-xl sm:text-2xl font-bold tracking-widest text-[#191817] group-hover:opacity-80 transition-opacity">
+                  ELORA
                 </span>
                 <span className="font-mono text-[9px] px-1.5 py-0.5 bg-[#EFE8DC] text-[#4A443A] border border-[#D1C9BC] uppercase tracking-wider rounded-none hidden sm:inline">
                   VOL. IV
@@ -114,7 +115,7 @@ const Navbar = () => {
             <Link
               to={user ? '/account' : '/login'}
               className="flex items-center gap-1.5 text-[#191817] hover:opacity-60 transition-opacity p-1 focus:outline-none"
-              aria-label={user ? `Account: ${user.name}` : 'Login to Journal'}
+              aria-label={user ? `Account: ${user.name}` : 'Login to Client Account'}
             >
               <User width={18} height={18} strokeWidth={1.5} />
               {user && (
@@ -195,10 +196,10 @@ const Navbar = () => {
                         {link.label}
                       </span>
                       <p className="font-handwriting text-sm text-[#7A756F]">
-                        {idx === 0 && 'browse all garments'}
+                        {idx === 0 && 'browse all pieces'}
                         {idx === 1 && 'moodboards & lookbooks'}
-                        {idx === 2 && 'the atelier story'}
-                        {idx === 3 && 'polaroid archives'}
+                        {idx === 2 && 'the atelier manifesto'}
+                        {idx === 3 && 'film & polaroid archives'}
                       </p>
                     </div>
                     <span className="font-mono text-xs text-[#7A756F]">

@@ -108,7 +108,7 @@ const About = () => {
           <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#2C2A29]/15">
             <div>
               <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#7A756F]">
-                HERITAGE WEAVING &amp; ATELIER REGISTRY
+                HERITAGE WEAVING &amp; TEXTILE REGISTRY
               </span>
               <h3 className="font-serif text-2xl sm:text-3xl text-[#191817] font-normal">
                 Where Our Textiles &amp; Silhouettes Are Born
@@ -121,23 +121,48 @@ const About = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-mono text-xs text-[#2C2A29]">
             <div className="p-4 bg-[#FDFCF9] border border-[#2C2A29]/10">
-              <span className="text-[#A66551] font-bold block mb-1">01 / BANDRA ATELIER, MUMBAI</span>
+              <span className="text-[#A66551] font-bold block mb-1">01 / MILAN &amp; NAPLES TAILORING</span>
               <p className="font-sans text-xs text-[#5C5751]">
-                Private bespoke fitting suites for cinema actors, red carpet draping, and hand-finished pick lapels.
+                Bespoke tailoring studios, natural spalla camicia shoulders, and hand-finished pick lapels.
               </p>
             </div>
             <div className="p-4 bg-[#FDFCF9] border border-[#2C2A29]/10">
-              <span className="text-[#A66551] font-bold block mb-1">02 / VARANASI &amp; COMO SILK</span>
+              <span className="text-[#A66551] font-bold block mb-1">02 / COMO &amp; LYON SILK MILLS</span>
               <p className="font-sans text-xs text-[#5C5751]">
-                Mulberry silk 28 momme crepe de chine woven with generational heritage looms.
+                Mulberry silk 28 momme crepe de chine and lustrous silk velvet woven on heritage European looms.
               </p>
             </div>
             <div className="p-4 bg-[#FDFCF9] border border-[#2C2A29]/10">
-              <span className="text-[#A66551] font-bold block mb-1">03 / KASHMIR &amp; BIELLA WOOL</span>
+              <span className="text-[#A66551] font-bold block mb-1">03 / BIELLA WOOL &amp; NORMANDY FLAX</span>
               <p className="font-sans text-xs text-[#5C5751]">
-                Pure pashmina cashmere and Super 130s Loro Piana extra-fine virgin wool.
+                Pure cashmere, Super 130s extra-fine virgin wool, and long-staple French Normandy flax linen.
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* Public Exhibition, Pinterest Curation & Fair-Use Copyright Statement */}
+        <div className="mt-12 bg-[#FDFCF9] p-8 sm:p-10 border border-[#2C2A29]/15 relative">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#7A756F]">
+              DOCUMENT NO. 04 • EDITORIAL FAIR USE &amp; PUBLIC EXHIBITION POLICY
+            </span>
+          </div>
+
+          <h3 className="font-serif text-2xl sm:text-3xl text-[#191817] font-normal mb-3">
+            Imagery Curation &amp; Intellectual Property Notice
+          </h3>
+
+          <div className="space-y-3 font-sans text-xs text-[#5C5751] font-light leading-relaxed max-w-4xl">
+            <p>
+              <strong>Public Exhibition:</strong> All garments and lookbooks curated through ELORA are exhibited publicly for artistic storytelling, portfolio demonstration, and style exploration.
+            </p>
+            <p>
+              <strong>Moodboard Curation &amp; Pinterest References:</strong> Photographic references and moodboard imagery curated by administrators are sourced from public creative networks (including Pinterest and open digital archives) solely under non-commercial fair-use for aesthetic curation and creative context.
+            </p>
+            <p>
+              <strong>Copyright Protection:</strong> All original photography, trademarks, model rights, and brand designs remain the sole intellectual property of their original creators and fashion houses. No copyright infringement is intended. If you are an intellectual property holder and wish to request immediate removal or attribution adjustment, please contact our administrator desk.
+            </p>
           </div>
         </div>
       </div>

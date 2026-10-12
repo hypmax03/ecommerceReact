@@ -59,7 +59,7 @@ const QuickViewModal = () => {
         >
           {/* Washi Tape at Modal Header */}
           <div className="absolute -top-3.5 left-10 pointer-events-none">
-            <Tape rotate="-3deg" variant="kraft" text="GARMENT SWATCH CARD" width="w-44" />
+            <Tape rotate="-3deg" variant="kraft" text="GARMENT SPECIFICATION" width="w-44" />
           </div>
 
           {/* Close button */}
@@ -82,7 +82,7 @@ const QuickViewModal = () => {
                   className="w-full h-full object-cover object-center"
                 />
                 <div className="absolute bottom-2 left-2 bg-[#FAF7F2]/90 px-2 py-0.5 border border-[#2C2A29]/15 text-[8px] font-mono uppercase tracking-widest">
-                  {product.edition || 'ATELIER EDITION'}
+                  {product.edition || 'PERMANENT COLLECTION'}
                 </div>
               </div>
             </div>
@@ -103,7 +103,7 @@ const QuickViewModal = () => {
 
               {/* Description */}
               <p className="font-sans text-xs text-[#5C5751] font-light leading-relaxed">
-                {product.description || 'Handcrafted from single-origin Italian yarn with hand-finished hems and bespoke detailing.'}
+                {product.description || 'Crafted from single-origin Italian fibers with hand-finished hems and bespoke detailing.'}
               </p>
 
               {/* Color Selection */}
@@ -111,7 +111,7 @@ const QuickViewModal = () => {
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="font-mono text-[9px] uppercase tracking-wider text-[#7A756F]">
-                      COLOR: {selectedColor}
+                      COLOURWAY: {selectedColor}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -146,7 +146,7 @@ const QuickViewModal = () => {
                     SELECT SIZE
                   </span>
                   <span className="font-handwriting text-xs text-[#A66551]">
-                    true to Italian tailoring
+                    true to size
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -175,13 +175,13 @@ const QuickViewModal = () => {
                   className="w-full bg-[#191817] hover:bg-[#2C2A29] text-[#FAF7F2] font-mono text-xs uppercase tracking-[0.2em] py-3.5 flex items-center justify-center gap-2 shadow-md transition-colors"
                 >
                   <ShoppingBag width={14} height={14} />
-                  <span>ADD PIECE TO BAG</span>
+                  <span>ADD TO SHOPPING BAG</span>
                 </button>
               </div>
 
               <div className="text-center pt-1">
                 <HandwrittenNote
-                  text="“dispatches worldwide in 24 hours”"
+                  text="“complimentary express delivery above ₹8,000”"
                   color="text-[#7A756F]"
                   className="text-sm"
                 />

@@ -39,13 +39,13 @@ const ToastNotification = () => {
 
             <div className="flex-1 pr-2">
               <span className="font-mono text-[9px] uppercase tracking-widest text-[#A66551] font-bold block">
-                {toast.title || 'ADDED TO SARTORIAL BAG'}
+                {toast.title || 'ADDED TO SHOPPING BAG'}
               </span>
               <p className="font-serif text-sm font-normal text-[#191817] leading-snug">
                 {toast.name}
               </p>
               <p className="font-mono text-[9px] text-[#7A756F] mt-0.5">
-                Size: {toast.size} • Color: {toast.color}
+                Size: {toast.size} • Colourway: {toast.color}
               </p>
             </div>
 

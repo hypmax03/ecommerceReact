@@ -5,224 +5,224 @@ import Product from "./model/productSchema.js";
 dotenv.config();
 
 export const fashionProducts = [
-  // --- WOMEN'S COUTURE COLLECTION ---
+  // --- WOMEN'S ATELIER COLLECTION ---
   {
-    name: "Aurelia Silk Evening Gown",
+    name: "Bias-Cut Silk Evening Gown — Obsidian Black",
     price: 6499,
     category: "Evening Gowns",
     gender: "Women",
     stock: 14,
     image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=900&q=80",
-    description: "Floor-length pure silk gown featuring a delicate cowl neckline, flattering bias cut, and an alluring low back for black-tie soirees."
+    description: "A floor-length evening gown cut on the bias from pure heavyweight mulberry silk. Features an architectural cowl neckline, open back, and fluid drape suited for formal occasions."
   },
   {
-    name: "Botanical Prairie Midi Dress",
+    name: "Botanical Print Linen Midi Dress — Sage",
     price: 3899,
     category: "Summer Dresses",
     gender: "Women",
     stock: 22,
     image: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=900&q=80",
-    description: "Handcrafted cotton-linen midi dress with puff sleeves, smocked bodice, and a romantic botanical floral print."
+    description: "A handcrafted cotton-linen midi dress detailed with gentle puff sleeves and a smocked bodice. Features an understated botanical print suitable for warm-weather gatherings."
   },
   {
-    name: "Noir Velvet Cocktail Dress",
+    name: "Draped Velvet Cocktail Mini Dress — Midnight Black",
     price: 5299,
     category: "Cocktail Dresses",
     gender: "Women",
     stock: 18,
     image: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=900&q=80",
-    description: "Sultry plush velvet mini dress with asymmetric draping, sculpted waistline, and shimmering obsidian undertones."
+    description: "A plush silk-blend velvet mini dress with an asymmetrical neckline drape and sculpted waistline. Finished with a clean, fitted silhouette for evening soirees."
   },
   {
-    name: "Scarlet Siren Satin Gown",
+    name: "Draped Satin Evening Gown — Crimson Red",
     price: 7199,
     category: "Evening Gowns",
     gender: "Women",
     stock: 9,
     image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=900&q=80",
-    description: "Striking crimson satin gown with high leg slit, structured bodice, and draped cross-back straps."
+    description: "A striking crimson evening gown tailored with a structured bodice, fluid side slit, and crossed back straps. Pairs effortlessly with minimal fine jewelry."
   },
   {
-    name: "Ivory Whispers Tiered Maxi",
+    name: "Tiered Muslin Cotton Maxi Dress — Ivory",
     price: 4799,
-    category: "Bohemian",
+    category: "Summer Dresses",
     gender: "Women",
     stock: 15,
     image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=900&q=80",
-    description: "Airy bohemian dress crafted from organic muslin cotton with fine embroidery details and a tiered flowing silhouette."
+    description: "An airy tiered maxi dress crafted from organic muslin cotton with delicate tone-on-tone embroidery. Designed with a flowing silhouette for relaxed warm-weather dressing."
   },
   {
-    name: "Solstice Floral Breeze Sundress",
+    name: "Floral Print Chiffon Sundress — Pastel Blue",
     price: 3499,
     category: "Summer Dresses",
     gender: "Women",
     stock: 25,
     image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=80",
-    description: "Breezy tiered sundress in a lightweight chiffon fabric, ideal for beachside brunches and sun-drenched resort days."
+    description: "A lightweight chiffon sundress featuring delicate tiers and an airy drape. An effortless choice for coastal getaways and relaxed outdoor luncheons."
   },
   {
-    name: "Emerald Gala One-Shoulder Gown",
+    name: "One-Shoulder Crepe Evening Gown — Emerald Green",
     price: 6899,
     category: "Evening Gowns",
     gender: "Women",
     stock: 11,
     image: "https://images.unsplash.com/photo-1568252542512-9fe8fe9c87bb?auto=format&fit=crop&w=900&q=80",
-    description: "Opulent emerald green crepe-satin evening dress showcasing a single sculptural shoulder cape and floor-sweeping train."
+    description: "A sculpted one-shoulder evening gown tailored from heavyweight crepe satin. Designed with a gentle train and clean lines for black-tie gatherings."
   },
   {
-    name: "Lilac Blossom Halter Dress",
+    name: "Pleated Halter Midi Dress — Lilac",
     price: 4199,
     category: "Cocktail Dresses",
     gender: "Women",
     stock: 17,
     image: "https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?auto=format&fit=crop&w=900&q=80",
-    description: "Pastel lilac floral halter neck dress with accordion pleats, cinched waist sash, and fluid motion."
+    description: "A pleated halter-neck dress with fine accordion folds and a cinched waist sash. Moves fluidly from day celebrations into cocktail evenings."
   },
   {
-    name: "Vintage Polka Dot Midi Dress",
+    name: "A-Line Collared Midi Dress — Polka Dot",
     price: 3999,
-    category: "Vintage & Retro",
+    category: "Summer Dresses",
     gender: "Women",
     stock: 12,
     image: "https://images.unsplash.com/photo-1550639525-c97d455acf70?auto=format&fit=crop&w=900&q=80",
-    description: "1950s-inspired vintage A-line silhouette with classic polka print, notched collar, and fabric-covered buttons."
+    description: "A classic A-line midi dress tailored with a notched collar, tonal fabric buttons, and a timeless polka print. Wear with leather loafers or strappy sandals."
   },
   {
-    name: "Monochrome Tailored Blazer Dress",
+    name: "Tailored Double-Breasted Blazer Dress — Charcoal",
     price: 5999,
     category: "Blazer Dresses",
     gender: "Women",
     stock: 20,
     image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=80",
-    description: "Double-breasted power blazer dress with satin peak lapels, structured shoulders, and bespoke horn buttons."
+    description: "A double-breasted dress tailored from virgin wool with satin peak lapels and structured shoulders. Combines modern suiting precision with evening sophistication."
   },
   {
-    name: "Rose Quartz Tiered Ruffle Dress",
+    name: "Tiered Organza Party Dress — Blush Pink",
     price: 4899,
-    category: "Party Dresses",
+    category: "Cocktail Dresses",
     gender: "Women",
     stock: 16,
     image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=900&q=80",
-    description: "Multi-tiered blush pink organza party dress with subtle shimmer yarn and adjustable spaghetti straps."
+    description: "A tiered organza cocktail dress designed with subtle shimmer and adjustable delicate straps. Features an architectural flared skirt for festive occasions."
   },
   {
-    name: "Haute Couture Draped Column Dress",
+    name: "Architectural Silk Column Dress — Ivory White",
     price: 8499,
     category: "Evening Gowns",
     gender: "Women",
     stock: 7,
     image: "https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&w=900&q=80",
-    description: "Sculpted architectural column dress designed for red carpet events, made from heavyweight Italian silk crepe."
+    description: "A statuesque column gown crafted from heavyweight Italian silk crepe. Features a clean, sculpted silhouette designed for ceremonial galas and formal events."
   },
 
-  // --- MEN'S SARTORIAL & COUTURE COLLECTION ---
+  // --- MEN'S SARTORIAL COLLECTION ---
   {
-    name: "Milano Double-Breasted Wool Suit",
+    name: "Double-Breasted Wool Suit — Charcoal Mélange",
     price: 9999,
     category: "Suits & Tailoring",
     gender: "Men",
     stock: 12,
     image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=900&q=80",
-    description: "Bespoke double-breasted suit tailored from Super 130s Italian wool, featuring wide peak lapels and hand-stitched pick detailing."
+    description: "A bespoke two-piece suit crafted from Super 130s Italian wool. Features unstructured Neapolitan shoulders, hand-pick stitching, and softly tapered trousers."
   },
   {
-    name: "Kensington Cashmere Overcoat",
+    name: "Classic Fit Pure Cashmere Overcoat — Camel Tan",
     price: 8999,
     category: "Outerwear & Coats",
     gender: "Men",
     stock: 8,
     image: "https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=900&q=80",
-    description: "Timeless single-breasted overcoat crafted from heavy camel cashmere-wool blend with horn buttons and cupro lining."
+    description: "A timeless single-breasted overcoat tailored from heavy cashmere and virgin wool blend. Finished with horn buttons, deep welt pockets, and a cupro lining."
   },
   {
-    name: "Black Tie Grosgrain Tuxedo",
+    name: "Bespoke Grosgrain Shawl Tuxedo — Midnight Obsidian",
     price: 11499,
     category: "Suits & Tailoring",
     gender: "Men",
     stock: 6,
     image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=900&q=80",
-    description: "Exquisite midnight black tuxedo with grosgrain silk shawl lapels, jetted pockets, and matching satin-stripe trousers."
+    description: "An evening tuxedo crafted from Super 150s wool with pure silk grosgrain shawl lapels. Complete with jetted pockets and matching satin-stripe trousers."
   },
   {
-    name: "Riviera Pure Linen Bandhgala Shirt",
+    name: "Relaxed Fit Linen Band-Collar Shirt — Chalk White",
     price: 3299,
     category: "Linen & Shirts",
     gender: "Men",
     stock: 24,
     image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=80",
-    description: "Breathable French flax linen shirt with a modern band collar, mother-of-pearl buttons, and relaxed tailored fit."
+    description: "A breathable French flax linen shirt featuring a modern band collar and mother-of-pearl buttons. Pairs seamlessly with tailored trousers or relaxed chinos."
   },
   {
-    name: "Venetian Velvet Smoking Jacket",
+    name: "Tailored Velvet Dinner Jacket — Burgundy",
     price: 7499,
     category: "Blazers & Jackets",
     gender: "Men",
     stock: 10,
     image: "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=900&q=80",
-    description: "Sumptuous burgundy cotton velvet dinner jacket with contrast black satin peak lapels and gauntlet cuffs."
+    description: "A plush cotton velvet dinner jacket styled with contrast black satin peak lapels and gauntlet cuffs. Designed for black-tie gatherings and festive evenings."
   },
   {
-    name: "Full-Grain Lambskin Biker Jacket",
+    name: "Full-Grain Nappa Leather Blouson — Matte Black",
     price: 8299,
     category: "Blazers & Jackets",
     gender: "Men",
     stock: 15,
     image: "https://images.unsplash.com/photo-1520975954732-35dd22299614?auto=format&fit=crop&w=900&q=80",
-    description: "Buttery soft full-grain lambskin leather jacket with antique silver hardware and diamond-quilted shoulder panels."
+    description: "A minimalist blouson crafted from butter-soft Tuscan lambskin leather. Features antique silver hardware, a neat stand collar, and silk-lined interior pockets."
   },
   {
-    name: "Merino Wool Waffle Knit Crewneck",
+    name: "Extrafine Merino Waffle Knit Crewneck — Oatmeal Heather",
     price: 3699,
     category: "Knitwear",
     gender: "Men",
     stock: 20,
     image: "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&w=900&q=80",
-    description: "Ultra-soft extrafine Merino wool sweater with subtle waffle ribbing, ribbed hems, and thermal breathability."
+    description: "An extrafine Australian merino wool sweater designed with a tactile micro-waffle structure. Offers lightweight warmth and breathable comfort year-round."
   },
   {
-    name: "Savile Row Charcoal Hopsack Blazer",
+    name: "Tailored Hopsack Wool Blazer — Charcoal",
     price: 6899,
     category: "Blazers & Jackets",
     gender: "Men",
     stock: 14,
     image: "https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?auto=format&fit=crop&w=900&q=80",
-    description: "Half-canvassed hopsack wool blazer with patch pockets, natural shoulders, and dual rear vents for effortless refinement."
+    description: "A half-canvassed hopsack wool blazer with patch pockets, natural shoulders, and dual rear vents. Designed for versatile smart-casual refinement."
   },
   {
-    name: "Oxford Crisp Formal Dress Shirt",
+    name: "Classic Fit Two-Ply Cotton Dress Shirt — Crisp White",
     price: 2899,
     category: "Linen & Shirts",
     gender: "Men",
     stock: 30,
     image: "https://images.unsplash.com/photo-1620012253295-c15c429fccf8?auto=format&fit=crop&w=900&q=80",
-    description: "100% Egyptian two-ply cotton dress shirt with spread collar and convertible French cuffs."
+    description: "A formal dress shirt woven from 100% two-ply Egyptian cotton. Features a structured spread collar and convertible French cuffs."
   },
   {
-    name: "Florentine Draped Belted Trench",
+    name: "Minimalist Belted Storm Trench Coat — Khaki Sand",
     price: 9499,
     category: "Outerwear & Coats",
     gender: "Men",
     stock: 9,
     image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80",
-    description: "Modern minimalist storm-flap trench coat crafted from water-repellent gabardine twill with a cinched waist belt."
+    description: "A storm-flap trench coat crafted from water-repellent gabardine twill. Features a cinched waist belt and a clean, minimalist silhouette for transitional weather."
   },
   {
-    name: "Silk Jacquard Nocturne Evening Shirt",
+    name: "Tonal Jacquard Silk Evening Shirt — Black",
     price: 4299,
     category: "Linen & Shirts",
     gender: "Men",
     stock: 16,
     image: "https://images.unsplash.com/photo-1618886614638-80e3c153d31a?auto=format&fit=crop&w=900&q=80",
-    description: "Pure silk dress shirt with tonal damask jacquard weave, hidden placket, and subtle lustrous sheen."
+    description: "A pure silk dress shirt woven with a tonal damask jacquard pattern and hidden front placket. Styled for evening cocktail events and black-tie layering."
   },
   {
-    name: "Heritage Herringbone Wool Overcoat",
+    name: "Double-Breasted Herringbone Wool Overcoat — Charcoal Grey",
     price: 9199,
     category: "Outerwear & Coats",
     gender: "Men",
     stock: 11,
     image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
-    description: "Structured double-breasted greatcoat in a rich charcoal herringbone weave with high collar and deep welt pockets."
+    description: "A structured double-breasted coat in a rich charcoal herringbone wool weave. Finished with high peak lapels and deep welt pockets for winter protection."
   }
 ];
 

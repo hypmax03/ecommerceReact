@@ -10,89 +10,89 @@ const fullPolaroidArchive = [
   {
     id: 'p_01',
     image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80',
-    caption: 'Deepika — Cannes, 11:42 AM',
-    subCaption: 'silk cowl drape / red carpet',
-    city: 'Cannes',
+    caption: 'Silk Evening Gown — Como, 11:42 AM',
+    subCaption: 'bias-cut silk / lookbook plate',
+    city: 'Como',
     year: '2026',
     rotate: '-2.5deg',
-    tapeText: 'DEEPIKA',
+    tapeText: 'SILK',
     tapeVariant: 'kraft',
   },
   {
     id: 'p_02',
     image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80',
-    caption: 'Ranveer — Bandra, 3:15 PM',
+    caption: 'Wool Suit — Milan, 3:15 PM',
     subCaption: 'bespoke double-breasted suit',
-    city: 'Mumbai',
+    city: 'Milan',
     year: '2026',
     rotate: '2deg',
-    tapeText: 'RANVEER',
+    tapeText: 'SARTORIAL',
     tapeVariant: 'dark',
   },
   {
     id: 'p_03',
     image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80',
-    caption: 'Shah Rukh Khan — Mannat, 5:00 PM',
+    caption: 'Shawl Tuxedo — London, 5:00 PM',
     subCaption: 'midnight black grosgrain tuxedo',
-    city: 'Mumbai',
+    city: 'London',
     year: '2026',
     rotate: '-1.5deg',
-    tapeText: 'SRK',
+    tapeText: 'TUXEDO',
     tapeVariant: 'cream',
   },
   {
     id: 'p_04',
     image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-    caption: 'Sobhita — Venice, 09:30 AM',
+    caption: 'Silk Slip Dress — Venice, 09:30 AM',
     subCaption: 'sandwashed silk slip fitting',
     city: 'Venice',
     year: '2025',
     rotate: '3deg',
-    tapeText: 'SOBHITA',
+    tapeText: 'SLIP',
     tapeVariant: 'kraft',
   },
   {
     id: 'p_05',
     image: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=800&q=80',
-    caption: 'Ranbir — Delhi, 1:20 PM',
-    subCaption: 'Kashmir cashmere overcoat',
-    city: 'Delhi',
+    caption: 'Cashmere Overcoat — Paris, 1:20 PM',
+    subCaption: 'pure camel cashmere overcoat',
+    city: 'Paris',
     year: '2026',
     rotate: '-3deg',
-    tapeText: 'RANBIR',
+    tapeText: 'CASHMERE',
     tapeVariant: 'dark',
   },
   {
     id: 'p_06',
     image: 'https://images.unsplash.com/photo-1568252542512-9fe8fe9c87bb?auto=format&fit=crop&w=800&q=80',
-    caption: 'Kiara — Jaipur, 4:45 PM',
-    subCaption: 'pleated organza evening maxi',
-    city: 'Jaipur',
+    caption: 'Pleated Organza Maxi — Florence, 4:45 PM',
+    subCaption: 'accordion pleated organza gown',
+    city: 'Florence',
     year: '2026',
     rotate: '1.5deg',
-    tapeText: 'KIARA',
+    tapeText: 'ORGANZA',
     tapeVariant: 'kraft',
   },
   {
     id: 'p_07',
     image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80',
-    caption: 'Kareena — Pataudi, 10:15 AM',
-    subCaption: 'virgin wool blazer dress',
-    city: 'Delhi',
+    caption: 'Blazer Dress — Milan, 10:15 AM',
+    subCaption: 'double-breasted virgin wool dress',
+    city: 'Milan',
     year: '2025',
     rotate: '-2deg',
-    tapeText: 'KAREENA',
+    tapeText: 'TAILORING',
     tapeVariant: 'cream',
   },
   {
     id: 'p_08',
     image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80',
-    caption: 'Siddhant — Goa, 6:00 PM',
-    subCaption: 'Normandy flax linen shirt',
-    city: 'Goa',
+    caption: 'Flax Linen Overshirt — Normandy, 6:00 PM',
+    subCaption: 'long-staple flax linen shirt',
+    city: 'Normandy',
     year: '2026',
     rotate: '2.5deg',
-    tapeText: 'SIDDHANT',
+    tapeText: 'LINEN',
     tapeVariant: 'dark',
   },
 ];
@@ -127,7 +127,7 @@ const Archive = () => {
             POLAROID &amp; FILM ARCHIVES
           </h1>
           <p className="font-sans text-sm text-[#5C5751] font-light mt-2 max-w-xl">
-            Raw photographs taken during atelier fittings, textile mill journeys, and bespoke client appointments across Europe.
+            Photographs taken during atelier fittings, textile mill journeys, and bespoke client appointments across Europe.
           </p>
         </div>
 
@@ -136,7 +136,7 @@ const Archive = () => {
           <span className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] mr-2">
             LOCATION STAMP:
           </span>
-          {['All', 'Mumbai', 'Cannes', 'Venice', 'Delhi', 'Jaipur', 'Goa'].map((city) => (
+          {['All', 'Milan', 'Como', 'Venice', 'Paris', 'London', 'Florence', 'Normandy'].map((city) => (
             <button
               key={city}
               type="button"

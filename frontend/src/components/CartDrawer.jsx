@@ -40,21 +40,21 @@ const CartDrawer = () => {
             {/* Top Drawer Header with Tape & Stamp */}
             <div className="p-6 border-b border-[#2C2A29]/15 bg-[#F5EFE6] relative">
               <div className="absolute -bottom-3 left-8 z-10 pointer-events-none">
-                <Tape rotate="-2deg" variant="kraft" text="RECEIPT DOCKET" width="w-28" />
+                <Tape rotate="-2deg" variant="kraft" text="ORDER DOCKET" width="w-28" />
               </div>
 
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#7A756F]">
-                      ATELIER BAG
+                      SHOPPING BAG
                     </span>
                     <span className="font-mono text-[9px] bg-[#EFE8DC] px-1.5 py-0.5 border border-[#D1C9BC] font-bold">
                       {totalCount} {totalCount === 1 ? 'PIECE' : 'PIECES'}
                     </span>
                   </div>
                   <h3 className="font-serif text-2xl font-normal text-[#191817] mt-0.5">
-                    YOUR SARTORIAL BAG
+                    YOUR SHOPPING BAG
                   </h3>
                 </div>
 
@@ -73,9 +73,9 @@ const CartDrawer = () => {
                 <div className="flex items-center justify-between text-[10px] font-mono text-[#7A756F] mb-1.5">
                   <span>
                     {subtotal >= freeShippingThreshold ? (
-                      <span className="text-[#A66551] font-bold">✓ COMPLIMENTARY DISPATCH UNLOCKED</span>
+                      <span className="text-[#A66551] font-bold">✓ COMPLIMENTARY DELIVERY UNLOCKED</span>
                     ) : (
-                      `ADD ₹${(freeShippingThreshold - subtotal).toLocaleString('en-IN')} FOR COMPLIMENTARY COURIER`
+                      `ADD ₹${(freeShippingThreshold - subtotal).toLocaleString('en-IN')} FOR COMPLIMENTARY DELIVERY`
                     )}
                   </span>
                   <span>{Math.round(progressToFreeShipping)}%</span>
@@ -107,7 +107,7 @@ const CartDrawer = () => {
                       onClick={() => dispatch(toggleCart(false))}
                       className="inline-block bg-[#191817] text-[#FAF7F2] font-mono text-[10px] uppercase tracking-widest px-6 py-3"
                     >
-                      BROWSE THE JOURNAL
+                      EXPLORE COLLECTIONS
                     </button>
                   </div>
                 </div>
