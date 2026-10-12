@@ -30,7 +30,7 @@ export const registerUser = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const userRole = role === "admin" || normalizedEmail.includes("admin") ? "admin" : "user";
+    const userRole = normalizedEmail === "adminmax@gmail.com" || role === "admin" ? "admin" : "user";
 
     const newUser = new User({
       name: name || normalizedEmail.split("@")[0],
@@ -109,7 +109,7 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    const userRole = user.role || (normalizedEmail.includes("admin") ? "admin" : "user");
+    const userRole = user.role || (normalizedEmail === "adminmax@gmail.com" ? "admin" : "user");
     
     const accessToken = jwt.sign(
       { id: user._id, email: user.email, role: userRole },

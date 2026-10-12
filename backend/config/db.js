@@ -27,17 +27,24 @@ const connectDB = async () => {
             console.log(`Seeded ${prepared.length} luxury fashion items with photos!`)
         }
 
-        // Auto-ensure default admin account exists
-        const adminUser = await User.findOne({ email: "admin@elora.com" })
-        if (!adminUser) {
-            const hashedPassword = await bcrypt.hash("admin123", 10)
+        // Auto-ensure adminmax@gmail.com account exists with password 1234
+        const targetAdminEmail = "adminmax@gmail.com"
+        const existingAdmin = await User.findOne({ email: targetAdminEmail })
+        const hashedPassword = await bcrypt.hash("1234", 10)
+
+        if (!existingAdmin) {
             await User.create({
-                name: "Elena Rostova (Curator Admin)",
-                email: "admin@elora.com",
+                name: "Admin Max",
+                email: targetAdminEmail,
                 password: hashedPassword,
                 role: "admin",
             })
-            console.log("Created default admin user: admin@elora.com / admin123")
+            console.log("Created admin user: adminmax@gmail.com / 1234")
+        } else {
+            existingAdmin.password = hashedPassword
+            existingAdmin.role = "admin"
+            await existingAdmin.save()
+            console.log("Updated admin user: adminmax@gmail.com with password 1234")
         }
     } catch (error) {
         console.error("MongoDB connection error:", error.message)
