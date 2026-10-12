@@ -17,13 +17,13 @@ const ProductDetails = () => {
   const { products } = useSelector((state) => state.product || { products: [] });
   const user = useSelector((state) => state.user?.user);
 
-  // Find product in local list or fallback
+  // Find product in list
   const product = products.find((p) => (p._id || p.id) === id) || products[0];
 
   const defaultImg =
-    product.images?.[0] ||
-    product.image ||
-    'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=1200&q=85';
+    product?.images?.[0] ||
+    product?.image ||
+    '';
 
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedColor, setSelectedColor] = useState('');

@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'iconoir-react';
 import Tape from './Tape';
@@ -9,6 +10,19 @@ import Polaroid from './Polaroid';
 const EditorialSection = () => {
   const sectionRef = useRef(null);
   const shouldReduceMotion = useReducedMotion();
+  const { products } = useSelector((state) => state.product || { products: [] });
+
+  // Only render if manual products exist
+  if (!products || products.length === 0) {
+    return null;
+  }
+
+  const editorialItem = products[2] || products[0];
+  const polaroidItem = products[1] || products[0];
+  const editorialImg = editorialItem.images?.[0] || editorialItem.image;
+  const polaroidImg = polaroidItem.images?.[0] || polaroidItem.image;
+
+  if (!editorialImg) return null;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -47,8 +61,8 @@ const EditorialSection = () => {
             >
               <div className="aspect-[16/11] overflow-hidden bg-[#ECE8DF]">
                 <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85"
-                  alt="Editorial portrait fashion journal"
+                  src={editorialImg}
+                  alt={editorialItem.name || "Editorial garment"}
                   className="w-full h-full object-cover object-[center_25%] filter saturate-[0.95]"
                   loading="lazy"
                 />
@@ -56,25 +70,27 @@ const EditorialSection = () => {
 
               {/* Photo Bottom Caption */}
               <div className="mt-3 flex items-center justify-between text-[#7A756F] font-mono text-[9px] uppercase tracking-widest border-t border-dashed border-[#2C2A29]/10 pt-2">
-                <span>LOOKBOOK / PROVENANCE</span>
-                <span className="font-handwriting text-sm text-[#A66551]">natural linen drape</span>
+                <span>{editorialItem.category || "ATELIER PIECE"}</span>
+                <span className="font-handwriting text-sm text-[#A66551]">{editorialItem.name}</span>
               </div>
             </motion.div>
 
             {/* Overlapping Polaroid breaking out of layout */}
-            <motion.div
-              style={{ y: noteParallax }}
-              className="absolute -bottom-10 -right-4 sm:-right-8 z-20 w-44 sm:w-52 hidden sm:block"
-            >
-              <Polaroid
-                image="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80"
-                caption="Tailor’s desk — 3:15 PM"
-                subCaption="Super 130s wool swatch"
-                rotate="5deg"
-                tapeText="STUDIO CUT"
-                tapeVariant="dark"
-              />
-            </motion.div>
+            {polaroidImg && (
+              <motion.div
+                style={{ y: noteParallax }}
+                className="absolute -bottom-10 -right-4 sm:-right-8 z-20 w-44 sm:w-52 hidden sm:block"
+              >
+                <Polaroid
+                  image={polaroidImg}
+                  caption={polaroidItem.name}
+                  subCaption={`${polaroidItem.category || 'Atelier'} • ₹${polaroidItem.price?.toLocaleString('en-IN')}`}
+                  rotate="5deg"
+                  tapeText="STUDIO CUT"
+                  tapeVariant="dark"
+                />
+              </motion.div>
+            )}
 
             {/* Handwritten Note Pin */}
             <div className="absolute -top-8 right-8 z-20 bg-[#F5EFE6] px-3 py-1 border border-[#D1C9BC] shadow-sm rotate-3 hidden md:block">

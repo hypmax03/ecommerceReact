@@ -40,7 +40,7 @@ const ProductCard = ({ product, index = 0, priority = false }) => {
   const productImage =
     product.images?.[0] ||
     product.image ||
-    'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=800&q=85';
+    '';
 
   const productHoverImage =
     product.images?.[1] ||
@@ -79,18 +79,24 @@ const ProductCard = ({ product, index = 0, priority = false }) => {
           className="relative block w-full aspect-[3/4] overflow-hidden bg-[#ECE8DF] cursor-pointer"
         >
           {/* Primary Image */}
-          <img
-            src={productImage}
-            alt={product.name}
-            loading={priority ? 'eager' : 'lazy'}
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = fallbackImage;
-            }}
-            className={`w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-105 ${
-              productHoverImage && isHovered ? 'opacity-0' : 'opacity-100'
-            }`}
-          />
+          {productImage ? (
+            <img
+              src={productImage}
+              alt={product.name}
+              loading={priority ? 'eager' : 'lazy'}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+              className={`w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-105 ${
+                productHoverImage && isHovered ? 'opacity-0' : 'opacity-100'
+              }`}
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center font-mono text-[10px] text-[#7A756F] uppercase tracking-widest">
+              <span>[GARMENT PLATE]</span>
+              <span className="font-handwriting text-xs text-[#A66551] mt-1 normal-case tracking-normal">atelier piece</span>
+            </div>
+          )}
 
           {/* Secondary Crossfade Image */}
           {productHoverImage && (
