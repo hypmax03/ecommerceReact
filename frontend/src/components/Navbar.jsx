@@ -10,6 +10,7 @@ const navLinks = [
   { label: 'LOOKBOOK', to: '/collections' },
   { label: 'ABOUT', to: '/about' },
   { label: 'ARCHIVE', to: '/archive' },
+  { label: 'BAG', to: '/cart', isCartTrigger: true },
   { label: 'CURATOR ADMIN', to: '/admin' },
 ];
 
@@ -69,6 +70,24 @@ const Navbar = () => {
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center space-x-8 lg:space-x-10">
             {navLinks.map((link) => {
+              if (link.isCartTrigger) {
+                return (
+                  <button
+                    key={link.label}
+                    type="button"
+                    onClick={() => dispatch(toggleCart(true))}
+                    className="font-mono text-[11px] tracking-[0.2em] uppercase transition-all duration-200 relative py-1 text-[#7A756F] hover:text-[#191817] cursor-pointer flex items-center gap-1.5 focus:outline-none"
+                  >
+                    <span>{link.label}</span>
+                    {totalCartCount > 0 && (
+                      <span className="font-mono text-[9px] bg-[#191817] text-[#FAF7F2] px-1 py-0.5 rounded-none font-bold">
+                        {totalCartCount}
+                      </span>
+                    )}
+                  </button>
+                );
+              }
+
               const isActive =
                 link.to === '/products'
                   ? location.pathname === '/products' && !location.search
@@ -102,7 +121,7 @@ const Navbar = () => {
             <button
               type="button"
               onClick={() => dispatch(toggleSearch(true))}
-              className="flex items-center gap-1.5 text-[#191817] hover:opacity-60 transition-opacity p-1 focus:outline-none"
+              className="flex items-center gap-1.5 text-[#191817] hover:opacity-60 transition-opacity p-1 focus:outline-none cursor-pointer"
               aria-label="Open search journal"
             >
               <Search width={18} height={18} strokeWidth={1.5} />
@@ -129,7 +148,7 @@ const Navbar = () => {
             <button
               type="button"
               onClick={() => dispatch(toggleCart(true))}
-              className="relative flex items-center gap-1.5 text-[#191817] hover:opacity-60 transition-opacity p-1 focus:outline-none"
+              className="relative flex items-center gap-1.5 text-[#191817] hover:opacity-60 transition-opacity p-1 focus:outline-none cursor-pointer"
               aria-label={`Open Bag (${totalCartCount} items)`}
             >
               <ShoppingBag width={18} height={18} strokeWidth={1.5} />
@@ -185,28 +204,57 @@ const Navbar = () => {
               </div>
 
               <div className="flex flex-col space-y-4">
-                {navLinks.map((link, idx) => (
-                  <Link
-                    key={link.label}
-                    to={link.to}
-                    className="flex items-center justify-between py-2 group border-b border-dashed border-[#2C2A29]/10"
-                  >
-                    <div>
-                      <span className="font-serif text-3xl font-normal text-[#191817] group-hover:translate-x-2 inline-block transition-transform">
-                        {link.label}
+                {navLinks.map((link, idx) => {
+                  if (link.isCartTrigger) {
+                    return (
+                      <button
+                        key={link.label}
+                        type="button"
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          dispatch(toggleCart(true));
+                        }}
+                        className="flex items-center justify-between py-2 group border-b border-dashed border-[#2C2A29]/10 text-left w-full cursor-pointer focus:outline-none"
+                      >
+                        <div>
+                          <span className="font-serif text-3xl font-normal text-[#191817] group-hover:translate-x-2 inline-block transition-transform">
+                            {link.label}
+                          </span>
+                          <p className="font-handwriting text-sm text-[#7A756F]">
+                            {totalCartCount} {totalCartCount === 1 ? 'piece' : 'pieces'} in bag
+                          </p>
+                        </div>
+                        <span className="font-mono text-xs text-[#7A756F]">
+                          0{idx + 1}
+                        </span>
+                      </button>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={link.label}
+                      to={link.to}
+                      className="flex items-center justify-between py-2 group border-b border-dashed border-[#2C2A29]/10"
+                    >
+                      <div>
+                        <span className="font-serif text-3xl font-normal text-[#191817] group-hover:translate-x-2 inline-block transition-transform">
+                          {link.label}
+                        </span>
+                        <p className="font-handwriting text-sm text-[#7A756F]">
+                          {idx === 0 && 'browse all pieces'}
+                          {idx === 1 && 'moodboards & lookbooks'}
+                          {idx === 2 && 'the atelier manifesto'}
+                          {idx === 3 && 'film & polaroid archives'}
+                          {idx === 5 && 'curator administration'}
+                        </p>
+                      </div>
+                      <span className="font-mono text-xs text-[#7A756F]">
+                        0{idx + 1}
                       </span>
-                      <p className="font-handwriting text-sm text-[#7A756F]">
-                        {idx === 0 && 'browse all pieces'}
-                        {idx === 1 && 'moodboards & lookbooks'}
-                        {idx === 2 && 'the atelier manifesto'}
-                        {idx === 3 && 'film & polaroid archives'}
-                      </p>
-                    </div>
-                    <span className="font-mono text-xs text-[#7A756F]">
-                      0{idx + 1}
-                    </span>
-                  </Link>
-                ))}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 
