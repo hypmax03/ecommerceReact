@@ -335,6 +335,7 @@ function ProductForm() {
                   className="w-full bg-[#FAF7F2] border border-[#2C2A29]/20 px-3.5 py-2.5 font-mono text-xs uppercase tracking-wider text-[#191817] focus:outline-none focus:border-[#191817] transition-colors"
                 >
                   <option value="">-- SELECT CATEGORY --</option>
+                  <option value="Bags & Leather Goods">Bags & Leather Goods</option>
                   <option value="Evening Gowns">Evening Gowns</option>
                   <option value="Suits & Tailoring">Suits & Tailoring</option>
                   <option value="Outerwear & Coats">Outerwear & Coats</option>

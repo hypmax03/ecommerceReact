@@ -6,6 +6,7 @@ import { ArrowUpRight, Plus } from 'iconoir-react';
 import HeroScrapbook from '../components/HeroScrapbook';
 import EditorialSection from '../components/EditorialSection';
 import HorizontalCollection from '../components/HorizontalCollection';
+import BagSection from '../components/BagSection';
 import ProductCard from '../components/ProductCard';
 import Tape from '../components/Tape';
 import HandwrittenNote from '../components/HandwrittenNote';
@@ -45,7 +46,10 @@ const Home = () => {
       {/* 3. Broken-Grid Editorial Section ("WHAT WE KEEP.") */}
       <EditorialSection />
 
-      {/* 4. Featured Catalog Pinboard (Dynamic Real Products) */}
+      {/* 4. Atelier Bags & Leather Goods Section */}
+      <BagSection />
+
+      {/* 5. Featured Catalog Pinboard (Dynamic Real Products) */}
       <section className="py-24 sm:py-32 px-6 sm:px-8 lg:px-12 bg-[#FAF7F2] border-b border-[#2C2A29]/10 relative">
         <div className="max-w-7xl mx-auto">
           {/* Header with Gender Filter Tabs */}
