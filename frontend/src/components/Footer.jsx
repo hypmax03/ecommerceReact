@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { ArrowUpRight, Check, Mail } from 'iconoir-react';
 
 const Footer = () => {
+  const { products } = useSelector((state) => state.product || { products: [] });
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
 
@@ -24,15 +26,16 @@ const Footer = () => {
           ========================================================================= */}
       <section className="relative w-full aspect-[16/10] sm:aspect-[16/8] lg:aspect-[21/9] xl:aspect-[2.4/1] min-h-[480px] sm:min-h-[540px] lg:min-h-[620px] bg-[#221B17] overflow-hidden group select-none">
         {/* Background Editorial Photographic Spread */}
-        <div className="absolute inset-0 w-full h-full">
-          <img
-            src="/editorial_footer_banner.jpg"
-            alt="Autumn Winter New Arrival Editorial Campaign"
-            className="w-full h-full object-cover object-center filter brightness-[0.88] contrast-[1.04] transition-transform duration-1000 group-hover:scale-[1.02]"
-          />
+        <div className="absolute inset-0 w-full h-full bg-[#181412]">
+          {products?.[0] && (products[0].images?.[0] || products[0].image) && (
+            <img
+              src={products[0].images?.[0] || products[0].image}
+              alt={products[0].name || "Atelier Campaign"}
+              className="w-full h-full object-cover object-center filter brightness-[0.75] contrast-[1.04] transition-transform duration-1000 group-hover:scale-[1.02]"
+            />
+          )}
           {/* Subtle cinematic gradient overlays for high contrast typography */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/30 pointer-events-none" />
-          <div className="absolute inset-0 bg-black/15 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/50 pointer-events-none" />
         </div>
 
         {/* TOP RIGHT: Date & Campaign Timestamp */}

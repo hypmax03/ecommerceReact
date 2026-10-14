@@ -1,9 +1,9 @@
 import axios from "axios";
 
-// If VITE_API_BASE_URL is defined, use it. Defaults to the deployed Render backend API URL.
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL;
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL !== undefined && import.meta.env.VITE_API_BASE_URL !== ""
-    ? import.meta.env.VITE_API_BASE_URL
+  rawBaseUrl && rawBaseUrl.trim() !== ""
+    ? rawBaseUrl.trim().replace(/\/+$/, "")
     : "https://ecommercebk-1.onrender.com";
 
 const api = axios.create({

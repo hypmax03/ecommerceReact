@@ -55,14 +55,40 @@ const About = () => {
                 />
               </div>
 
-              {/* Photo Area */}
+              {/* Textile Specimen Area */}
               <div className={`lg:col-span-5 ${idx % 2 === 1 ? 'lg:order-2' : ''}`}>
-                <div className="aspect-[4/5] bg-[#ECE8DF] overflow-hidden border border-[#2C2A29]/10">
-                  <img
-                    src={story.image}
-                    alt={story.author}
-                    className="w-full h-full object-cover object-center filter contrast-[1.02]"
-                  />
+                <div className="aspect-[4/5] bg-[#F4EFE6] border border-[#2C2A29]/15 p-6 flex flex-col justify-between relative overflow-hidden shadow-inner">
+                  {/* Subtle paper texture overlay */}
+                  <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#191817_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
+
+                  {/* Top registry stamp */}
+                  <div className="flex items-center justify-between border-b border-[#2C2A29]/10 pb-3">
+                    <span className="font-mono text-[9px] uppercase tracking-widest text-[#7A756F]">
+                      SPECIMEN NO. 0{idx + 1}
+                    </span>
+                    <span className="font-mono text-[8px] uppercase tracking-widest px-2 py-0.5 bg-[#191817] text-[#FAF7F2]">
+                      CERTIFIED
+                    </span>
+                  </div>
+
+                  {/* Specimen Typography Plate */}
+                  <div className="my-auto py-6 text-center space-y-3">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#A66551] block">
+                      {idx === 0 ? 'MULBERRY SILK WEAVE' : idx === 1 ? 'SUPER 130S SARTORIAL WOOL' : 'LONG-STAPLE BELGIAN LINEN'}
+                    </span>
+                    <h4 className="font-serif text-2xl sm:text-3xl text-[#191817] font-normal italic">
+                      {idx === 0 ? '28 Momme Silk' : idx === 1 ? 'Neapolitan Suiting' : 'Sandwashed Flax'}
+                    </h4>
+                    <p className="font-mono text-[10px] text-[#7A756F] uppercase tracking-wider">
+                      {idx === 0 ? 'Como, Lombardy • Italy' : idx === 1 ? 'Biella, Piedmont • Italy' : 'Kortrijk • Flanders'}
+                    </p>
+                  </div>
+
+                  {/* Bottom Footer Details */}
+                  <div className="border-t border-[#2C2A29]/10 pt-3 flex justify-between items-center font-mono text-[9px] text-[#7A756F] uppercase">
+                    <span>100% SINGLE ORIGIN</span>
+                    <span>ATELIER DOSSIER</span>
+                  </div>
                 </div>
               </div>
 

@@ -1,108 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
-import { ArrowUpRight } from 'iconoir-react';
+import { ArrowUpRight, Plus } from 'iconoir-react';
 import Tape from '../components/Tape';
 import Polaroid from '../components/Polaroid';
 import HandwrittenNote from '../components/HandwrittenNote';
+import { getProduct } from '../redux/productSlice';
 
-const fullPolaroidArchive = [
-  {
-    id: 'p_01',
-    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80',
-    caption: 'Silk Evening Gown — Como, 11:42 AM',
-    subCaption: 'bias-cut silk / lookbook plate',
-    city: 'Como',
-    year: '2026',
-    rotate: '-2.5deg',
-    tapeText: 'SILK',
-    tapeVariant: 'kraft',
-  },
-  {
-    id: 'p_02',
-    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80',
-    caption: 'Wool Suit — Milan, 3:15 PM',
-    subCaption: 'bespoke double-breasted suit',
-    city: 'Milan',
-    year: '2026',
-    rotate: '2deg',
-    tapeText: 'SARTORIAL',
-    tapeVariant: 'dark',
-  },
-  {
-    id: 'p_03',
-    image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80',
-    caption: 'Shawl Tuxedo — London, 5:00 PM',
-    subCaption: 'midnight black grosgrain tuxedo',
-    city: 'London',
-    year: '2026',
-    rotate: '-1.5deg',
-    tapeText: 'TUXEDO',
-    tapeVariant: 'cream',
-  },
-  {
-    id: 'p_04',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-    caption: 'Silk Slip Dress — Venice, 09:30 AM',
-    subCaption: 'sandwashed silk slip fitting',
-    city: 'Venice',
-    year: '2025',
-    rotate: '3deg',
-    tapeText: 'SLIP',
-    tapeVariant: 'kraft',
-  },
-  {
-    id: 'p_05',
-    image: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=800&q=80',
-    caption: 'Cashmere Overcoat — Paris, 1:20 PM',
-    subCaption: 'pure camel cashmere overcoat',
-    city: 'Paris',
-    year: '2026',
-    rotate: '-3deg',
-    tapeText: 'CASHMERE',
-    tapeVariant: 'dark',
-  },
-  {
-    id: 'p_06',
-    image: 'https://images.unsplash.com/photo-1568252542512-9fe8fe9c87bb?auto=format&fit=crop&w=800&q=80',
-    caption: 'Pleated Organza Maxi — Florence, 4:45 PM',
-    subCaption: 'accordion pleated organza gown',
-    city: 'Florence',
-    year: '2026',
-    rotate: '1.5deg',
-    tapeText: 'ORGANZA',
-    tapeVariant: 'kraft',
-  },
-  {
-    id: 'p_07',
-    image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80',
-    caption: 'Blazer Dress — Milan, 10:15 AM',
-    subCaption: 'double-breasted virgin wool dress',
-    city: 'Milan',
-    year: '2025',
-    rotate: '-2deg',
-    tapeText: 'TAILORING',
-    tapeVariant: 'cream',
-  },
-  {
-    id: 'p_08',
-    image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80',
-    caption: 'Flax Linen Overshirt — Normandy, 6:00 PM',
-    subCaption: 'long-staple flax linen shirt',
-    city: 'Normandy',
-    year: '2026',
-    rotate: '2.5deg',
-    tapeText: 'LINEN',
-    tapeVariant: 'dark',
-  },
-];
+const rotations = ['-2.5deg', '2deg', '-1.5deg', '3deg', '-2deg', '1.5deg', '-1deg', '2.5deg'];
+const tapeVariants = ['kraft', 'dark', 'cream'];
 
 const Archive = () => {
-  const [selectedCity, setSelectedCity] = useState('All');
+  const dispatch = useDispatch();
+  const { products } = useSelector((state) => state.product || { products: [] });
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-  const filteredPolaroids = fullPolaroidArchive.filter((p) => {
-    if (selectedCity === 'All') return true;
-    return p.city === selectedCity;
+  useEffect(() => {
+    if (!products || products.length === 0) {
+      dispatch(getProduct({ status: 'approved' }));
+    }
+  }, [dispatch, products]);
+
+  const categories = ['All', ...new Set(products.map((p) => p.category).filter(Boolean))];
+
+  const filteredProducts = products.filter((p) => {
+    if (selectedCategory === 'All') return true;
+    return p.category === selectedCategory;
   });
 
   return (
@@ -111,7 +35,7 @@ const Archive = () => {
         {/* Header */}
         <div className="border-b border-[#2C2A29]/15 pb-8 mb-10 relative">
           <div className="absolute -top-3 right-6 pointer-events-none hidden sm:block">
-            <Tape rotate="2deg" variant="kraft" text="35MM FILM PRINTS" width="w-36" />
+            <Tape rotate="2deg" variant="kraft" text="ATELIER DOSSIER" width="w-36" />
           </div>
 
           <div className="flex items-center gap-2 mb-2">
@@ -119,7 +43,7 @@ const Archive = () => {
               DOCUMENTARY ARCHIVE • VOL. IV
             </span>
             <span className="font-handwriting text-base text-[#A66551]">
-              (uncropped, unedited snapshots)
+              (uncropped manual product records)
             </span>
           </div>
 
@@ -127,54 +51,105 @@ const Archive = () => {
             POLAROID &amp; FILM ARCHIVES
           </h1>
           <p className="font-sans text-sm text-[#5C5751] font-light mt-2 max-w-xl">
-            Photographs taken during atelier fittings, textile mill journeys, and bespoke client appointments across Europe.
+            Physical photographic plates and catalog prints documenting bespoke garments curated into the collection.
           </p>
         </div>
 
-        {/* City Filter Strip */}
-        <div className="flex items-center gap-2 mb-12 flex-wrap bg-[#F5EFE6] p-3 border border-[#2C2A29]/15">
-          <span className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] mr-2">
-            LOCATION STAMP:
-          </span>
-          {['All', 'Milan', 'Como', 'Venice', 'Paris', 'London', 'Florence', 'Normandy'].map((city) => (
-            <button
-              key={city}
-              type="button"
-              onClick={() => setSelectedCity(city)}
-              className={`font-mono text-xs uppercase tracking-wider px-3 py-1 border transition-colors ${
-                selectedCity === city
-                  ? 'bg-[#191817] text-[#FAF7F2] border-[#191817] font-bold shadow-sm'
-                  : 'bg-[#FAF7F2] text-[#191817] border-[#2C2A29]/20 hover:border-[#191817]'
-              }`}
-            >
-              {city === 'All' ? 'ALL LOCATIONS' : city}
-            </button>
-          ))}
-        </div>
+        {/* Category Filter Strip if products exist */}
+        {products.length > 0 && categories.length > 1 && (
+          <div className="flex items-center gap-2 mb-12 flex-wrap bg-[#F5EFE6] p-3 border border-[#2C2A29]/15">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] mr-2">
+              CURATION CATEGORY:
+            </span>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCategory(cat)}
+                className={`font-mono text-xs uppercase tracking-wider px-3 py-1 border transition-colors ${
+                  selectedCategory === cat
+                    ? 'bg-[#191817] text-[#FAF7F2] border-[#191817] font-bold shadow-sm'
+                    : 'bg-[#FAF7F2] text-[#191817] border-[#2C2A29]/20 hover:border-[#191817]'
+                }`}
+              >
+                {cat === 'All' ? `ALL PIECES (${products.length})` : cat}
+              </button>
+            ))}
+          </div>
+        )}
 
-        {/* Polaroids Scattered Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 items-center">
-          {filteredPolaroids.map((item, idx) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: idx * 0.08 }}
-              className="flex justify-center"
+        {/* Empty Archive State when no manual products have been added yet */}
+        {products.length === 0 ? (
+          <div className="py-24 px-8 text-center bg-[#FDFCF9] border border-dashed border-[#2C2A29]/25 max-w-3xl mx-auto shadow-sm">
+            <div className="inline-block mb-4">
+              <Tape rotate="-1deg" variant="kraft" text="ARCHIVE VAULT" width="w-32" />
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl text-[#191817] font-normal mb-3">
+              The Atelier Archive is Empty
+            </h2>
+            <p className="font-sans text-sm text-[#5C5751] max-w-md mx-auto leading-relaxed mb-6 font-light">
+              No physical catalog pieces have been added yet. Once garments are added and approved through the admin atelier, photographic plates will automatically appear here.
+            </p>
+            <HandwrittenNote
+              text="“all garment entries are cataloged manually”"
+              color="text-[#7A756F]"
+              className="mb-8"
+            />
+            <div className="flex justify-center">
+              <Link
+                to="/add"
+                className="inline-flex items-center gap-2 bg-[#191817] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest px-7 py-3.5 shadow hover:bg-[#2C2A29] transition-colors"
+              >
+                <Plus width={15} height={15} />
+                <span>+ ADD MANUAL PIECE TO ATELIER</span>
+              </Link>
+            </div>
+          </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="py-16 text-center bg-[#FDFCF9] border border-[#2C2A29]/15 p-6">
+            <p className="font-serif text-lg text-[#5C5751]">No pieces found in this category.</p>
+            <button
+              type="button"
+              onClick={() => setSelectedCategory('All')}
+              className="mt-4 font-mono text-xs uppercase tracking-wider text-[#A66551] underline cursor-pointer"
             >
-              <Polaroid
-                image={item.image}
-                caption={item.caption}
-                subCaption={item.subCaption}
-                rotate={item.rotate}
-                tapeText={item.tapeText}
-                tapeVariant={item.tapeVariant}
-                aspect="aspect-[4/5]"
-                className="w-full max-w-[270px]"
-              />
-            </motion.div>
-          ))}
-        </div>
+              View all archive pieces
+            </button>
+          </div>
+        ) : (
+          /* Polaroids Scattered Grid for real manual products */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 items-center">
+            {filteredProducts.map((item, idx) => {
+              const imgUrl = item.images?.[0] || item.image;
+              const rotate = rotations[idx % rotations.length];
+              const tapeVariant = tapeVariants[idx % tapeVariants.length];
+              const tapeText = item.gender?.toUpperCase() || item.category?.toUpperCase() || 'ATELIER';
+
+              return (
+                <motion.div
+                  key={item._id || item.id || idx}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: (idx % 8) * 0.08 }}
+                  className="flex justify-center"
+                >
+                  <Link to={`/product/${item._id || item.id}`} className="block">
+                    <Polaroid
+                      image={imgUrl}
+                      caption={item.name}
+                      subCaption={`₹${item.price?.toLocaleString('en-IN')} • ${item.category || 'Atelier'}`}
+                      rotate={rotate}
+                      tapeText={tapeText}
+                      tapeVariant={tapeVariant}
+                      aspect="aspect-[4/5]"
+                      className="w-full max-w-[270px]"
+                    />
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Bottom Note */}
         <div className="mt-16 text-center border-t border-[#2C2A29]/15 pt-8">

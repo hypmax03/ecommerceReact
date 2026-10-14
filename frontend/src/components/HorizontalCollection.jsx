@@ -115,8 +115,7 @@ const HorizontalCollection = () => {
                     src={imgUrl}
                     alt={item.name}
                     onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80';
+                      e.currentTarget.style.display = 'none';
                     }}
                     className="w-full h-full object-cover object-center filter contrast-[1.02] transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"
