@@ -532,11 +532,20 @@ function ProductForm() {
               )}
             </div>
 
-            {/* Acknowledgment disclaimer text */}
-            <div className="pt-1 text-center">
-              <p className="font-mono text-[9px] uppercase tracking-wider text-[#7A756F]">
-                By submitting, you agree that approved dockets are exhibited publicly. Moodboard references curated from Pinterest/editorial platforms remain the property of original copyright holders.
+            {/* Attribution & Takedown Protocol */}
+            <div className="p-4 bg-[#F5EFE6] border border-[#2C2A29]/15 text-left space-y-1.5">
+              <span className="font-mono text-[9px] uppercase font-bold tracking-widest text-[#A66551] block">
+                ATTRIBUTION &amp; TAKEDOWN
+              </span>
+              <p className="font-sans text-[11px] text-[#5C5751] font-light leading-relaxed">
+                If you are the copyright holder or creator of any image displayed on this site and would like your work credited differently, or prefer it to be removed, please send a gentle note to our contact desk. We will honor your request and take it down immediately with gratitude.
               </p>
+              <a
+                href="mailto:concierge@elora.com?subject=Image%20Attribution%20or%20Removal%20Request"
+                className="font-mono text-[10px] text-[#191817] hover:text-[#A66551] underline uppercase tracking-wider inline-block pt-0.5"
+              >
+                [→ REQUEST REMOVAL OR ATTRIBUTION]
+              </a>
             </div>
 
             {/* Submit Action Button */}

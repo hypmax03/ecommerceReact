@@ -222,6 +222,38 @@ const AdminDashboard = () => {
           </div>
         </div>
 
+        {/* ATTRIBUTION & TAKEDOWN Advisory Box for Admin Approvals */}
+        <div className="mb-8 bg-[#FDFCF9] border border-[#2C2A29]/20 p-6 sm:p-7 shadow-sm relative">
+          <div className="absolute -top-3.5 left-6 pointer-events-none">
+            <Tape rotate="-1deg" variant="kraft" text="CURATION &amp; ATTRIBUTION PROTOCOL" width="w-64" />
+          </div>
+
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-5 pt-1">
+            <div className="space-y-2 max-w-3xl">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[10px] uppercase font-bold tracking-[0.25em] text-[#A66551]">
+                  ADMINISTRATOR ADVISORY • PRODUCT APPROVAL POLICY
+                </span>
+              </div>
+              <h2 className="font-serif text-xl sm:text-2xl text-[#191817] font-normal">
+                ATTRIBUTION &amp; TAKEDOWN
+              </h2>
+              <p className="font-sans text-xs sm:text-sm text-[#5C5751] font-light leading-relaxed">
+                If you are the copyright holder or creator of any image displayed on this site and would like your work credited differently, or prefer it to be removed, please send a gentle note to our contact desk. We will honor your request and take it down immediately with gratitude.
+              </p>
+            </div>
+
+            <div className="pt-2 md:pt-1 flex-shrink-0">
+              <a
+                href="mailto:concierge@elora.com?subject=Image%20Attribution%20or%20Removal%20Request"
+                className="inline-flex items-center gap-1.5 bg-[#191817] hover:bg-[#2C2A29] text-[#FAF7F2] font-mono text-[11px] uppercase tracking-wider px-4 py-3 shadow-sm transition-all"
+              >
+                <span>→ REQUEST REMOVAL OR ATTRIBUTION</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
         {/* Filter Navigation Tabs */}
         <div className="flex items-center gap-2 mb-6 border-b border-[#2C2A29]/15 pb-4 flex-wrap">
           <button
@@ -357,6 +389,15 @@ const AdminDashboard = () => {
                         {product.submittedBy?.email && <span>({product.submittedBy.email})</span>}
                         {product.submittedBy?.note && <span className="italic text-[#A66551]">“{product.submittedBy.note}”</span>}
                       </div>
+
+                      {product.status === 'pending' && (
+                        <div className="text-[9.5px] font-mono text-[#7A756F] bg-[#FAF7F2] p-2 border border-dashed border-[#2C2A29]/15">
+                          <strong className="text-[#A66551]">Attribution Protocol:</strong> Verify visual attribution before publishing. Creators may request removal or credit adjustment via{' '}
+                          <a href="mailto:concierge@elora.com?subject=Image%20Attribution%20or%20Removal%20Request" className="underline text-[#191817]">
+                            concierge@elora.com
+                          </a>.
+                        </div>
+                      )}
 
                       {product.rejectionReason && (
                         <div className="text-[10px] font-mono text-[#8B263E] bg-[#FDF2F4] p-1.5 border border-[#8B263E]/20">

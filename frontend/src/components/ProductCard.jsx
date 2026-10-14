@@ -40,6 +40,7 @@ const ProductCard = ({ product, index = 0, priority = false }) => {
   const productImage =
     product.images?.[0] ||
     product.image ||
+    product.localImage ||
     '';
 
   const productHoverImage =

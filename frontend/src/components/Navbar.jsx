@@ -5,15 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ShoppingBag, User, Menu, Xmark, ArrowRight } from 'iconoir-react';
 import { toggleCart, toggleSearch } from '../redux/cartSlice';
 
-const navLinks = [
-  { label: 'COLLECTIONS', to: '/products' },
-  { label: 'LOOKBOOK', to: '/collections' },
-  { label: 'ABOUT', to: '/about' },
-  { label: 'ARCHIVE', to: '/archive' },
-  { label: 'BAG', to: '/cart', isCartTrigger: true },
-  { label: 'CURATOR ADMIN', to: '/admin' },
-];
-
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -22,7 +13,15 @@ const Navbar = () => {
 
   const cartItems = useSelector((state) => state.cart?.items || []);
   const user = useSelector((state) => state.user?.user);
+  const isAdmin = user?.role === 'admin' || user?.email?.toLowerCase().includes('admin');
   const totalCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
+  const navLinks = [
+    { label: 'COLLECTIONS', to: '/products' },
+    { label: 'LOOKBOOK', to: '/collections' },
+    { label: 'ARCHIVE', to: '/archive' },
+    ...(isAdmin ? [{ label: 'CURATOR ADMIN', to: '/admin' }] : []),
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -133,13 +132,30 @@ const Navbar = () => {
             {/* Account Link */}
             <Link
               to={user ? '/account' : '/login'}
-              className="flex items-center gap-1.5 text-[#191817] hover:opacity-60 transition-opacity p-1 focus:outline-none"
-              aria-label={user ? `Account: ${user.name}` : 'Login to Client Account'}
+              className="group flex flex-col items-center justify-center text-[#191817] hover:opacity-75 transition-opacity px-1 py-0.5 focus:outline-none relative"
+              aria-label={user ? `Account: ${user.name}` : 'Sign In to Client Account'}
             >
-              <User width={18} height={18} strokeWidth={1.5} />
-              {user && (
-                <span className="font-handwriting text-base text-[#191817] max-w-[80px] truncate hidden md:inline">
-                  {user.name}
+              <div className="relative flex items-center justify-center">
+                {user?.image ? (
+                  <img
+                    src={user.image}
+                    alt={user.name || 'Account'}
+                    className="w-5 h-5 rounded-full object-cover border border-[#2C2A29]/30"
+                  />
+                ) : (
+                  <User width={18} height={18} strokeWidth={1.5} />
+                )}
+                {!user && (
+                  <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-[#A66551]" />
+                )}
+              </div>
+              {user ? (
+                <span className="font-mono text-[8px] sm:text-[9px] uppercase tracking-wider text-[#7A756F] group-hover:text-[#191817] transition-colors max-w-[65px] truncate text-center leading-none mt-1">
+                  {user.name?.split(' ')[0] || 'ACCOUNT'}
+                </span>
+              ) : (
+                <span className="font-mono text-[8px] sm:text-[9px] uppercase font-bold tracking-widest text-[#A66551] group-hover:text-[#191817] transition-colors leading-none mt-1 whitespace-nowrap">
+                  SIGN IN
                 </span>
               )}
             </Link>

@@ -8,6 +8,7 @@ import { addToCart } from '../redux/cartSlice';
 import Tape from './Tape';
 import HandwrittenNote from './HandwrittenNote';
 import Polaroid from './Polaroid';
+import { DRESS_COLLECTION_PRODUCTS } from '../data/fashionProducts';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -17,12 +18,17 @@ const ProductDetails = () => {
   const { products } = useSelector((state) => state.product || { products: [] });
   const user = useSelector((state) => state.user?.user);
 
-  // Find product in list
-  const product = products.find((p) => (p._id || p.id) === id) || products[0];
+  // Find product in live store or fallback collection
+  const allAvailable = products && products.length > 0 ? products : DRESS_COLLECTION_PRODUCTS;
+  const product =
+    allAvailable.find((p) => (p._id || p.id) === id) ||
+    DRESS_COLLECTION_PRODUCTS.find((p) => (p._id || p.id) === id) ||
+    allAvailable[0];
 
   const defaultImg =
     product?.images?.[0] ||
     product?.image ||
+    product?.localImage ||
     '';
 
   const [selectedSize, setSelectedSize] = useState('M');

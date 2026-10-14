@@ -5,6 +5,8 @@ import { ArrowUpRight, Check, Mail, ArrowUp, Pin, Camera, Heart } from 'iconoir-
 
 const Footer = () => {
   const { products } = useSelector((state) => state.product || { products: [] });
+  const { user } = useSelector((state) => state.user || { user: null });
+  const isAdmin = user?.role === 'admin' || user?.email?.toLowerCase().includes('admin');
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
 
@@ -184,11 +186,13 @@ const Footer = () => {
                     Polaroid Archive
                   </Link>
                 </li>
-                <li>
-                  <Link to="/admin" className="hover:text-white transition-colors">
-                    Curator Admin Desk
-                  </Link>
-                </li>
+                {isAdmin && (
+                  <li>
+                    <Link to="/admin" className="hover:text-white transition-colors">
+                      Curator Admin Desk
+                    </Link>
+                  </li>
+                )}
                 <li>
                   <Link to="/about" className="hover:text-white transition-colors">
                     Private Appointment

@@ -77,7 +77,7 @@ const QuickViewModal = () => {
             <div className="md:col-span-6">
               <div className="aspect-[3/4] bg-[#ECE8DF] border border-[#2C2A29]/15 overflow-hidden shadow-sm relative">
                 <img
-                  src={product.image}
+                  src={product.images?.[0] || product.image || product.localImage}
                   alt={product.name}
                   className="w-full h-full object-cover object-center"
                 />
