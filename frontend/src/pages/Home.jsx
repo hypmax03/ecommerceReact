@@ -7,7 +7,6 @@ import HeroScrapbook from '../components/HeroScrapbook';
 import EditorialSection from '../components/EditorialSection';
 import HorizontalCollection from '../components/HorizontalCollection';
 import ProductCard from '../components/ProductCard';
-import CartSection from '../components/CartSection';
 import Tape from '../components/Tape';
 import HandwrittenNote from '../components/HandwrittenNote';
 import { getProduct } from '../redux/productSlice';
@@ -158,34 +157,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 5. Scrapbook Sartorial Bag & Order Docket Section */}
-      <CartSection />
-
-      {/* 6. Scrapbook Studio Invitation Box */}
-      <section className="py-20 px-6 sm:px-8 lg:px-12 bg-[#F5EFE6]">
-        <div className="max-w-4xl mx-auto bg-[#FDFCF9] p-8 sm:p-12 border border-[#2C2A29]/15 shadow-[0_12px_40px_rgba(0,0,0,0.06)] relative text-center">
-          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 pointer-events-none">
-            <Tape rotate="1deg" variant="kraft" text="ATELIER VISIT" width="w-36" />
-          </div>
-
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#7A756F] block mb-2">
-            PRIVATE APPOINTMENTS • MILAN &amp; PARIS
-          </span>
-          <h3 className="font-serif text-3xl sm:text-4xl text-[#191817] font-normal mb-4">
-            Experience the Fabrics in Person
-          </h3>
-          <p className="font-sans text-sm text-[#5C5751] font-light max-w-lg mx-auto leading-relaxed mb-6">
-            We welcome clients to our private showroom atelier to inspect physical swatch rolls, discuss custom measurements with our master tailors, and enjoy an espresso.
-          </p>
-
-          <Link
-            to="/about"
-            className="font-mono text-xs uppercase tracking-widest text-[#191817] font-bold border-b border-[#191817] pb-1 hover:text-[#A66551] hover:border-[#A66551] transition-colors"
-          >
-            REQUEST A PRIVATE ATELIER APPOINTMENT →
-          </Link>
-        </div>
-      </section>
     </main>
   );
 };

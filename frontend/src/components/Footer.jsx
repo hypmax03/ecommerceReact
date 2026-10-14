@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { ArrowUpRight, Check, Mail } from 'iconoir-react';
+import { ArrowUpRight, Check, Mail, Copyright, ShieldCheck, ArrowUp } from 'iconoir-react';
 
 const Footer = () => {
   const { products } = useSelector((state) => state.product || { products: [] });
@@ -211,24 +211,121 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Public Exhibition, Pinterest Moodboard & Legal Disclaimer */}
-          <div className="pt-8 pb-4">
-            <div className="bg-white/5 border border-white/10 p-4 sm:p-5 rounded-none text-white/70">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-[#E3D5B8] font-bold">
-                  PUBLIC EXHIBITION &amp; EDITORIAL IMAGERY NOTICE
+          {/* =========================================================================
+              3. ATELIER COPYRIGHT & INTELLECTUAL PROPERTY REGISTER SECTION
+              ========================================================================= */}
+          <section className="pt-10 pb-6" aria-labelledby="atelier-copyright-heading">
+            <div className="bg-[#181615] border border-white/15 p-6 sm:p-8 lg:p-10 relative overflow-hidden shadow-2xl">
+              {/* Header Bar: Stamp, Title & Back to Top */}
+              <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full border border-[#E3D5B8]/40 bg-[#E3D5B8]/10 flex items-center justify-center text-[#E3D5B8] flex-shrink-0">
+                    <Copyright width={18} height={18} />
+                  </div>
+                  <div>
+                    <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-[#E3D5B8] font-bold block">
+                      OFFICIAL INTELLECTUAL PROPERTY &amp; COPYRIGHT REGISTER
+                    </span>
+                    <h3 id="atelier-copyright-heading" className="font-serif text-xl sm:text-2xl text-white font-normal mt-0.5">
+                      © {new Date().getFullYear()} ELORA ATELIER S.R.L. • ALL RIGHTS RESERVED
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[9px] uppercase tracking-widest px-2.5 py-1 bg-white/5 border border-white/15 text-white/70 hidden sm:inline-block">
+                    REG. SPEC. EL-2026-EU
+                  </span>
+                  <button
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 bg-white/10 hover:bg-white text-white hover:text-[#191817] border border-white/20 transition-all cursor-pointer"
+                    title="Return to top of page"
+                  >
+                    <span>TOP</span>
+                    <ArrowUp width={12} height={12} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Three-Column Detailed Copyright & Provenance Breakdown */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 pb-6 text-white/70">
+                {/* Column 1: Original Works & Content Copyright */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2 text-white text-xs font-mono tracking-wider uppercase font-semibold">
+                    <ShieldCheck width={14} height={14} className="text-[#E3D5B8]" />
+                    <span>ORIGINAL WORKS &amp; TRADEMARKS</span>
+                  </div>
+                  <p className="font-sans text-[11px] leading-relaxed text-white/60 font-light">
+                    All proprietary garments, editorial essays, digital scrapbook interfaces, original sketches, typography schemes, layout compositions, and website source code are proprietary works protected under international copyright conventions (Berne Convention) and digital copyright acts. Unauthorized reproduction, automated scraping, or commercial exploitation is strictly prohibited.
+                  </p>
+                </div>
+
+                {/* Column 2: Editorial Fair Use & Visual Provenance */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2 text-white text-xs font-mono tracking-wider uppercase font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#E3D5B8]" />
+                    <span>EDITORIAL CURATION &amp; FAIR USE</span>
+                  </div>
+                  <p className="font-sans text-[11px] leading-relaxed text-white/60 font-light">
+                    ELORA operates as an editorial lookbook and clothing curation platform exhibited in the public domain. Archival references, moodboards, and vintage photographic scans are curated solely for non-commercial artistic demonstration, styling commentary, and portfolio curation. All third-party trademarks and original photo rights remain with their respective creators and fashion houses.
+                  </p>
+                </div>
+
+                {/* Column 3: Legal Compliance & Client Declarations */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2 text-white text-xs font-mono tracking-wider uppercase font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#E3D5B8]" />
+                    <span>LEGAL POLICIES &amp; INQUIRIES</span>
+                  </div>
+                  <ul className="space-y-2 font-mono text-[10px] tracking-wider text-white/60 uppercase">
+                    <li>
+                      <Link to="/about" className="hover:text-white transition-colors flex items-center gap-1.5">
+                        <span className="text-[#E3D5B8]">→</span>
+                        <span>Intellectual Property &amp; DMCA</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/about" className="hover:text-white transition-colors flex items-center gap-1.5">
+                        <span className="text-[#E3D5B8]">→</span>
+                        <span>Terms of Sartorial Service</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/about" className="hover:text-white transition-colors flex items-center gap-1.5">
+                        <span className="text-[#E3D5B8]">→</span>
+                        <span>Privacy &amp; Client Data Protection</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/about" className="hover:text-white transition-colors flex items-center gap-1.5">
+                        <span className="text-[#E3D5B8]">→</span>
+                        <span>Atelier Provenance Register</span>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Bottom Atelier Origin & Status Bar */}
+              <div className="pt-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] font-mono text-white/40">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>MILAN • PARIS • LONDON • TOKYO • NEW YORK</span>
+                </div>
+                <span className="font-serif italic text-white/50 text-xs text-center">
+                  Crafted with archival care for discerning wardrobes.
+                </span>
+                <span className="uppercase tracking-widest text-[#E3D5B8]/70">
+                  STATUS: ARCHIVE ACTIVE &amp; PROTECTED
                 </span>
               </div>
-              <p className="font-sans text-[11px] leading-relaxed text-white/60 font-light">
-                ELORA is an editorial lookbook and clothing curation platform exhibited in the public domain. Garments, moodboards, and photographic references uploaded or curated by administration are collected from public discovery platforms including Pinterest and archival fashion lookbooks solely for non-commercial artistic demonstration, aesthetic curation, and visual styling. All original imagery, designs, trademarks, and copyrights remain the exclusive property of their respective creators, photographers, and fashion houses. No copyright infringement is intended. If you are an intellectual property owner and wish to request attribution or immediate removal of any media, please contact our administrator curation desk.
-              </p>
             </div>
-          </div>
+          </section>
 
-          {/* Bottom Copyright & Legal */}
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-white/40 text-xs font-mono">
+          {/* Bottom Micro Legal Row */}
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-white/40 text-xs font-mono">
             <div className="flex items-center gap-3">
-              <span>© 2026 ELORA</span>
+              <span>© {new Date().getFullYear()} ELORA ATELIER</span>
               <span>•</span>
               <span className="font-serif italic text-white/60 text-xs">
                 Public Curated Lookbooks &amp; Garments
@@ -239,6 +336,7 @@ const Footer = () => {
               <Link to="/about" className="hover:text-white transition-colors">Privacy</Link>
               <Link to="/about" className="hover:text-white transition-colors">Fair Use &amp; Terms</Link>
               <Link to="/about" className="hover:text-white transition-colors">Provenance</Link>
+              <Link to="/admin" className="hover:text-white transition-colors">Admin Desk</Link>
             </div>
           </div>
         </div>

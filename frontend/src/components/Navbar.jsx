@@ -10,7 +10,6 @@ const navLinks = [
   { label: 'LOOKBOOK', to: '/collections' },
   { label: 'ABOUT', to: '/about' },
   { label: 'ARCHIVE', to: '/archive' },
-  { label: 'BAG', to: '/cart' },
   { label: 'CURATOR ADMIN', to: '/admin' },
 ];
 
