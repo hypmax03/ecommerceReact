@@ -59,6 +59,10 @@ export const loginUser = createAsyncThunk(
 export const getUser = createAsyncThunk(
   "user/getUser",
   async (_, { rejectWithValue }) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return null;
+    }
     try {
       const res = await api.get("/api/user/profile");
       if (res.data?.user) {

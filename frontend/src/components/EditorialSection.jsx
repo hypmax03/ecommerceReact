@@ -12,6 +12,14 @@ const EditorialSection = () => {
   const shouldReduceMotion = useReducedMotion();
   const { products } = useSelector((state) => state.product || { products: [] });
 
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+
+  const photoParallax = useTransform(scrollYProgress, [0, 1], ['-6%', shouldReduceMotion ? '0%' : '6%']);
+  const noteParallax = useTransform(scrollYProgress, [0, 1], ['10%', shouldReduceMotion ? '0%' : '-10%']);
+
   // Only render if manual products exist
   if (!products || products.length === 0) {
     return null;
@@ -23,14 +31,6 @@ const EditorialSection = () => {
   const polaroidImg = polaroidItem.images?.[0] || polaroidItem.image;
 
   if (!editorialImg) return null;
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start end', 'end start'],
-  });
-
-  const photoParallax = useTransform(scrollYProgress, [0, 1], ['-6%', shouldReduceMotion ? '0%' : '6%']);
-  const noteParallax = useTransform(scrollYProgress, [0, 1], ['10%', shouldReduceMotion ? '0%' : '-10%']);
 
   return (
     <section
