@@ -1,20 +1,58 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Trash, Plus, Minus, ArrowUpRight, ArrowLeft, Check, ShoppingBag, Xmark } from 'iconoir-react';
+import {
+  Trash,
+  Plus,
+  Minus,
+  ArrowUpRight,
+  ArrowLeft,
+  Check,
+  ShoppingBag,
+  Xmark,
+  CreditCard,
+  QrCode,
+  Bank,
+  Cash,
+  ShieldCheck,
+} from 'iconoir-react';
 import { removeFromCart, updateQuantity, clearCart, applyPromo, removePromo, setOrderNote } from '../redux/cartSlice';
 import Tape from '../components/Tape';
 import HandwrittenNote from '../components/HandwrittenNote';
+import ReceiptBill from '../components/ReceiptBill';
 
 const Cart = () => {
   const dispatch = useDispatch();
   const { items, promo, orderNote } = useSelector((state) => state.cart || { items: [], promo: null, orderNote: '' });
   const [isOrdered, setIsOrdered] = useState(false);
-  const [orderDocketId, setOrderDocketId] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [receiptData, setReceiptData] = useState(null);
+
+  // Client Details
   const [clientName, setClientName] = useState('');
   const [clientAddress, setClientAddress] = useState('');
+  const [clientEmail, setClientEmail] = useState('');
+  const [clientPhone, setClientPhone] = useState('');
+
+  // Fake Payment Option State
+  const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' | 'upi' | 'netbanking' | 'cod'
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  const [cardHolder, setCardHolder] = useState('');
+  const [upiId, setUpiId] = useState('atelier.client@elora');
+  const [selectedBank, setSelectedBank] = useState('HDFC');
+
   const [promoInput, setPromoInput] = useState('');
   const [promoError, setPromoError] = useState('');
+
+  // Autofill Demo Card Credentials
+  const fillDemoCard = () => {
+    setCardNumber('4242 4242 4242 4242');
+    setCardExpiry('12/28');
+    setCardCvv('888');
+    setCardHolder(clientName || 'JANE ATELIER');
+  };
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -53,51 +91,53 @@ const Cart = () => {
       alert('Please provide your name and delivery address.');
       return;
     }
+
+    if (paymentMethod === 'card' && (!cardNumber.trim() || !cardExpiry.trim() || !cardCvv.trim())) {
+      fillDemoCard();
+    }
+
+    setIsProcessing(true);
     const generatedId = `ELO-${Math.floor(100000 + Math.random() * 900000)}`;
-    setOrderDocketId(generatedId);
-    setIsOrdered(true);
-    dispatch(clearCart());
+
+    const snapshotReceipt = {
+      orderDocketId: generatedId,
+      clientName,
+      clientAddress,
+      clientEmail,
+      clientPhone,
+      items: [...items],
+      subtotal,
+      discountAmount,
+      shipping,
+      grandTotal,
+      promo,
+      orderNote,
+      paymentMethod,
+      cardLast4: cardNumber ? cardNumber.replace(/\s+/g, '').slice(-4) : '4242',
+      orderDate: new Date(),
+    };
+
+    setReceiptData(snapshotReceipt);
+
+    // Simulated terminal authorization & thermal paper feed delay
+    setTimeout(() => {
+      setIsProcessing(false);
+      setIsOrdered(true);
+      dispatch(clearCart());
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 1200);
   };
 
-  if (isOrdered) {
+  if (isOrdered && receiptData) {
     return (
-      <main className="min-h-screen bg-[#FAF7F2] pt-36 pb-24 px-6 sm:px-8 flex items-center justify-center">
-        <div className="max-w-lg w-full bg-[#FDFCF9] p-8 sm:p-12 border border-[#2C2A29]/15 shadow-2xl relative text-center">
-          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-            <Tape rotate="-1deg" variant="kraft" text={`ORDER DOCKET #${orderDocketId || '2689'}`} width="w-48" />
-          </div>
-
-          <div className="w-12 h-12 mx-auto rounded-full bg-[#191817] text-[#FAF7F2] flex items-center justify-center mb-4">
-            <Check width={20} height={20} />
-          </div>
-
-          <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#7A756F] block mb-1">
-            ORDER CONFIRMED &amp; DISPATCH SCHEDULED
-          </span>
-          <h2 className="font-serif text-3xl text-[#191817] font-normal mb-3">
-            Thank You, {clientName || 'Valued Client'}.
-          </h2>
-
-          <p className="font-sans text-xs sm:text-sm text-[#5C5751] font-light leading-relaxed mb-6">
-            Your order <strong>#{orderDocketId}</strong> has been logged in the atelier registry. Each piece will be hand-inspected, steam-pressed, and dispatched in recyclable packaging with garment care instructions to:
-            <br />
-            <span className="font-mono text-xs text-[#191817] block mt-2 bg-[#EFE8DC] p-2 border border-[#D1C9BC]">
-              {clientAddress}
-            </span>
-          </p>
-
-          <div className="p-4 bg-[#F5EFE6] border border-[#2C2A29]/10 text-left font-mono text-xs space-y-1 mb-6">
-            <p><strong>ESTIMATED DELIVERY:</strong> 2–4 Business Days</p>
-            <p><strong>CLIENT SERVICES:</strong> concierge@elora.com</p>
-          </div>
-
-          <Link
-            to="/products"
-            className="inline-block bg-[#191817] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest px-8 py-3.5 shadow-md hover:bg-[#2C2A29] transition-colors"
-          >
-            RETURN TO COLLECTIONS
-          </Link>
-        </div>
+      <main className="min-h-screen bg-[#FAF7F2] pt-24 sm:pt-32 pb-24 px-4 sm:px-8">
+        <ReceiptBill
+          receipt={receiptData}
+          onReset={() => {
+            setIsOrdered(false);
+            setReceiptData(null);
+          }}
+        />
       </main>
     );
   }
@@ -311,29 +351,233 @@ const Cart = () => {
                 />
               </div>
 
-              <form onSubmit={handleCheckout} className="space-y-3 pt-2">
-                <input
-                  type="text"
-                  required
-                  value={clientName}
-                  onChange={(e) => setClientName(e.target.value)}
-                  placeholder="Full Delivery Name"
-                  className="w-full bg-[#FDFCF9] border border-[#2C2A29]/20 px-3.5 py-2.5 font-sans text-xs focus:outline-none focus:border-[#191817]"
-                />
-                <input
-                  type="text"
-                  required
-                  value={clientAddress}
-                  onChange={(e) => setClientAddress(e.target.value)}
-                  placeholder="Delivery Address & Postal Code"
-                  className="w-full bg-[#FDFCF9] border border-[#2C2A29]/20 px-3.5 py-2.5 font-sans text-xs focus:outline-none focus:border-[#191817]"
-                />
+              <form onSubmit={handleCheckout} className="space-y-4 pt-2">
+                <div className="space-y-2">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] font-bold block">
+                    1. CLIENT &amp; DISPATCH DESTINATION
+                  </span>
+                  <input
+                    type="text"
+                    required
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
+                    placeholder="Full Client Name *"
+                    className="w-full bg-[#FDFCF9] border border-[#2C2A29]/20 px-3.5 py-2 font-sans text-xs focus:outline-none focus:border-[#191817]"
+                  />
+                  <input
+                    type="text"
+                    required
+                    value={clientAddress}
+                    onChange={(e) => setClientAddress(e.target.value)}
+                    placeholder="Delivery Street Address, City &amp; Postal Code *"
+                    className="w-full bg-[#FDFCF9] border border-[#2C2A29]/20 px-3.5 py-2 font-sans text-xs focus:outline-none focus:border-[#191817]"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="email"
+                      value={clientEmail}
+                      onChange={(e) => setClientEmail(e.target.value)}
+                      placeholder="Email for Digital Docket"
+                      className="bg-[#FDFCF9] border border-[#2C2A29]/20 px-3 py-2 font-sans text-xs focus:outline-none focus:border-[#191817]"
+                    />
+                    <input
+                      type="tel"
+                      value={clientPhone}
+                      onChange={(e) => setClientPhone(e.target.value)}
+                      placeholder="Phone for Courier SMS"
+                      className="bg-[#FDFCF9] border border-[#2C2A29]/20 px-3 py-2 font-sans text-xs focus:outline-none focus:border-[#191817]"
+                    />
+                  </div>
+                </div>
+
+                {/* 2. Settlement / Fake Payment Option Selector */}
+                <div className="space-y-3 pt-3 border-t border-dashed border-[#2C2A29]/15">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] font-bold">
+                      2. PAYMENT METHOD (DEMO / SIMULATED)
+                    </span>
+                    <span className="font-mono text-[9px] bg-[#EFE8DC] text-[#4A443A] px-1.5 py-0.5 border border-[#D1C9BC] font-bold">
+                      TEST MODE
+                    </span>
+                  </div>
+
+                  {/* 4 Payment Method Tabs */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('card')}
+                      className={`p-2 border text-left flex flex-col justify-between h-14 transition-all cursor-pointer ${
+                        paymentMethod === 'card'
+                          ? 'bg-[#191817] text-[#FAF7F2] border-[#191817] shadow-sm'
+                          : 'bg-[#FDFCF9] text-[#7A756F] border-[#2C2A29]/20 hover:border-[#191817]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <CreditCard width={15} height={15} />
+                        {paymentMethod === 'card' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                      </div>
+                      <span className="font-mono text-[9px] uppercase tracking-wider font-bold">CARD</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('upi')}
+                      className={`p-2 border text-left flex flex-col justify-between h-14 transition-all cursor-pointer ${
+                        paymentMethod === 'upi'
+                          ? 'bg-[#191817] text-[#FAF7F2] border-[#191817] shadow-sm'
+                          : 'bg-[#FDFCF9] text-[#7A756F] border-[#2C2A29]/20 hover:border-[#191817]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <QrCode width={15} height={15} />
+                        {paymentMethod === 'upi' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                      </div>
+                      <span className="font-mono text-[9px] uppercase tracking-wider font-bold">UPI / QR</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('netbanking')}
+                      className={`p-2 border text-left flex flex-col justify-between h-14 transition-all cursor-pointer ${
+                        paymentMethod === 'netbanking'
+                          ? 'bg-[#191817] text-[#FAF7F2] border-[#191817] shadow-sm'
+                          : 'bg-[#FDFCF9] text-[#7A756F] border-[#2C2A29]/20 hover:border-[#191817]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <Bank width={15} height={15} />
+                        {paymentMethod === 'netbanking' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                      </div>
+                      <span className="font-mono text-[9px] uppercase tracking-wider font-bold">NETBANKING</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('cod')}
+                      className={`p-2 border text-left flex flex-col justify-between h-14 transition-all cursor-pointer ${
+                        paymentMethod === 'cod'
+                          ? 'bg-[#191817] text-[#FAF7F2] border-[#191817] shadow-sm'
+                          : 'bg-[#FDFCF9] text-[#7A756F] border-[#2C2A29]/20 hover:border-[#191817]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <Cash width={15} height={15} />
+                        {paymentMethod === 'cod' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                      </div>
+                      <span className="font-mono text-[9px] uppercase tracking-wider font-bold">COD / ARRIVAL</span>
+                    </button>
+                  </div>
+
+                  {/* Active Payment Method Inputs */}
+                  {paymentMethod === 'card' && (
+                    <div className="bg-[#FAF7F2] p-3 border border-[#2C2A29]/15 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-[9px] uppercase tracking-wider text-[#7A756F]">
+                          SIMULATED CARD CREDENTIALS
+                        </span>
+                        <button
+                          type="button"
+                          onClick={fillDemoCard}
+                          className="font-mono text-[9px] text-[#A66551] uppercase font-bold hover:underline cursor-pointer"
+                        >
+                          ⚡ AUTOFILL DEMO CARD
+                        </button>
+                      </div>
+
+                      <input
+                        type="text"
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value)}
+                        placeholder="Card Number (e.g. 4242 4242 4242 4242)"
+                        className="w-full bg-[#FDFCF9] border border-[#2C2A29]/20 px-3 py-1.5 font-mono text-xs focus:outline-none focus:border-[#191817]"
+                      />
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <input
+                          type="text"
+                          value={cardExpiry}
+                          onChange={(e) => setCardExpiry(e.target.value)}
+                          placeholder="MM/YY (e.g. 12/28)"
+                          className="bg-[#FDFCF9] border border-[#2C2A29]/20 px-3 py-1.5 font-mono text-xs focus:outline-none focus:border-[#191817]"
+                        />
+                        <input
+                          type="text"
+                          value={cardCvv}
+                          onChange={(e) => setCardCvv(e.target.value)}
+                          placeholder="CVV (e.g. 888)"
+                          maxLength={4}
+                          className="bg-[#FDFCF9] border border-[#2C2A29]/20 px-3 py-1.5 font-mono text-xs focus:outline-none focus:border-[#191817]"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {paymentMethod === 'upi' && (
+                    <div className="bg-[#FAF7F2] p-3 border border-[#2C2A29]/15 space-y-1.5">
+                      <span className="font-mono text-[9px] uppercase tracking-wider text-[#7A756F] block">
+                        SIMULATED UPI VPA HANDLE
+                      </span>
+                      <input
+                        type="text"
+                        value={upiId}
+                        onChange={(e) => setUpiId(e.target.value)}
+                        placeholder="client@okhdfcbank or atelier@upi"
+                        className="w-full bg-[#FDFCF9] border border-[#2C2A29]/20 px-3 py-1.5 font-mono text-xs focus:outline-none focus:border-[#191817]"
+                      />
+                      <p className="font-sans text-[10px] text-[#7A756F] font-light">
+                        Simulated auto-approval. Instant verification on order submission.
+                      </p>
+                    </div>
+                  )}
+
+                  {paymentMethod === 'netbanking' && (
+                    <div className="bg-[#FAF7F2] p-3 border border-[#2C2A29]/15 space-y-1.5">
+                      <span className="font-mono text-[9px] uppercase tracking-wider text-[#7A756F] block">
+                        SELECT SIMULATED BANKING PORTAL
+                      </span>
+                      <select
+                        value={selectedBank}
+                        onChange={(e) => setSelectedBank(e.target.value)}
+                        className="w-full bg-[#FDFCF9] border border-[#2C2A29]/20 px-3 py-1.5 font-mono text-xs focus:outline-none focus:border-[#191817]"
+                      >
+                        <option value="HDFC">HDFC Bank (Demo Corporate Gateway)</option>
+                        <option value="ICICI">ICICI Bank Infinity</option>
+                        <option value="SBI">State Bank of India</option>
+                        <option value="AXIS">Axis Bank Sartorial</option>
+                        <option value="STANCHAR">Standard Chartered Private Banking</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {paymentMethod === 'cod' && (
+                    <div className="bg-[#FAF7F2] p-3 border border-[#2C2A29]/15 space-y-1">
+                      <span className="font-mono text-[10px] uppercase tracking-wider text-[#191817] font-bold block">
+                        CONCIERGE PAY ON ARRIVAL
+                      </span>
+                      <p className="font-sans text-[11px] text-[#5C5751] font-light leading-relaxed">
+                        Our courier brings a portable card reader and receipt docket. Cash or card accepted upon handover.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Submit Action Button with Printing Indicator */}
                 <button
                   type="submit"
-                  className="w-full bg-[#191817] hover:bg-[#2C2A29] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest py-4 flex items-center justify-center gap-2 shadow-md transition-colors font-bold"
+                  disabled={isProcessing}
+                  className="w-full bg-[#191817] hover:bg-[#2C2A29] disabled:bg-[#3D3A38] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest py-4 flex items-center justify-center gap-2 shadow-lg transition-all font-bold cursor-pointer"
                 >
-                  <span>COMPLETE ORDER</span>
-                  <ArrowUpRight width={14} height={14} />
+                  {isProcessing ? (
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      <span>AUTHORIZING &amp; ENGAGING THERMAL PRINTER...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <span>PAY &amp; PRINT OFFICIAL RECEIPT (₹{grandTotal.toLocaleString('en-IN')})</span>
+                      <ArrowUpRight width={14} height={14} />
+                    </>
+                  )}
                 </button>
               </form>
 

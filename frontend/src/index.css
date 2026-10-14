@@ -163,3 +163,21 @@
     transform: none !important;
   }
 }
+
+/* Print Receipt Styles */
+@media print {
+  header, footer, nav, button, .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  #printable-receipt-area {
+    padding: 0 !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+  }
+}
