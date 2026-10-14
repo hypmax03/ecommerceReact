@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { motion } from 'framer-motion';
-import { ShoppingBag, ArrowUpRight, Check, Plus, Minus, ArrowLeft, Refresh } from 'iconoir-react';
-import { getProductById, deleteProduct } from '../redux/productSlice';
-import { addToCart } from '../redux/cartSlice';
+import { ShoppingBag, Check, Plus, Minus, ArrowLeft } from 'iconoir-react';
+import { deleteProduct } from '../redux/productSlice';
+import { addToCart, openRemovalModal } from '../redux/cartSlice';
+import { sendFormspreeNotification } from '../utils/formspree';
 import Tape from './Tape';
-import HandwrittenNote from './HandwrittenNote';
 import Polaroid from './Polaroid';
 import { DRESS_COLLECTION_PRODUCTS } from '../data/fashionProducts';
 
@@ -16,7 +15,6 @@ const ProductDetails = () => {
   const dispatch = useDispatch();
 
   const { products } = useSelector((state) => state.product || { products: [] });
-  const user = useSelector((state) => state.user?.user);
 
   // Find product in live store or fallback collection
   const allAvailable = products && products.length > 0 ? products : DRESS_COLLECTION_PRODUCTS;
@@ -31,21 +29,15 @@ const ProductDetails = () => {
     product?.localImage ||
     '';
 
-  const [selectedSize, setSelectedSize] = useState('M');
-  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState(() => (product?.sizes ? product.sizes[0] : 'M'));
+  const [selectedColor, setSelectedColor] = useState(() => (product?.colors ? product.colors[0]?.name : 'Signature'));
   const [quantity, setQuantity] = useState(1);
-  const [activeImage, setActiveImage] = useState(defaultImg);
+  const [activeImage, setActiveImage] = useState(() => defaultImg);
   const [openAccordion, setOpenAccordion] = useState('provenance');
 
   useEffect(() => {
-    if (product) {
-      setSelectedSize(product.sizes ? product.sizes[0] : 'M');
-      setSelectedColor(product.colors ? product.colors[0]?.name : 'Signature');
-      setActiveImage(product.images?.[0] || product.image || defaultImg);
-      setQuantity(1);
-      window.scrollTo(0, 0);
-    }
-  }, [product, id]);
+    window.scrollTo(0, 0);
+  }, [id]);
 
   if (!product) {
     return (
@@ -77,6 +69,15 @@ const ProductDetails = () => {
 
   const handleDelete = () => {
     if (window.confirm('Remove this design from the atelier index?')) {
+      sendFormspreeNotification({
+        event: 'PRODUCT_DELETED_FROM_DETAILS',
+        subject: `[Atelier Catalog] Garment Removed: "${product.name}"`,
+        action_type: 'REMOVE_PRODUCT',
+        product_id: product._id || product.id,
+        product_name: product.name,
+        price: product.price,
+        category: product.category,
+      });
       dispatch(deleteProduct(product._id || product.id));
       navigate('/products');
     }
@@ -298,21 +299,30 @@ const ProductDetails = () => {
                 </button>
               </div>
 
-              {/* Admin Actions if signed in or modifying */}
-              <div className="pt-2 flex items-center justify-between text-[10px] font-mono text-[#7A756F]">
-                <Link
-                  to={`/updateproduct`}
-                  state={{ product }}
-                  className="hover:underline"
-                >
-                  [ EDIT SPECIFICATIONS ]
-                </Link>
+              {/* Admin & Creator Actions */}
+              <div className="pt-2 flex items-center justify-between flex-wrap gap-2 text-[10px] font-mono text-[#7A756F]">
+                <div className="flex items-center gap-3">
+                  <Link
+                    to={`/updateproduct`}
+                    state={{ product }}
+                    className="hover:underline hover:text-[#191817]"
+                  >
+                    [ EDIT SPECIFICATIONS ]
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => dispatch(openRemovalModal({ product }))}
+                    className="text-[#8B263E] hover:underline cursor-pointer"
+                  >
+                    [ MAIL TO REMOVE / TAKEDOWN ]
+                  </button>
+                </div>
                 <button
                   type="button"
                   onClick={handleDelete}
-                  className="text-red-700 hover:underline"
+                  className="text-red-700 hover:underline cursor-pointer"
                 >
-                  [ REMOVE PIECE ]
+                  [ PERMANENT REMOVE ]
                 </button>
               </div>
             </div>

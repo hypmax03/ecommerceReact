@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Printer, Copy, Check, ArrowUpRight, ArrowLeft } from 'iconoir-react';
+import { Printer, Copy, Check, ArrowUpRight } from 'iconoir-react';
 import Tape from './Tape';
 
 const ReceiptBill = ({ receipt, onReset }) => {

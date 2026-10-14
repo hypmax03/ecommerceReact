@@ -1,9 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowUpRight } from 'iconoir-react';
 import Tape from '../components/Tape';
-import Polaroid from '../components/Polaroid';
 import HandwrittenNote from '../components/HandwrittenNote';
 import { EDITORIAL_STORIES } from '../data/fashionProducts';
 

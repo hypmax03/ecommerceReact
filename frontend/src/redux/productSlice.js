@@ -4,6 +4,7 @@ import api from "../api/apiClient";
 const initialState = {
   products: [],
   allAdminProducts: [],
+  mySubmissions: [],
   adminStats: {
     total: 0,
     pending: 0,
@@ -31,6 +32,18 @@ export const getAdminDashboard = createAsyncThunk(
     try {
       const response = await api.get("/api/product/admin/dashboard");
       return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
+export const getMySubmissions = createAsyncThunk(
+  "product/getMySubmissions",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/api/product/my-submissions");
+      return response.data?.submissions || [];
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
     }
@@ -154,6 +167,11 @@ const productSlice = createSlice({
           } else {
             state.products.unshift(approved);
           }
+          // Update in user's own submissions list
+          const mySubIdx = state.mySubmissions.findIndex((p) => p._id === approved._id);
+          if (mySubIdx !== -1) {
+            state.mySubmissions[mySubIdx] = approved;
+          }
           // Adjust stats
           if (state.adminStats.pending > 0) state.adminStats.pending -= 1;
           state.adminStats.approved += 1;
@@ -168,6 +186,11 @@ const productSlice = createSlice({
           }
           // Remove from public live products if it was there
           state.products = state.products.filter((p) => p._id !== rejected._id);
+          // Update in user's own submissions list
+          const mySubIdx = state.mySubmissions.findIndex((p) => p._id === rejected._id);
+          if (mySubIdx !== -1) {
+            state.mySubmissions[mySubIdx] = rejected;
+          }
           if (state.adminStats.pending > 0) state.adminStats.pending -= 1;
           state.adminStats.rejected += 1;
         }
@@ -179,6 +202,7 @@ const productSlice = createSlice({
         state.loading = false;
         if (action.payload) {
           state.allAdminProducts.unshift(action.payload);
+          state.mySubmissions.unshift(action.payload);
           if (action.payload.status === "approved") {
             state.products.unshift(action.payload);
           }
@@ -196,6 +220,10 @@ const productSlice = createSlice({
         const id = action.payload;
         state.products = state.products.filter((v) => (v._id || v.id) !== id);
         state.allAdminProducts = state.allAdminProducts.filter((v) => (v._id || v.id) !== id);
+        state.mySubmissions = state.mySubmissions.filter((v) => (v._id || v.id) !== id);
+      })
+      .addCase(getMySubmissions.fulfilled, (state, action) => {
+        state.mySubmissions = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(updateProduct.fulfilled, (state, action) => {
         const updated = action.payload?.updatedProduct || action.payload;

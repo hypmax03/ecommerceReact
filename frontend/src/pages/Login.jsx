@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { ArrowUpRight, ShieldCheck, Mail, Lock } from 'iconoir-react';
+import { ArrowUpRight } from 'iconoir-react';
 import { loginUser } from '../redux/userSlice';
 import Tape from '../components/Tape';
 import HandwrittenNote from '../components/HandwrittenNote';

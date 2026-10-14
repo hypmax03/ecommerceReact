@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowUpRight, CheckCircle, Mail, ShieldCheck, Xmark } from 'iconoir-react';
 import { addProduct } from '../redux/productSlice';
+import { sendFormspreeNotification } from '../utils/formspree';
 import Tape from './Tape';
-import HandwrittenNote from './HandwrittenNote';
 
 function ProductForm() {
   const dispatch = useDispatch();
@@ -75,7 +75,54 @@ function ProductForm() {
       });
 
       // Dispatch directly to Redux + Backend Database
-      await dispatch(addProduct(productPayload)).unwrap();
+      const result = await dispatch(addProduct(productPayload)).unwrap();
+
+      // Cache locally for instant feedback on Account page
+      try {
+        const localKey = `atelier_submissions_${user?.email || 'guest'}`;
+        const previous = JSON.parse(localStorage.getItem(localKey) || '[]');
+        const localItem = {
+          _id: result?._id || result?.id || `sub_${Date.now()}`,
+          name: formData.name,
+          price: Number(formData.price),
+          category: formData.category || 'Occasionwear',
+          gender: formData.gender,
+          material: formData.material,
+          description: formData.description,
+          status: isAdmin ? 'approved' : 'pending',
+          rejectionReason: '',
+          image: result?.image || (result?.images && result?.images[0]) || '',
+          images: result?.images || [],
+          submittedBy: {
+            name: formData.submitterName || user?.name || 'Atelier Client',
+            email: formData.submitterEmail || user?.email || '',
+            note: formData.submitterNote || '',
+          },
+          createdAt: new Date().toISOString(),
+        };
+        localStorage.setItem(localKey, JSON.stringify([localItem, ...previous.filter((p) => p._id !== localItem._id)]));
+      } catch (cacheErr) {
+        console.warn('Could not cache submission locally', cacheErr);
+      }
+
+      // Dispatch real-time Formspree email notification to site owner
+      sendFormspreeNotification({
+        event: isAdmin ? 'ADMIN_PRODUCT_PUBLISHED' : 'NEW_GARMENT_PROPOSAL',
+        subject: `[Atelier Alert] New Garment Added: "${formData.name}" (Status: ${isAdmin ? 'Live' : 'Pending Review'})`,
+        action_type: 'ADD_PRODUCT_ATTEMPT',
+        product_name: formData.name,
+        price: `₹${Number(formData.price).toLocaleString('en-IN')}`,
+        category: formData.category || 'Occasionwear',
+        gender: formData.gender,
+        material: formData.material || 'Not specified',
+        stock: formData.stock || 1,
+        description: formData.description || 'No description provided',
+        submitter_name: formData.submitterName || user?.name || 'Anonymous Submitter',
+        submitter_email: formData.submitterEmail || user?.email || 'No email provided',
+        submitter_notes: formData.submitterNote || 'None',
+        images_count: formData.images.length,
+        moderation_status: isAdmin ? 'Directly Published' : 'Queued for Moderation',
+      });
 
       setLastSubmitted({
         name: formData.name,
@@ -190,7 +237,7 @@ function ProductForm() {
                   <p className="font-sans text-xs text-[#5C5751] font-light leading-relaxed max-w-md mx-auto">
                     {isAdmin
                       ? 'Your piece has been added directly to the active catalog and is now live across the storefront.'
-                      : 'Your garment details have been securely recorded and dispatched to the Atelier Administrator Dashboard for curation review.'}
+                      : 'Your garment details have been securely recorded and dispatched for curation review. You will receive an instant approval or rejection notification with curator notes on your Account page under "My Garment Dockets".'}
                   </p>
                 </div>
 

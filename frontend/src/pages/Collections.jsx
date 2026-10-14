@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowUpRight, Plus } from 'iconoir-react';
 import Tape from '../components/Tape';
 import HandwrittenNote from '../components/HandwrittenNote';

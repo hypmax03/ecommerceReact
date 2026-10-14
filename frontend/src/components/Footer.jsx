@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ArrowUpRight, Check, Mail, ArrowUp, Pin, Camera, Heart } from 'iconoir-react';
+import { openRemovalModal } from '../redux/cartSlice';
 
 const Footer = () => {
+  const dispatch = useDispatch();
   const { products } = useSelector((state) => state.product || { products: [] });
   const { user } = useSelector((state) => state.user || { user: null });
   const isAdmin = user?.role === 'admin' || user?.email?.toLowerCase().includes('admin');
@@ -284,13 +286,21 @@ const Footer = () => {
                   <p className="font-sans text-[11px] leading-relaxed text-white/60 font-light">
                     If you are the copyright holder or creator of any image displayed on this site and would like your work credited differently, or prefer it to be removed, please send a gentle note to our contact desk. We will honor your request and take it down immediately with gratitude.
                   </p>
-                  <div className="pt-1">
+                  <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => dispatch(openRemovalModal({ reasonType: 'Takedown / Copyright Request' }))}
+                      className="inline-flex items-center gap-1.5 font-mono text-[10px] text-[#191817] bg-[#E3D5B8] hover:bg-white px-3 py-1.5 uppercase tracking-wider font-bold transition-colors cursor-pointer shadow-sm"
+                    >
+                      <Mail width={12} height={12} />
+                      <span>MAIL TO REMOVE PRODUCTS</span>
+                    </button>
                     <a
                       href="mailto:concierge@elora.com?subject=Image%20Attribution%20or%20Removal%20Request"
-                      className="inline-flex items-center gap-1.5 font-mono text-[10px] text-[#E3D5B8] uppercase tracking-wider hover:underline"
+                      className="inline-flex items-center gap-1 font-mono text-[9px] text-white/50 hover:text-white uppercase tracking-wider underline transition-colors"
                     >
-                      <span>→ REQUEST REMOVAL OR ATTRIBUTION</span>
-                      <ArrowUpRight width={11} height={11} />
+                      <span>Direct Email</span>
+                      <ArrowUpRight width={10} height={10} />
                     </a>
                   </div>
                 </div>
@@ -299,7 +309,7 @@ const Footer = () => {
               {/* Bottom Subtle Note Bar */}
               <div className="pt-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] font-mono text-white/40">
                 <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+
                   <span>CURATED WITH RESPECT &amp; APPRECIATION</span>
                 </div>
                 <span className="font-handwriting text-sm text-[#E3D5B8]/80 text-center">
@@ -316,7 +326,6 @@ const Footer = () => {
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-white/40 text-xs font-mono">
             <div className="flex items-center gap-3">
               <span>© {new Date().getFullYear()} ELORA</span>
-              <span>•</span>
               <span className="font-serif italic text-white/60 text-xs">
                 A non-commercial visual lookbook &amp; aesthetic tribute
               </span>

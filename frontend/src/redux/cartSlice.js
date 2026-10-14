@@ -14,6 +14,7 @@ const initialState = {
   isCartOpen: false,
   isSearchOpen: false,
   quickViewProduct: null,
+  removalModalData: null, // { product?: object, title?: string, id?: string }
   toast: null,
   promo: null, // { code: 'ATELIER10', discountPercent: 10, discountAmount: 0, label: '10% Atelier Courtesy' }
   orderNote: "",
@@ -147,6 +148,18 @@ const cartSlice = createSlice({
       state.quickViewProduct = action.payload;
     },
 
+    openRemovalModal: (state, action) => {
+      state.removalModalData = action.payload || {};
+    },
+
+    closeRemovalModal: (state) => {
+      state.removalModalData = null;
+    },
+
+    showToast: (state, action) => {
+      state.toast = action.payload;
+    },
+
     clearToast: (state) => {
       state.toast = null;
     },
@@ -164,6 +177,9 @@ export const {
   toggleCart,
   toggleSearch,
   setQuickViewProduct,
+  openRemovalModal,
+  closeRemovalModal,
+  showToast,
   clearToast,
 } = cartSlice.actions;
 

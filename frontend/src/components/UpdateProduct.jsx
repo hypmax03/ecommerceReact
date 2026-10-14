@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowLeft, ArrowUpRight } from 'iconoir-react';
@@ -14,17 +14,17 @@ const UpdateProduct = () => {
   const product = location.state?.product;
   const reduxProducts = useSelector((state) => state.product?.products || []);
 
-  const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    category: 'Evening Gowns',
-    gender: 'Women',
-    image: '',
-    hoverImage: '',
-    description: '',
-    material: '',
-    madeIn: 'Como, Italy',
-  });
+  const [formData, setFormData] = useState(() => ({
+    name: product?.name || '',
+    price: product?.price || '',
+    category: product?.category || 'Evening Gowns',
+    gender: product?.gender || 'Women',
+    image: product?.image || '',
+    hoverImage: product?.hoverImage || '',
+    description: product?.description || '',
+    material: product?.material || '',
+    madeIn: product?.madeIn || 'Como, Italy',
+  }));
 
   const [customCategories, setCustomCategories] = useState([]);
   const [isCreatingCategory, setIsCreatingCategory] = useState(false);
@@ -38,9 +38,7 @@ const UpdateProduct = () => {
   }, [customCategories, reduxProducts, product]);
 
   const [primaryUploadMode, setPrimaryUploadMode] = useState('file'); // 'file' | 'url'
-  const [hoverUploadMode, setHoverUploadMode] = useState('url'); // 'file' | 'url'
   const [isDraggingPrimary, setIsDraggingPrimary] = useState(false);
-  const [isDraggingHover, setIsDraggingHover] = useState(false);
 
   const handleFileUpload = (file, fieldName) => {
     if (!file) return;
@@ -75,22 +73,6 @@ const UpdateProduct = () => {
     setIsCreatingCategory(false);
     setNewCategoryInput('');
   };
-
-  useEffect(() => {
-    if (product) {
-      setFormData({
-        name: product.name || '',
-        price: product.price || '',
-        category: product.category || 'Evening Gowns',
-        gender: product.gender || 'Women',
-        image: product.image || '',
-        hoverImage: product.hoverImage || '',
-        description: product.description || '',
-        material: product.material || '',
-        madeIn: product.madeIn || 'Como, Italy',
-      });
-    }
-  }, [product]);
 
   if (!product) {
     return (

@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Plus } from 'iconoir-react';
+import { ArrowUpRight } from 'iconoir-react';
 import HeroScrapbook from '../components/HeroScrapbook';
 import EditorialSection from '../components/EditorialSection';
 import HorizontalCollection from '../components/HorizontalCollection';
 import ProductCard from '../components/ProductCard';
-import Tape from '../components/Tape';
 import HandwrittenNote from '../components/HandwrittenNote';
 import { getProduct } from '../redux/productSlice';
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -7,19 +7,22 @@ import {
   Minus,
   ArrowUpRight,
   ArrowLeft,
-  Check,
   ShoppingBag,
   Xmark,
   CreditCard,
   QrCode,
   Bank,
   Cash,
-  ShieldCheck,
 } from 'iconoir-react';
+import api from '../api/apiClient';
 import { removeFromCart, updateQuantity, clearCart, applyPromo, removePromo, setOrderNote } from '../redux/cartSlice';
 import Tape from '../components/Tape';
 import HandwrittenNote from '../components/HandwrittenNote';
 import ReceiptBill from '../components/ReceiptBill';
+
+const createDocketId = () => {
+  return `ELO-${Math.floor(100000 + Math.random() * 900000)}`;
+};
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -34,12 +37,11 @@ const Cart = () => {
   const [clientEmail, setClientEmail] = useState('');
   const [clientPhone, setClientPhone] = useState('');
 
-  // Fake Payment Option State
+  // Payment Option State
   const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' | 'upi' | 'netbanking' | 'cod'
   const [cardNumber, setCardNumber] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvv, setCardCvv] = useState('');
-  const [cardHolder, setCardHolder] = useState('');
   const [upiId, setUpiId] = useState('atelier.client@elora');
   const [selectedBank, setSelectedBank] = useState('HDFC');
 
@@ -51,7 +53,6 @@ const Cart = () => {
     setCardNumber('4242 4242 4242 4242');
     setCardExpiry('12/28');
     setCardCvv('888');
-    setCardHolder(clientName || 'JANE ATELIER');
   };
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -85,7 +86,7 @@ const Cart = () => {
     }
   };
 
-  const handleCheckout = (e) => {
+  const handleCheckout = async (e) => {
     e.preventDefault();
     if (!clientName.trim() || !clientAddress.trim()) {
       alert('Please provide your name and delivery address.');
@@ -97,14 +98,14 @@ const Cart = () => {
     }
 
     setIsProcessing(true);
-    const generatedId = `ELO-${Math.floor(100000 + Math.random() * 900000)}`;
+    const generatedId = createDocketId();
 
     const snapshotReceipt = {
       orderDocketId: generatedId,
-      clientName,
-      clientAddress,
-      clientEmail,
-      clientPhone,
+      clientName: clientName.trim(),
+      clientAddress: clientAddress.trim(),
+      clientEmail: clientEmail.trim(),
+      clientPhone: clientPhone.trim(),
       items: [...items],
       subtotal,
       discountAmount,
@@ -116,6 +117,45 @@ const Cart = () => {
       cardLast4: cardNumber ? cardNumber.replace(/\s+/g, '').slice(-4) : '4242',
       orderDate: new Date(),
     };
+
+    // 1. Send Order to backend MongoDB API (logs order and decrements inventory)
+    try {
+      const orderPayload = {
+        orderDocketId: generatedId,
+        clientName: clientName.trim(),
+        clientAddress: clientAddress.trim(),
+        clientEmail: clientEmail.trim(),
+        clientPhone: clientPhone.trim(),
+        items: items.map((it) => ({
+          id: it.id || it._id,
+          name: it.name,
+          price: it.price,
+          quantity: it.quantity,
+          size: it.size,
+          color: it.color,
+          image: it.image,
+        })),
+        subtotal,
+        discountAmount,
+        shipping,
+        grandTotal,
+        promo,
+        orderNote,
+        paymentMethod,
+      };
+      await api.post('/api/order/create', orderPayload);
+    } catch (orderApiErr) {
+      console.warn('Backend order logging (offline/local fallback):', orderApiErr.message);
+    }
+
+    // 2. Cache order locally for instant client access
+    try {
+      const ordersKey = `atelier_orders_${clientEmail.trim() || 'guest'}`;
+      const previousOrders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
+      localStorage.setItem(ordersKey, JSON.stringify([snapshotReceipt, ...previousOrders]));
+    } catch (cacheErr) {
+      console.warn('Could not cache order locally:', cacheErr);
+    }
 
     setReceiptData(snapshotReceipt);
 

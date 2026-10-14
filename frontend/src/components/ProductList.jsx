@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
-import { Filter, ArrowUpRight, Refresh } from 'iconoir-react';
+import { ArrowUpRight } from 'iconoir-react';
 import ProductCard from './ProductCard';
 import Tape from './Tape';
 import HandwrittenNote from './HandwrittenNote';
@@ -12,25 +12,17 @@ import { getProduct } from '../redux/productSlice';
 const ProductList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
-  const { products, loading } = useSelector((state) => state.product || { products: [] });
+  const { products } = useSelector((state) => state.product || { products: [] });
 
-  const genderParam = searchParams.get('gender') || 'All';
-  const categoryParam = searchParams.get('category') || 'All';
+  const selectedGender = searchParams.get('gender') || 'All';
+  const selectedCategory = searchParams.get('category') || 'All';
   const sortParam = searchParams.get('sort') || 'featured';
 
-  const [selectedGender, setSelectedGender] = useState(genderParam);
-  const [selectedCategory, setSelectedCategory] = useState(categoryParam);
   const [sortBy, setSortBy] = useState(sortParam);
-  const [showFiltersMobile, setShowFiltersMobile] = useState(false);
 
   useEffect(() => {
     dispatch(getProduct({ status: 'approved' }));
   }, [dispatch]);
-
-  useEffect(() => {
-    setSelectedGender(searchParams.get('gender') || 'All');
-    setSelectedCategory(searchParams.get('category') || 'All');
-  }, [searchParams]);
 
   const updateFilters = (gender, category, sort) => {
     const params = {};
@@ -118,8 +110,6 @@ const ProductList = () => {
                 key={gender}
                 type="button"
                 onClick={() => {
-                  setSelectedGender(gender);
-                  setSelectedCategory('All');
                   updateFilters(gender, 'All', sortBy);
                 }}
                 className={`font-mono text-xs uppercase tracking-wider px-3 py-1.5 border transition-colors ${
@@ -138,7 +128,6 @@ const ProductList = () => {
             <select
               value={selectedCategory}
               onChange={(e) => {
-                setSelectedCategory(e.target.value);
                 updateFilters(selectedGender, e.target.value, sortBy);
               }}
               className="bg-[#FAF7F2] border border-[#2C2A29]/20 px-3 py-1.5 font-mono text-xs text-[#191817] focus:outline-none uppercase tracking-wider"
@@ -176,8 +165,6 @@ const ProductList = () => {
             <button
               type="button"
               onClick={() => {
-                setSelectedGender('All');
-                setSelectedCategory('All');
                 setSortBy('featured');
                 setSearchParams({});
               }}
@@ -218,8 +205,7 @@ const ProductList = () => {
             <button
               type="button"
               onClick={() => {
-                setSelectedGender('All');
-                setSelectedCategory('All');
+                setSortBy('featured');
                 setSearchParams({});
               }}
               className="mt-6 bg-[#191817] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest px-6 py-3 cursor-pointer"

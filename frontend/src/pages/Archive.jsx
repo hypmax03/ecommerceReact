@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Plus } from 'iconoir-react';
+import { Plus } from 'iconoir-react';
 import Tape from '../components/Tape';
 import Polaroid from '../components/Polaroid';
 import HandwrittenNote from '../components/HandwrittenNote';

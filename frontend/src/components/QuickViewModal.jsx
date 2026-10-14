@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Xmark, ShoppingBag, Check } from 'iconoir-react';
@@ -10,17 +10,9 @@ const QuickViewModal = () => {
   const dispatch = useDispatch();
   const product = useSelector((state) => state.cart?.quickViewProduct);
 
-  const [selectedSize, setSelectedSize] = useState('M');
-  const [selectedColor, setSelectedColor] = useState('');
-  const [quantity, setQuantity] = useState(1);
-
-  useEffect(() => {
-    if (product) {
-      setSelectedSize(product.sizes ? product.sizes[0] : 'M');
-      setSelectedColor(product.colors ? product.colors[0]?.name : 'Signature');
-      setQuantity(1);
-    }
-  }, [product]);
+  const [selectedSize, setSelectedSize] = useState(() => (product?.sizes ? product.sizes[0] : 'M'));
+  const [selectedColor, setSelectedColor] = useState(() => (product?.colors ? product.colors[0]?.name : 'Signature'));
+  const [quantity] = useState(1);
 
   if (!product) return null;
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,8 +13,12 @@ const Navbar = () => {
 
   const cartItems = useSelector((state) => state.cart?.items || []);
   const user = useSelector((state) => state.user?.user);
+  const mySubmissions = useSelector((state) => state.product?.mySubmissions || []);
   const isAdmin = user?.role === 'admin' || user?.email?.toLowerCase().includes('admin');
   const totalCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
+  const hasRejectedSubmissions = mySubmissions.some((s) => s.status === 'rejected');
+  const hasApprovedSubmissions = mySubmissions.some((s) => s.status === 'approved');
 
   const navLinks = [
     { label: 'COLLECTIONS', to: '/products' },
@@ -32,7 +36,10 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    setIsMobileMenuOpen(false);
+    const timer = setTimeout(() => {
+      setIsMobileMenuOpen(false);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [location.pathname, location.search]);
 
   return (
@@ -147,6 +154,18 @@ const Navbar = () => {
                 )}
                 {!user && (
                   <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-[#A66551]" />
+                )}
+                {user && hasRejectedSubmissions && (
+                  <span
+                    className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#D94F65] border border-white animate-pulse"
+                    title="Submission rejected — see feedback on Account page"
+                  />
+                )}
+                {user && !hasRejectedSubmissions && hasApprovedSubmissions && (
+                  <span
+                    className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#2E5A36] border border-white"
+                    title="Submission approved & published!"
+                  />
                 )}
               </div>
               {user ? (

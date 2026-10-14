@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Check,
   Xmark,
@@ -18,8 +18,8 @@ import {
   rejectProduct,
   deleteProduct,
 } from '../redux/productSlice';
+import { sendFormspreeNotification } from '../utils/formspree';
 import Tape from '../components/Tape';
-import HandwrittenNote from '../components/HandwrittenNote';
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (isAdmin) {
-      refreshDashboard();
+      dispatch(getAdminDashboard());
     }
   }, [dispatch, isAdmin]);
 
@@ -50,6 +50,18 @@ const AdminDashboard = () => {
   };
 
   const handleReject = async (id) => {
+    const product = allAdminProducts.find((p) => (p._id || p.id) === id);
+    sendFormspreeNotification({
+      event: 'PRODUCT_REJECTED_BY_ADMIN',
+      subject: `[Atelier Moderation] Garment Submission Rejected: "${product?.name || id}"`,
+      action_type: 'REJECT_PRODUCT',
+      product_id: id,
+      product_name: product?.name || 'Unknown',
+      rejection_reason: rejectionReason,
+      submitter_email: product?.submittedBy?.email || 'N/A',
+      curator_name: user?.name || user?.email || 'Administrator',
+    });
+
     await dispatch(rejectProduct({ id, reason: rejectionReason }));
     setRejectingId(null);
     setActionSuccessMessage('✕ Garment submission rejected.');
@@ -58,7 +70,19 @@ const AdminDashboard = () => {
   };
 
   const handleDelete = async (id) => {
+    const product = allAdminProducts.find((p) => (p._id || p.id) === id);
     if (window.confirm('Are you sure you want to permanently delete this garment from the database?')) {
+      sendFormspreeNotification({
+        event: 'PRODUCT_DELETED_BY_ADMIN',
+        subject: `[Atelier Inventory] Garment Permanently Deleted: "${product?.name || id}"`,
+        action_type: 'REMOVE_PRODUCT',
+        product_id: id,
+        product_name: product?.name || 'Unknown',
+        price: product?.price ? `₹${Number(product.price).toLocaleString('en-IN')}` : 'N/A',
+        category: product?.category || 'N/A',
+        deleted_by: user?.name || user?.email || 'Administrator',
+      });
+
       await dispatch(deleteProduct(id));
       setActionSuccessMessage('Garment permanently removed from database.');
       setTimeout(() => setActionSuccessMessage(''), 3500);
