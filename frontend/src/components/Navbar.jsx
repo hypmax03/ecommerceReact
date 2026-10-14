@@ -8,9 +8,9 @@ import { toggleCart, toggleSearch } from '../redux/cartSlice';
 const navLinks = [
   { label: 'COLLECTIONS', to: '/products' },
   { label: 'LOOKBOOK', to: '/collections' },
-  { label: 'BAGS', to: '/bags' },
   { label: 'ABOUT', to: '/about' },
   { label: 'ARCHIVE', to: '/archive' },
+  { label: 'BAG', to: '/cart' },
   { label: 'CURATOR ADMIN', to: '/admin' },
 ];
 

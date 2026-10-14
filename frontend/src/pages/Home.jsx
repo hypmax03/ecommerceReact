@@ -6,8 +6,8 @@ import { ArrowUpRight, Plus } from 'iconoir-react';
 import HeroScrapbook from '../components/HeroScrapbook';
 import EditorialSection from '../components/EditorialSection';
 import HorizontalCollection from '../components/HorizontalCollection';
-import BagSection from '../components/BagSection';
 import ProductCard from '../components/ProductCard';
+import CartSection from '../components/CartSection';
 import Tape from '../components/Tape';
 import HandwrittenNote from '../components/HandwrittenNote';
 import { getProduct } from '../redux/productSlice';
@@ -46,10 +46,7 @@ const Home = () => {
       {/* 3. Broken-Grid Editorial Section ("WHAT WE KEEP.") */}
       <EditorialSection />
 
-      {/* 4. Atelier Bags & Leather Goods Section */}
-      <BagSection />
-
-      {/* 5. Featured Catalog Pinboard (Dynamic Real Products) */}
+      {/* 4. Featured Catalog Pinboard (Dynamic Real Products) */}
       <section className="py-24 sm:py-32 px-6 sm:px-8 lg:px-12 bg-[#FAF7F2] border-b border-[#2C2A29]/10 relative">
         <div className="max-w-7xl mx-auto">
           {/* Header with Gender Filter Tabs */}
@@ -161,7 +158,10 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 7. Scrapbook Studio Invitation Box */}
+      {/* 5. Scrapbook Sartorial Bag & Order Docket Section */}
+      <CartSection />
+
+      {/* 6. Scrapbook Studio Invitation Box */}
       <section className="py-20 px-6 sm:px-8 lg:px-12 bg-[#F5EFE6]">
         <div className="max-w-4xl mx-auto bg-[#FDFCF9] p-8 sm:p-12 border border-[#2C2A29]/15 shadow-[0_12px_40px_rgba(0,0,0,0.06)] relative text-center">
           <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 pointer-events-none">

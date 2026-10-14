@@ -26,7 +26,7 @@ const Login = () => {
     );
     if (res.meta.requestStatus === 'fulfilled') {
       const user = res.payload?.user;
-      if (user?.role === 'admin' || user?.email?.toLowerCase().includes('admin')) {
+      if (user?.role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/');
@@ -71,7 +71,7 @@ const Login = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="e.g. admin@elora.com"
+              placeholder=""
               className="w-full bg-[#FAF7F2] border border-[#2C2A29]/20 px-3.5 py-3 font-sans text-xs text-[#191817] focus:outline-none focus:border-[#191817]"
             />
           </div>
@@ -85,7 +85,7 @@ const Login = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder=""
               className="w-full bg-[#FAF7F2] border border-[#2C2A29]/20 px-3.5 py-3 font-sans text-xs text-[#191817] focus:outline-none focus:border-[#191817]"
             />
           </div>

@@ -29,7 +29,7 @@ const Register = () => {
 
     if (res.meta.requestStatus === 'fulfilled') {
       const user = res.payload?.user;
-      if (user?.role === 'admin' || user?.email?.toLowerCase().includes('admin')) {
+      if (user?.role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/account');
@@ -88,7 +88,7 @@ const Register = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="e.g. elena@atelier.com"
+              placeholder=""
               className="w-full bg-[#FAF7F2] border border-[#2C2A29]/20 px-3.5 py-3 font-sans text-xs text-[#191817] focus:outline-none focus:border-[#191817]"
             />
           </div>

@@ -24,7 +24,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Account from './pages/Account';
 import AdminDashboard from './pages/AdminDashboard';
-import Bags from './pages/Bags';
 
 // Redux
 import { getUser } from './redux/userSlice';
@@ -65,7 +64,6 @@ function App() {
           <Route path="/archive" element={<Archive />} />
           <Route path="/about" element={<About />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/bags" element={<Bags />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/account" element={<Account />} />

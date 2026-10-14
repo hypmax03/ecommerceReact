@@ -15,6 +15,8 @@ const initialState = {
   isSearchOpen: false,
   quickViewProduct: null,
   toast: null,
+  promo: null, // { code: 'ATELIER10', discountPercent: 10, discountAmount: 0, label: '10% Atelier Courtesy' }
+  orderNote: "",
 };
 
 const cartSlice = createSlice({
@@ -26,6 +28,9 @@ const cartSlice = createSlice({
       const chosenColor = color || (product.colors && product.colors[0]?.name) || "Signature";
       const itemKey = `${product._id || product.id}_${size}_${chosenColor}`;
 
+      const primaryImage =
+        (product.images && product.images.length > 0 ? product.images[0] : product.image) || "";
+
       const existingIndex = state.items.findIndex((item) => item.key === itemKey);
       if (existingIndex > -1) {
         state.items[existingIndex].quantity += quantity;
@@ -34,13 +39,14 @@ const cartSlice = createSlice({
           key: itemKey,
           id: product._id || product.id,
           name: product.name,
-          price: product.price,
-          image: product.image,
-          category: product.category,
-          gender: product.gender,
+          price: Number(product.price) || 0,
+          image: primaryImage,
+          category: product.category || "Atelier Occasionwear",
+          gender: product.gender || "Women",
           size,
           color: chosenColor,
           quantity,
+          material: product.material || "",
           edition: product.edition || "COLLECTION 2026",
         });
       }
@@ -89,11 +95,44 @@ const cartSlice = createSlice({
 
     clearCart: (state) => {
       state.items = [];
+      state.promo = null;
+      state.orderNote = "";
       try {
         localStorage.removeItem("atelier_cart");
       } catch (err) {
         console.error("Cart storage error", err);
       }
+    },
+
+    applyPromo: (state, action) => {
+      const code = String(action.payload || "").trim().toUpperCase();
+      if (code === "ATELIER10") {
+        state.promo = {
+          code: "ATELIER10",
+          discountPercent: 10,
+          label: "10% Curated Client Privilege",
+        };
+      } else if (code === "ELORA2026" || code === "ELORA500") {
+        state.promo = {
+          code: "ELORA500",
+          discountAmount: 500,
+          label: "₹500 Atelier Welcome Gift",
+        };
+      } else if (code === "FREESHIP") {
+        state.promo = {
+          code: "FREESHIP",
+          freeShipping: true,
+          label: "Complimentary Global Delivery",
+        };
+      }
+    },
+
+    removePromo: (state) => {
+      state.promo = null;
+    },
+
+    setOrderNote: (state, action) => {
+      state.orderNote = action.payload || "";
     },
 
     toggleCart: (state, action) => {
@@ -119,6 +158,9 @@ export const {
   removeFromCart,
   updateQuantity,
   clearCart,
+  applyPromo,
+  removePromo,
+  setOrderNote,
   toggleCart,
   toggleSearch,
   setQuickViewProduct,

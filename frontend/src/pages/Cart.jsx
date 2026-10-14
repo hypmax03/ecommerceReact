@@ -1,23 +1,60 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Trash, Plus, Minus, ArrowUpRight, ArrowLeft, Check, ShoppingBag } from 'iconoir-react';
-import { removeFromCart, updateQuantity, clearCart } from '../redux/cartSlice';
+import { Trash, Plus, Minus, ArrowUpRight, ArrowLeft, Check, ShoppingBag, Xmark } from 'iconoir-react';
+import { removeFromCart, updateQuantity, clearCart, applyPromo, removePromo, setOrderNote } from '../redux/cartSlice';
 import Tape from '../components/Tape';
 import HandwrittenNote from '../components/HandwrittenNote';
 
 const Cart = () => {
   const dispatch = useDispatch();
-  const { items } = useSelector((state) => state.cart || { items: [] });
+  const { items, promo, orderNote } = useSelector((state) => state.cart || { items: [], promo: null, orderNote: '' });
   const [isOrdered, setIsOrdered] = useState(false);
+  const [orderDocketId, setOrderDocketId] = useState('');
+  const [clientName, setClientName] = useState('');
+  const [clientAddress, setClientAddress] = useState('');
+  const [promoInput, setPromoInput] = useState('');
+  const [promoError, setPromoError] = useState('');
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  const shipping = subtotal >= 8000 || items.length === 0 ? 0 : 250;
-  const total = subtotal + shipping;
+
+  let discountAmount = 0;
+  if (promo) {
+    if (promo.discountPercent) {
+      discountAmount = Math.round((subtotal * promo.discountPercent) / 100);
+    } else if (promo.discountAmount) {
+      discountAmount = Math.min(subtotal, promo.discountAmount);
+    }
+  }
+
+  const freeShippingThreshold = 8000;
+  const isFreeShipping = subtotal >= freeShippingThreshold || promo?.freeShipping || items.length === 0;
+  const shipping = isFreeShipping ? 0 : 250;
+  const grandTotal = Math.max(0, subtotal - discountAmount + shipping);
+
+  const handleApplyPromo = (e) => {
+    e.preventDefault();
+    setPromoError('');
+    const code = promoInput.trim().toUpperCase();
+    if (!code) return;
+
+    if (code === 'ATELIER10' || code === 'ELORA2026' || code === 'ELORA500' || code === 'FREESHIP') {
+      dispatch(applyPromo(code));
+      setPromoInput('');
+    } else {
+      setPromoError('Invalid coupon code. Try ATELIER10 or ELORA500.');
+    }
+  };
 
   const handleCheckout = (e) => {
     e.preventDefault();
+    if (!clientName.trim() || !clientAddress.trim()) {
+      alert('Please provide your name and delivery address.');
+      return;
+    }
+    const generatedId = `ELO-${Math.floor(100000 + Math.random() * 900000)}`;
+    setOrderDocketId(generatedId);
     setIsOrdered(true);
     dispatch(clearCart());
   };
@@ -27,7 +64,7 @@ const Cart = () => {
       <main className="min-h-screen bg-[#FAF7F2] pt-36 pb-24 px-6 sm:px-8 flex items-center justify-center">
         <div className="max-w-lg w-full bg-[#FDFCF9] p-8 sm:p-12 border border-[#2C2A29]/15 shadow-2xl relative text-center">
           <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-            <Tape rotate="-1deg" variant="kraft" text="ORDER DOCKET #2689" width="w-44" />
+            <Tape rotate="-1deg" variant="kraft" text={`ORDER DOCKET #${orderDocketId || '2689'}`} width="w-48" />
           </div>
 
           <div className="w-12 h-12 mx-auto rounded-full bg-[#191817] text-[#FAF7F2] flex items-center justify-center mb-4">
@@ -35,14 +72,18 @@ const Cart = () => {
           </div>
 
           <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#7A756F] block mb-1">
-            ORDER CONFIRMED
+            ORDER CONFIRMED &amp; DISPATCH SCHEDULED
           </span>
           <h2 className="font-serif text-3xl text-[#191817] font-normal mb-3">
-            Thank You for Your Order.
+            Thank You, {clientName || 'Valued Client'}.
           </h2>
 
           <p className="font-sans text-xs sm:text-sm text-[#5C5751] font-light leading-relaxed mb-6">
-            Your order has been confirmed. Each piece will be carefully inspected, hand-pressed, and dispatched in recyclable packaging with garment care instructions.
+            Your order <strong>#{orderDocketId}</strong> has been logged in the atelier registry. Each piece will be hand-inspected, steam-pressed, and dispatched in recyclable packaging with garment care instructions to:
+            <br />
+            <span className="font-mono text-xs text-[#191817] block mt-2 bg-[#EFE8DC] p-2 border border-[#D1C9BC]">
+              {clientAddress}
+            </span>
           </p>
 
           <div className="p-4 bg-[#F5EFE6] border border-[#2C2A29]/10 text-left font-mono text-xs space-y-1 mb-6">
@@ -118,12 +159,17 @@ const Cart = () => {
                   className="bg-[#FDFCF9] p-4 sm:p-6 border border-[#2C2A29]/15 shadow-sm flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between"
                 >
                   <div className="flex gap-4 items-center">
-                    <div className="w-20 h-24 bg-[#ECE8DF] overflow-hidden border border-[#2C2A29]/10 flex-shrink-0">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-cover object-center"
-                      />
+                    <div className="w-20 h-24 bg-[#ECE8DF] overflow-hidden border border-[#2C2A29]/10 flex-shrink-0 flex items-center justify-center">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          className="w-full h-full object-cover object-center"
+                        />
+                      ) : (
+                        <span className="font-mono text-[9px] text-[#7A756F]">[GARMENT]</span>
+                      )}
                     </div>
                     <div>
                       <span className="font-mono text-[9px] uppercase tracking-widest text-[#7A756F]">
@@ -192,9 +238,15 @@ const Cart = () => {
                   <span>SUBTOTAL</span>
                   <span>₹{subtotal.toLocaleString('en-IN')}</span>
                 </div>
+                {promo && discountAmount > 0 && (
+                  <div className="flex justify-between text-[#A66551] font-bold">
+                    <span>VOUCHER ({promo.code})</span>
+                    <span>-₹{discountAmount.toLocaleString('en-IN')}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span>EXPRESS DELIVERY</span>
-                  <span>{shipping === 0 ? 'COMPLIMENTARY' : '₹250'}</span>
+                  <span>{shipping === 0 ? 'COMPLIMENTARY' : `₹${shipping}`}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>PACKAGING</span>
@@ -202,20 +254,77 @@ const Cart = () => {
                 </div>
                 <div className="pt-3 border-t border-dashed border-[#2C2A29]/15 flex justify-between font-bold text-sm text-[#191817]">
                   <span>TOTAL ESTIMATED</span>
-                  <span>₹{total.toLocaleString('en-IN')}</span>
+                  <span>₹{grandTotal.toLocaleString('en-IN')}</span>
                 </div>
+              </div>
+
+              {/* Promo Code Input */}
+              <div className="space-y-2 border-t border-dashed border-[#2C2A29]/15 pt-3">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] block">
+                  PROMO VOUCHER
+                </span>
+                {promo ? (
+                  <div className="flex items-center justify-between bg-[#EFE8DC] p-2 border border-[#D1C9BC] font-mono text-xs">
+                    <span className="font-bold text-[#191817]">{promo.code} ({promo.label})</span>
+                    <button
+                      type="button"
+                      onClick={() => dispatch(removePromo())}
+                      className="text-[#7A756F] hover:text-[#A66551] p-1"
+                    >
+                      <Xmark width={12} height={12} />
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleApplyPromo} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={promoInput}
+                      onChange={(e) => setPromoInput(e.target.value)}
+                      placeholder="e.g. ATELIER10"
+                      className="flex-1 bg-[#FDFCF9] border border-[#2C2A29]/20 px-2.5 py-1.5 font-mono text-xs uppercase focus:outline-none focus:border-[#191817]"
+                    />
+                    <button
+                      type="submit"
+                      className="bg-[#191817] text-[#FAF7F2] font-mono text-xs px-3 py-1.5 uppercase hover:bg-[#2C2A29]"
+                    >
+                      APPLY
+                    </button>
+                  </form>
+                )}
+                {promoError && (
+                  <p className="font-mono text-[10px] text-red-700">{promoError}</p>
+                )}
+              </div>
+
+              {/* Special Tailoring Notes */}
+              <div className="space-y-1">
+                <label htmlFor="cart-notes" className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] block">
+                  PACKAGING &amp; TAILORING NOTE
+                </label>
+                <textarea
+                  id="cart-notes"
+                  rows={2}
+                  value={orderNote}
+                  onChange={(e) => dispatch(setOrderNote(e.target.value))}
+                  placeholder="Optional handwritten note or tailoring instructions"
+                  className="w-full bg-[#FDFCF9] border border-[#2C2A29]/20 p-2 font-sans text-xs focus:outline-none focus:border-[#191817] resize-none"
+                />
               </div>
 
               <form onSubmit={handleCheckout} className="space-y-3 pt-2">
                 <input
                   type="text"
                   required
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
                   placeholder="Full Delivery Name"
                   className="w-full bg-[#FDFCF9] border border-[#2C2A29]/20 px-3.5 py-2.5 font-sans text-xs focus:outline-none focus:border-[#191817]"
                 />
                 <input
                   type="text"
                   required
+                  value={clientAddress}
+                  onChange={(e) => setClientAddress(e.target.value)}
                   placeholder="Delivery Address & Postal Code"
                   className="w-full bg-[#FDFCF9] border border-[#2C2A29]/20 px-3.5 py-2.5 font-sans text-xs focus:outline-none focus:border-[#191817]"
                 />

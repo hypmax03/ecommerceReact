@@ -9,11 +9,24 @@ import HandwrittenNote from './HandwrittenNote';
 
 const CartDrawer = () => {
   const dispatch = useDispatch();
-  const { items, isCartOpen } = useSelector((state) => state.cart || { items: [], isCartOpen: false });
+  const { items, isCartOpen, promo } = useSelector((state) => state.cart || { items: [], isCartOpen: false, promo: null });
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  let discountAmount = 0;
+  if (promo) {
+    if (promo.discountPercent) {
+      discountAmount = Math.round((subtotal * promo.discountPercent) / 100);
+    } else if (promo.discountAmount) {
+      discountAmount = Math.min(subtotal, promo.discountAmount);
+    }
+  }
+
   const freeShippingThreshold = 8000;
+  const isFreeShipping = subtotal >= freeShippingThreshold || promo?.freeShipping || items.length === 0;
+  const shipping = isFreeShipping ? 0 : 250;
+  const grandTotal = Math.max(0, subtotal - discountAmount + shipping);
   const progressToFreeShipping = Math.min(100, (subtotal / freeShippingThreshold) * 100);
 
   return (
@@ -122,12 +135,17 @@ const CartDrawer = () => {
                     className="p-3.5 bg-[#FDFCF9] border border-[#2C2A29]/15 shadow-sm flex gap-4 items-center relative group"
                   >
                     {/* Item Thumbnail */}
-                    <div className="w-20 h-24 flex-shrink-0 bg-[#ECE8DF] overflow-hidden border border-[#2C2A29]/10">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-cover object-center"
-                      />
+                    <div className="w-20 h-24 flex-shrink-0 bg-[#ECE8DF] overflow-hidden border border-[#2C2A29]/10 flex items-center justify-center">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          className="w-full h-full object-cover object-center"
+                        />
+                      ) : (
+                        <span className="font-mono text-[9px] text-[#7A756F]">[ATELIER SWATCH]</span>
+                      )}
                     </div>
 
                     {/* Item Details */}
@@ -197,13 +215,19 @@ const CartDrawer = () => {
                     <span>SUBTOTAL</span>
                     <span>₹{subtotal.toLocaleString('en-IN')}</span>
                   </div>
+                  {promo && discountAmount > 0 && (
+                    <div className="flex items-center justify-between text-xs font-mono text-[#A66551] font-bold">
+                      <span>DISCOUNT ({promo.code})</span>
+                      <span>-₹{discountAmount.toLocaleString('en-IN')}</span>
+                    </div>
+                  )}
                   <div className="flex items-center justify-between text-xs font-mono text-[#7A756F]">
                     <span>ESTIMATED TAX &amp; COURIER</span>
-                    <span>{subtotal >= freeShippingThreshold ? 'FREE' : '₹250'}</span>
+                    <span>{shipping === 0 ? 'COMPLIMENTARY' : `₹${shipping}`}</span>
                   </div>
                   <div className="pt-2 border-t border-dashed border-[#2C2A29]/15 flex items-center justify-between font-mono text-sm font-bold text-[#191817]">
                     <span>TOTAL ESTIMATED</span>
-                    <span>₹{(subtotal + (subtotal >= freeShippingThreshold ? 0 : 250)).toLocaleString('en-IN')}</span>
+                    <span>₹{grandTotal.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 
