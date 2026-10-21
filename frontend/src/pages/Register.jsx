@@ -5,6 +5,7 @@ import { ArrowUpRight } from 'iconoir-react';
 import { registerUser } from '../redux/userSlice';
 import Tape from '../components/Tape';
 import HandwrittenNote from '../components/HandwrittenNote';
+import GoogleAuthButton from '../components/GoogleAuthButton';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -63,6 +64,21 @@ const Register = () => {
             {registerError}
           </div>
         )}
+
+        {/* Google Registration */}
+        <div className="mb-6 space-y-4">
+          <GoogleAuthButton
+            mode="signup"
+            onError={(err) => setRegisterError(err)}
+          />
+
+          <div className="relative flex items-center justify-center">
+            <div className="border-t border-[#2C2A29]/15 w-full" />
+            <span className="bg-[#FDFCF9] px-3 font-mono text-[9px] uppercase tracking-widest text-[#7A756F] relative">
+              OR REGISTER WITH EMAIL
+            </span>
+          </div>
+        </div>
 
         <form onSubmit={handleRegister} className="space-y-4">
           <div>

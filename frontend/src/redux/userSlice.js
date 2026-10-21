@@ -56,6 +56,24 @@ export const loginUser = createAsyncThunk(
   },
 );
 
+export const googleLogin = createAsyncThunk(
+  "user/googleLogin",
+  async ({ credential, accessToken }, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/api/user/google-login", { credential, accessToken });
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+      }
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      }
+      return { message: res.data.message, user: res.data.user };
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
 export const getUser = createAsyncThunk(
   "user/getUser",
   async (_, { rejectWithValue }) => {
@@ -129,6 +147,20 @@ const userSlice = createSlice({
         state.user = action.payload.user;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message;
+      })
+      .addCase(googleLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.message = "";
+      })
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+        state.user = action.payload.user;
+      })
+      .addCase(googleLogin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
       })

@@ -23,8 +23,11 @@ const ReceiptBill = ({ receipt, onReset }) => {
     grandTotal = 0,
     promo = null,
     orderNote = '',
-    paymentMethod = 'card',
-    cardLast4 = '4242',
+    paymentMethod = 'razorpay',
+    razorpayPaymentId = '',
+    razorpayOrderId = '',
+    cardLast4 = '',
+    paymentStatus = 'paid',
     orderDate = new Date(),
   } = receipt;
 
@@ -49,12 +52,14 @@ const ReceiptBill = ({ receipt, onReset }) => {
 
   const getPaymentLabel = () => {
     switch (paymentMethod) {
+      case 'razorpay':
+        return razorpayPaymentId
+          ? `RAZORPAY SECURE (${razorpayPaymentId})`
+          : 'RAZORPAY GATEWAY (VERIFIED)';
       case 'card':
-        return `DEMO ATELIER CARD (•••• ${cardLast4 || '4242'})`;
+        return `CARD SETTLEMENT (•••• ${cardLast4 || 'CARD'})`;
       case 'upi':
-        return 'SIMULATED INSTANT UPI (VERIFIED)';
-      case 'netbanking':
-        return 'NETBANKING WIRE (DEMO APPROVED)';
+        return 'INSTANT UPI SETTLEMENT (VERIFIED)';
       case 'cod':
         return 'CONCIERGE PAY ON ARRIVAL';
       default:
@@ -122,16 +127,20 @@ const ReceiptBill = ({ receipt, onReset }) => {
             <Tape rotate="-1deg" variant="kraft" text="OFFICIAL ATELIER RECEIPT" width="w-48" />
           </div>
 
-          {/* Stamp Animation: "PAID IN FULL" */}
+          {/* Stamp Animation: "PAID IN FULL" or "CONCIERGE ARRIVAL" */}
           <motion.div
             initial={{ scale: 3.5, opacity: 0, rotate: -35 }}
             animate={{ scale: 1, opacity: 1, rotate: -9 }}
             transition={{ delay: 1.5, duration: 0.45, type: 'spring', stiffness: 220, damping: 14 }}
-            className="absolute top-14 right-4 sm:right-8 border-2 border-dashed border-[#A66551] text-[#A66551] px-3 py-1.5 font-mono uppercase tracking-[0.25em] text-[10px] sm:text-xs font-bold rounded-sm pointer-events-none select-none bg-[#FAF7F2]/90 shadow-sm z-20"
+            className={`absolute top-14 right-4 sm:right-8 border-2 border-dashed px-3 py-1.5 font-mono uppercase tracking-[0.25em] text-[10px] sm:text-xs font-bold rounded-sm pointer-events-none select-none shadow-sm z-20 ${
+              paymentStatus === 'cod_due'
+                ? 'border-[#7A756F] text-[#5C5751] bg-[#FAF7F2]/90'
+                : 'border-[#A66551] text-[#A66551] bg-[#FAF7F2]/90'
+            }`}
           >
-            ✓ PAID IN FULL
+            {paymentStatus === 'cod_due' ? 'COD ARRIVAL' : '✓ PAID IN FULL'}
             <span className="block text-[8px] tracking-widest text-[#7A756F]">
-              AUTH-EL-2026-OK
+              {paymentMethod === 'razorpay' ? 'RZP-AUTH-OK' : paymentStatus === 'cod_due' ? 'AUTH-PAY-ON-DELIVERY' : 'AUTH-EL-2026-OK'}
             </span>
           </motion.div>
 
@@ -167,9 +176,21 @@ const ReceiptBill = ({ receipt, onReset }) => {
                 <span className="text-[#7A756F]">SETTLEMENT:</span>
                 <span className="font-bold text-[#191817]">{getPaymentLabel()}</span>
               </div>
+              {razorpayPaymentId && (
+                <div className="flex justify-between items-center text-[10px]">
+                  <span className="text-[#7A756F]">RAZORPAY ID:</span>
+                  <span className="text-emerald-800 font-bold tracking-wider">{razorpayPaymentId}</span>
+                </div>
+              )}
+              {razorpayOrderId && (
+                <div className="flex justify-between items-center text-[10px]">
+                  <span className="text-[#7A756F]">GATEWAY REF:</span>
+                  <span className="text-[#5C5751]">{razorpayOrderId}</span>
+                </div>
+              )}
               <div className="flex justify-between items-center">
                 <span className="text-[#7A756F]">AUTH CODE:</span>
-                <span className="text-[#5C5751]">TXN-EL-9948271</span>
+                <span className="text-[#5C5751]">{razorpayPaymentId ? `RZP-${razorpayPaymentId.slice(-6).toUpperCase()}` : 'TXN-EL-9948271'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[#7A756F]">DISPATCH:</span>
