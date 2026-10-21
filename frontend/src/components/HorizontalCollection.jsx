@@ -6,15 +6,13 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from 'iconoir-react';
 import Tape from './Tape';
 import HandwrittenNote from './HandwrittenNote';
 import ThemeImage from './ThemeImage';
+import { DRESS_COLLECTION_PRODUCTS } from '../data/fashionProducts';
 
 const HorizontalCollection = () => {
   const scrollRef = useRef(null);
   const { products } = useSelector((state) => state.product || { products: [] });
 
-  // If there are no products added yet, do not render static mock images
-  if (!products || products.length === 0) {
-    return null;
-  }
+  const displayProducts = products && products.length > 0 ? products : DRESS_COLLECTION_PRODUCTS;
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -70,7 +68,7 @@ const HorizontalCollection = () => {
         ref={scrollRef}
         className="flex gap-8 overflow-x-auto no-scrollbar px-6 sm:px-8 lg:px-12 pt-6 pb-8 scroll-smooth"
       >
-        {products.slice(0, 10).map((item, index) => {
+        {displayProducts.slice(0, 10).map((item, index) => {
           const lookNumber = `LOOK ${String(index + 1).padStart(2, '0')}`;
           const rotate = rotations[index % rotations.length];
           const tapeVariant = index % 3 === 0 ? 'kraft' : index % 3 === 1 ? 'dark' : 'cream';
@@ -113,6 +111,7 @@ const HorizontalCollection = () => {
               >
                 <ThemeImage
                   src={imgUrl}
+                  fallbackSrc={item.localImage || (item.images && item.images[1])}
                   alt={item.name}
                   wrapperClassName="w-full h-full"
                   className="filter contrast-[1.02] transition-transform duration-700 group-hover:scale-105"

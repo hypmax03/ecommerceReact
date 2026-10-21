@@ -7,6 +7,7 @@ import Tape from '../components/Tape';
 import Polaroid from '../components/Polaroid';
 import HandwrittenNote from '../components/HandwrittenNote';
 import { getProduct } from '../redux/productSlice';
+import { DRESS_COLLECTION_PRODUCTS } from '../data/fashionProducts';
 
 const rotations = ['-2.5deg', '2deg', '-1.5deg', '3deg', '-2deg', '1.5deg', '-1deg', '2.5deg'];
 const tapeVariants = ['kraft', 'dark', 'cream'];
@@ -22,9 +23,10 @@ const Archive = () => {
     }
   }, [dispatch, products]);
 
-  const categories = ['All', ...new Set(products.map((p) => p.category).filter(Boolean))];
+  const displayProducts = products && products.length > 0 ? products : DRESS_COLLECTION_PRODUCTS;
+  const categories = ['All', ...new Set(displayProducts.map((p) => p.category).filter(Boolean))];
 
-  const filteredProducts = products.filter((p) => {
+  const filteredProducts = displayProducts.filter((p) => {
     if (selectedCategory === 'All') return true;
     return p.category === selectedCategory;
   });
@@ -56,7 +58,7 @@ const Archive = () => {
         </div>
 
         {/* Category Filter Strip if products exist */}
-        {products.length > 0 && categories.length > 1 && (
+        {displayProducts.length > 0 && categories.length > 1 && (
           <div className="flex items-center gap-2 mb-12 flex-wrap bg-[#F5EFE6] p-3 border border-[#2C2A29]/15">
             <span className="font-mono text-[10px] uppercase tracking-wider text-[#7A756F] mr-2">
               CURATION CATEGORY:
@@ -72,14 +74,14 @@ const Archive = () => {
                     : 'bg-[#FAF7F2] text-[#191817] border-[#2C2A29]/20 hover:border-[#191817]'
                 }`}
               >
-                {cat === 'All' ? `ALL PIECES (${products.length})` : cat}
+                {cat === 'All' ? `ALL PIECES (${displayProducts.length})` : cat}
               </button>
             ))}
           </div>
         )}
 
         {/* Empty Archive State when no manual products have been added yet */}
-        {products.length === 0 ? (
+        {displayProducts.length === 0 ? (
           <div className="py-24 px-8 text-center bg-[#FDFCF9] border border-dashed border-[#2C2A29]/25 max-w-3xl mx-auto shadow-sm">
             <div className="inline-block mb-4">
               <Tape rotate="-1deg" variant="kraft" text="ARCHIVE VAULT" width="w-32" />

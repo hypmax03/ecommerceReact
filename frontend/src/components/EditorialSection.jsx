@@ -7,6 +7,7 @@ import Tape from './Tape';
 import HandwrittenNote from './HandwrittenNote';
 import Polaroid from './Polaroid';
 import ThemeImage from './ThemeImage';
+import { DRESS_COLLECTION_PRODUCTS } from '../data/fashionProducts';
 
 const EditorialSection = () => {
   const sectionRef = useRef(null);
@@ -21,17 +22,11 @@ const EditorialSection = () => {
   const photoParallax = useTransform(scrollYProgress, [0, 1], ['-6%', shouldReduceMotion ? '0%' : '6%']);
   const noteParallax = useTransform(scrollYProgress, [0, 1], ['10%', shouldReduceMotion ? '0%' : '-10%']);
 
-  // Only render if manual products exist
-  if (!products || products.length === 0) {
-    return null;
-  }
-
-  const editorialItem = products[2] || products[0];
-  const polaroidItem = products[1] || products[0];
-  const editorialImg = editorialItem.images?.[0] || editorialItem.image;
-  const polaroidImg = polaroidItem.images?.[0] || polaroidItem.image;
-
-  if (!editorialImg) return null;
+  const displayProducts = products && products.length > 0 ? products : DRESS_COLLECTION_PRODUCTS;
+  const editorialItem = displayProducts[2] || displayProducts[0];
+  const polaroidItem = displayProducts[1] || displayProducts[0];
+  const editorialImg = editorialItem.images?.[0] || editorialItem.image || editorialItem.localImage;
+  const polaroidImg = polaroidItem.images?.[0] || polaroidItem.image || polaroidItem.localImage;
 
   return (
     <section
@@ -63,7 +58,9 @@ const EditorialSection = () => {
               <div className="aspect-[16/11] overflow-hidden bg-[#ECE8DF]">
                 <ThemeImage
                   src={editorialImg}
+                  fallbackSrc={editorialItem.localImage || DRESS_COLLECTION_PRODUCTS[2]?.image}
                   alt={editorialItem.name || "Editorial garment"}
+                  priority={true}
                   wrapperClassName="w-full h-full"
                   className="object-[center_25%] filter saturate-[0.95]"
                   label="DEVELOPING EDITORIAL SPREAD..."

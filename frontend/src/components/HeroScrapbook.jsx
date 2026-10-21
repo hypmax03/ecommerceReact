@@ -7,6 +7,7 @@ import Tape from './Tape';
 import Polaroid from './Polaroid';
 import HandwrittenNote from './HandwrittenNote';
 import ThemeImage from './ThemeImage';
+import { DRESS_COLLECTION_PRODUCTS } from '../data/fashionProducts';
 
 const HeroScrapbook = () => {
   const containerRef = useRef(null);
@@ -20,11 +21,12 @@ const HeroScrapbook = () => {
     offset: ['start start', 'end start'],
   });
 
-  const mainProduct = products && products.length > 0 ? products[0] : null;
-  const secondProduct = products && products.length > 1 ? products[1] : null;
+  const displayProducts = products && products.length > 0 ? products : DRESS_COLLECTION_PRODUCTS;
+  const mainProduct = displayProducts[0] || DRESS_COLLECTION_PRODUCTS[0];
+  const secondProduct = displayProducts[1] || DRESS_COLLECTION_PRODUCTS[1];
 
-  const mainImgUrl = mainProduct?.images?.[0] || mainProduct?.image || null;
-  const secondImgUrl = secondProduct?.images?.[0] || secondProduct?.image || null;
+  const mainImgUrl = mainProduct?.images?.[0] || mainProduct?.image || mainProduct?.localImage;
+  const secondImgUrl = secondProduct?.images?.[0] || secondProduct?.image || secondProduct?.localImage;
 
   // Parallax layers
   const mainImageY = useTransform(scrollYProgress, [0, 1], ['0%', shouldReduceMotion ? '0%' : '8%']);
@@ -138,6 +140,7 @@ const HeroScrapbook = () => {
                     <Link to={`/product/${mainProduct._id || mainProduct.id}`} className="block aspect-[4/5] overflow-hidden bg-[#ECE8DF]">
                       <ThemeImage
                         src={mainImgUrl}
+                        fallbackSrc={mainProduct.localImage || DRESS_COLLECTION_PRODUCTS[0]?.image}
                         alt={mainProduct.name}
                         priority={true}
                         wrapperClassName="w-full h-full"

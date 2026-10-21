@@ -9,6 +9,7 @@ import HorizontalCollection from '../components/HorizontalCollection';
 import ProductCard from '../components/ProductCard';
 import HandwrittenNote from '../components/HandwrittenNote';
 import { getProduct } from '../redux/productSlice';
+import { DRESS_COLLECTION_PRODUCTS } from '../data/fashionProducts';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -27,8 +28,11 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [dispatch]);
 
+  // Seamlessly prioritize live approved backend products, falling back to curated dress collection
+  const displayProducts = products && products.length > 0 ? products : DRESS_COLLECTION_PRODUCTS;
+
   // Filter products by Gender
-  const filteredProducts = products.filter((p) => {
+  const filteredProducts = displayProducts.filter((p) => {
     if (selectedGenderTab !== 'All' && p.gender !== selectedGenderTab) return false;
     return true;
   });
@@ -76,14 +80,14 @@ const Home = () => {
                       : 'bg-[#FDFCF9] text-[#7A756F] border-[#2C2A29]/20 hover:border-[#191817] hover:text-[#191817]'
                   }`}
                 >
-                  {tab === 'All' ? `ALL PIECES (${products.length})` : tab === 'Women' ? 'WOMEN’S' : 'MEN’S'}
+                  {tab === 'All' ? `ALL PIECES (${displayProducts.length})` : tab === 'Women' ? 'WOMEN’S' : 'MEN’S'}
                 </button>
               ))}
             </div>
           </div>
 
           {/* Product Grid with Scrapbook cards */}
-          {products.length === 0 ? (
+          {displayProducts.length === 0 ? (
             <div className="py-20 text-center bg-[#FDFCF9] border border-dashed border-[#2C2A29]/20 p-8">
               <h3 className="font-serif text-2xl text-[#191817]">No pieces published to the atelier catalog yet.</h3>
               <HandwrittenNote

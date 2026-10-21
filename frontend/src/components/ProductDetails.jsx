@@ -116,6 +116,7 @@ const ProductDetails = () => {
               <div className="aspect-[3/4] overflow-hidden bg-[#ECE8DF]">
                 <ThemeImage
                   src={activeImage}
+                  fallbackSrc={product.localImage || (galleryImages && galleryImages[0])}
                   alt={product.name}
                   priority={true}
                   wrapperClassName="w-full h-full"

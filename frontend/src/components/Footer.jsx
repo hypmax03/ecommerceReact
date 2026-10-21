@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { ArrowUpRight, Check, Mail, ArrowUp, Pin, Camera, Heart } from 'iconoir-react';
 import { openRemovalModal } from '../redux/cartSlice';
 import ThemeImage from './ThemeImage';
+import { DRESS_COLLECTION_PRODUCTS } from '../data/fashionProducts';
 
 const Footer = () => {
   const dispatch = useDispatch();
@@ -32,17 +33,17 @@ const Footer = () => {
       <section className="relative w-full aspect-[16/10] sm:aspect-[16/8] lg:aspect-[21/9] xl:aspect-[2.4/1] min-h-[480px] sm:min-h-[540px] lg:min-h-[620px] bg-[#221B17] overflow-hidden group select-none">
         {/* Background Editorial Photographic Spread */}
         <div className="absolute inset-0 w-full h-full bg-[#181412]">
-          {products?.[0] && (products[0].images?.[0] || products[0].image) && (
-            <ThemeImage
-              src={products[0].images?.[0] || products[0].image}
-              alt={products[0].name || "Atelier Campaign"}
-              dark={true}
-              wrapperClassName="w-full h-full"
-              className="filter brightness-[0.75] contrast-[1.04] transition-transform duration-1000 group-hover:scale-[1.02]"
-              label="DEVELOPING CAMPAIGN..."
-              subLabel="atelier edition"
-            />
-          )}
+          <ThemeImage
+            src={products?.[0]?.images?.[0] || products?.[0]?.image || DRESS_COLLECTION_PRODUCTS[0]?.image}
+            fallbackSrc="/editorial_footer_banner.jpg"
+            alt={products?.[0]?.name || "Atelier Campaign"}
+            dark={true}
+            priority={true}
+            wrapperClassName="w-full h-full"
+            className="filter brightness-[0.75] contrast-[1.04] transition-transform duration-1000 group-hover:scale-[1.02]"
+            label="DEVELOPING CAMPAIGN..."
+            subLabel="atelier edition"
+          />
           {/* Subtle cinematic gradient overlays for high contrast typography */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/50 pointer-events-none" />
         </div>

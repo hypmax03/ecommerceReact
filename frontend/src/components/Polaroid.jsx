@@ -5,6 +5,7 @@ import ThemeImage from './ThemeImage';
 
 const Polaroid = ({
   image,
+  fallbackSrc = null,
   caption,
   subCaption = '',
   rotate = '-2deg',
@@ -48,6 +49,8 @@ const Polaroid = ({
       <div className={`relative w-full ${aspect} overflow-hidden bg-[#ECE8DF] border border-black/5 flex items-center justify-center`}>
         <ThemeImage
           src={image}
+          fallbackSrc={fallbackSrc || '/dress/1.jpg'}
+          priority={true}
           alt={caption || 'Polaroid journal memory'}
           wrapperClassName="w-full h-full"
           className="filter saturate-[0.92] contrast-[1.03] transition-transform duration-700 group-hover:scale-105"

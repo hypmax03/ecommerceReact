@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api/apiClient";
+import { DRESS_COLLECTION_PRODUCTS } from "../data/fashionProducts";
 
 const initialState = {
-  products: [],
+  products: DRESS_COLLECTION_PRODUCTS,
   allAdminProducts: [],
   mySubmissions: [],
   adminStats: {
@@ -140,7 +141,9 @@ const productSlice = createSlice({
       })
       .addCase(getProduct.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = Array.isArray(action.payload) ? action.payload : [];
+        if (Array.isArray(action.payload) && action.payload.length > 0) {
+          state.products = action.payload;
+        }
       })
       .addCase(getProduct.rejected, (state, action) => {
         state.loading = false;

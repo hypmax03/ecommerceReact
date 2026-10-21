@@ -82,6 +82,7 @@ const ProductCard = ({ product, index = 0, priority = false }) => {
           {/* Primary Image */}
           <ThemeImage
             src={productImage}
+            fallbackSrc={product.localImage || (product.images && product.images[1])}
             alt={product.name}
             priority={priority}
             wrapperClassName="w-full h-full"
