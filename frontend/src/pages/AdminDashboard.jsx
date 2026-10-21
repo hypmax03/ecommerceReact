@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Check,
   Xmark,
@@ -11,6 +11,11 @@ import {
   ArrowUpRight,
   ShieldCheck,
   Lock,
+  Eye,
+  ZoomIn,
+  ZoomOut,
+  OpenNewWindow,
+  MediaImage,
 } from 'iconoir-react';
 import {
   getAdminDashboard,
@@ -32,6 +37,11 @@ const AdminDashboard = () => {
   const [rejectingId, setRejectingId] = useState(null);
   const [rejectionReason, setRejectionReason] = useState('Does not meet current collection curation standards');
   const [actionSuccessMessage, setActionSuccessMessage] = useState('');
+
+  // Image Inspection Modal / Lightbox State
+  const [inspectingProduct, setInspectingProduct] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   const refreshDashboard = () => {
     dispatch(getAdminDashboard());
@@ -350,7 +360,14 @@ const AdminDashboard = () => {
         ) : (
           <div className="space-y-4">
             {filteredProducts.map((product) => {
-              const mainImage = product.images?.[0] || product.image;
+              const productImages = [
+                ...(Array.isArray(product.images) ? product.images : []),
+                product.image,
+                product.hoverImage,
+                product.localImage,
+              ].filter(Boolean);
+              const uniqueImages = Array.from(new Set(productImages));
+              const mainImage = uniqueImages[0] || '';
 
               return (
                 <div
@@ -358,27 +375,51 @@ const AdminDashboard = () => {
                   className="bg-[#FDFCF9] border border-[#2C2A29]/15 p-5 sm:p-6 shadow-sm relative transition-all hover:shadow-md"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
-                    {/* Thumbnail */}
+                    {/* Thumbnail with Click to Check Image */}
                     <div className="md:col-span-2">
-                      <div className="aspect-[3/4] bg-[#ECE8DF] border border-[#2C2A29]/10 overflow-hidden relative">
-                        <ThemeImage
-                          src={mainImage}
-                          alt={product.name}
-                          compact={true}
-                          wrapperClassName="w-full h-full"
-                        />
-                        <span
-                          className={`absolute top-1.5 left-1.5 font-mono text-[8px] uppercase px-1.5 py-0.5 font-bold ${
-                            product.status === 'approved'
-                              ? 'bg-[#2E5A36] text-[#FAF7F2]'
-                              : product.status === 'rejected'
-                              ? 'bg-[#8B263E] text-[#FAF7F2]'
-                              : 'bg-[#A66551] text-[#FAF7F2]'
-                          }`}
-                        >
-                          {product.status || 'PENDING'}
-                        </span>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setInspectingProduct(product);
+                          setSelectedImageIndex(0);
+                          setIsZoomed(false);
+                        }}
+                        className="w-full text-left group block relative cursor-pointer"
+                        title="Click to check user submitted image in full resolution"
+                      >
+                        <div className="aspect-[3/4] bg-[#ECE8DF] border border-[#2C2A29]/10 overflow-hidden relative">
+                          <ThemeImage
+                            src={mainImage}
+                            alt={product.name}
+                            compact={true}
+                            wrapperClassName="w-full h-full group-hover:scale-105 transition-transform duration-300"
+                          />
+                          <span
+                            className={`absolute top-1.5 left-1.5 font-mono text-[8px] uppercase px-1.5 py-0.5 font-bold z-10 ${
+                              product.status === 'approved'
+                                ? 'bg-[#2E5A36] text-[#FAF7F2]'
+                                : product.status === 'rejected'
+                                ? 'bg-[#8B263E] text-[#FAF7F2]'
+                                : 'bg-[#A66551] text-[#FAF7F2]'
+                            }`}
+                          >
+                            {product.status || 'PENDING'}
+                          </span>
+
+                          {/* Hover prompt to check image */}
+                          <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2 text-center">
+                            <span className="font-mono text-[9px] uppercase tracking-wider text-white bg-[#191817]/90 px-2 py-1 border border-white/20 shadow-md">
+                              🔍 CHECK IMAGE
+                            </span>
+                          </div>
+                        </div>
+
+                        {uniqueImages.length > 1 && (
+                          <span className="font-mono text-[8.5px] text-[#7A756F] text-center block mt-1">
+                            {uniqueImages.length} PHOTOS ATTACHED
+                          </span>
+                        )}
+                      </button>
                     </div>
 
                     {/* Garment Details & Submitter Information */}
@@ -404,8 +445,8 @@ const AdminDashboard = () => {
                       </div>
 
                       {/* Submitter Info */}
-                      <div className="text-[10px] font-mono text-[#7A756F] pt-1 border-t border-[#2C2A29]/10 flex items-center gap-2">
-                        <span>SUBMITTED BY: <strong className="text-[#191817]">{product.submittedBy?.name || 'Guest'}</strong></span>
+                      <div className="text-[10px] font-mono text-[#7A756F] pt-1 border-t border-[#2C2A29]/10 flex items-center gap-2 flex-wrap">
+                        <span>SUBMITTED BY: <strong className="text-[#191817]">{product.submittedBy?.name || 'Guest User'}</strong></span>
                         {product.submittedBy?.email && <span>({product.submittedBy.email})</span>}
                         {product.submittedBy?.note && <span className="italic text-[#A66551]">“{product.submittedBy.note}”</span>}
                       </div>
@@ -428,6 +469,21 @@ const AdminDashboard = () => {
 
                     {/* Actions */}
                     <div className="md:col-span-3 flex flex-col gap-2 justify-center border-t md:border-t-0 md:border-l border-[#2C2A29]/10 pt-3 md:pt-0 md:pl-5">
+                      {/* Check Image Option Button */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setInspectingProduct(product);
+                          setSelectedImageIndex(0);
+                          setIsZoomed(false);
+                        }}
+                        className="w-full bg-[#F5EFE6] hover:bg-[#EFE8DC] text-[#191817] border border-[#2C2A29]/25 font-mono text-xs uppercase tracking-wider py-2 flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                        title="Inspect user uploaded images in full resolution modal"
+                      >
+                        <Eye width={14} height={14} className="text-[#A66551]" />
+                        <span>CHECK IMAGE {uniqueImages.length > 1 ? `(${uniqueImages.length})` : ''}</span>
+                      </button>
+
                       {product.status !== 'approved' && (
                         <button
                           type="button"
@@ -503,6 +559,224 @@ const AdminDashboard = () => {
             })}
           </div>
         )}
+
+        {/* Full-Screen Atelier Image Inspection Lightbox Modal */}
+        <AnimatePresence>
+          {inspectingProduct && (() => {
+            const inspectingImages = Array.from(
+              new Set(
+                [
+                  ...(Array.isArray(inspectingProduct.images) ? inspectingProduct.images : []),
+                  inspectingProduct.image,
+                  inspectingProduct.hoverImage,
+                  inspectingProduct.localImage,
+                ].filter(Boolean)
+              )
+            );
+            const currentImg = inspectingImages[selectedImageIndex] || inspectingImages[0] || '';
+
+            return (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col p-3 sm:p-6 md:p-8 overflow-y-auto"
+                onClick={() => setInspectingProduct(null)}
+              >
+                <div
+                  className="relative max-w-4xl w-full mx-auto my-auto bg-[#FDFCF9] border border-[#2C2A29]/30 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Inspection Header */}
+                  <div className="bg-[#191817] text-[#FAF7F2] p-4 flex items-center justify-between border-b border-white/10 flex-shrink-0">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
+                      <div className="min-w-0">
+                        <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-[#E3D5B8] block truncate">
+                          CURATION INSPECTION • DOCKET #{inspectingProduct._id || inspectingProduct.id}
+                        </span>
+                        <h3 className="font-serif text-lg font-normal text-white truncate max-w-md">
+                          {inspectingProduct.name}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setIsZoomed(!isZoomed)}
+                        className="px-2.5 py-1.5 border border-white/20 text-[#FAF7F2] font-mono text-[10px] uppercase hover:bg-white/10 flex items-center gap-1.5 cursor-pointer"
+                        title="Toggle zoom magnification"
+                      >
+                        {isZoomed ? <ZoomOut width={13} height={13} /> : <ZoomIn width={13} height={13} />}
+                        <span className="hidden sm:inline">{isZoomed ? 'FIT' : 'ZOOM 2X'}</span>
+                      </button>
+
+                      {currentImg && (
+                        <a
+                          href={currentImg}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-2.5 py-1.5 border border-white/20 text-[#FAF7F2] font-mono text-[10px] uppercase hover:bg-white/10 flex items-center gap-1.5 cursor-pointer"
+                          title="Open original high-resolution image in new tab"
+                        >
+                          <OpenNewWindow width={13} height={13} />
+                          <span className="hidden sm:inline">ORIGINAL</span>
+                        </a>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => setInspectingProduct(null)}
+                        className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded cursor-pointer ml-1"
+                        aria-label="Close image inspection"
+                      >
+                        <Xmark width={18} height={18} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Main Inspection View Area */}
+                  <div className="flex-1 overflow-auto bg-[#121110] p-4 flex items-center justify-center relative min-h-[350px] sm:min-h-[440px]">
+                    {currentImg ? (
+                      <div
+                        className={`transition-all duration-200 ${
+                          isZoomed ? 'scale-175 cursor-zoom-out' : 'max-h-[58vh] cursor-zoom-in'
+                        } flex items-center justify-center`}
+                        onClick={() => setIsZoomed(!isZoomed)}
+                      >
+                        <img
+                          src={currentImg}
+                          alt={inspectingProduct.name}
+                          className="max-h-[58vh] max-w-full object-contain border border-white/10 shadow-2xl select-none"
+                        />
+                      </div>
+                    ) : (
+                      <div className="text-white/50 font-mono text-xs">No image asset available for preview</div>
+                    )}
+
+                    {/* Left/Right Navigation Arrows if Multiple Images */}
+                    {inspectingImages.length > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedImageIndex((prev) =>
+                              prev === 0 ? inspectingImages.length - 1 : prev - 1
+                            )
+                          }
+                          className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black text-white px-2.5 py-3 border border-white/20 shadow-lg cursor-pointer text-lg"
+                          aria-label="Previous image"
+                        >
+                          ‹
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedImageIndex((prev) =>
+                              prev === inspectingImages.length - 1 ? 0 : prev + 1
+                            )
+                          }
+                          className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black text-white px-2.5 py-3 border border-white/20 shadow-lg cursor-pointer text-lg"
+                          aria-label="Next image"
+                        >
+                          ›
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Multiple Photos Thumbnails Strip */}
+                  {inspectingImages.length > 1 && (
+                    <div className="bg-[#1C1A19] p-2.5 border-t border-white/10 flex items-center justify-center gap-2 overflow-x-auto flex-shrink-0">
+                      {inspectingImages.map((img, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setSelectedImageIndex(idx);
+                            setIsZoomed(false);
+                          }}
+                          className={`w-12 h-14 border overflow-hidden flex-shrink-0 cursor-pointer transition-all ${
+                            selectedImageIndex === idx
+                              ? 'border-[#E3D5B8] ring-2 ring-[#E3D5B8]/50 scale-105'
+                              : 'border-white/20 opacity-60 hover:opacity-100'
+                          }`}
+                        >
+                          <img src={img} alt={`Angle ${idx + 1}`} className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                      <span className="font-mono text-[10px] text-white/60 ml-2">
+                        Photo {selectedImageIndex + 1} of {inspectingImages.length}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Inspection Footer with Submitter & Decision Actions */}
+                  <div className="bg-[#FAF7F2] p-4 sm:p-5 border-t border-[#2C2A29]/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 flex-shrink-0">
+                    <div className="space-y-1 min-w-0">
+                      <div className="flex items-center gap-2 font-mono text-xs flex-wrap">
+                        <span className="text-[#7A756F]">SUBMITTED BY:</span>
+                        <strong className="text-[#191817]">{inspectingProduct.submittedBy?.name || 'Guest User'}</strong>
+                        {inspectingProduct.submittedBy?.email && (
+                          <span className="text-[#7A756F]">({inspectingProduct.submittedBy.email})</span>
+                        )}
+                      </div>
+                      {inspectingProduct.submittedBy?.note && (
+                        <p className="font-sans text-xs text-[#5C5751] italic truncate max-w-lg">
+                          “{inspectingProduct.submittedBy.note}”
+                        </p>
+                      )}
+                      <div className="font-mono text-[11px] text-[#7A756F] flex gap-3 pt-0.5 flex-wrap">
+                        <span>Price: <strong>₹{inspectingProduct.price?.toLocaleString('en-IN')}</strong></span>
+                        <span>Stock: <strong>{inspectingProduct.stock || 1}</strong></span>
+                        {inspectingProduct.material && <span>Fabric: <strong>{inspectingProduct.material}</strong></span>}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap sm:flex-nowrap">
+                      {inspectingProduct.status !== 'approved' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleApprove(inspectingProduct._id || inspectingProduct.id);
+                            setInspectingProduct(null);
+                          }}
+                          className="flex-1 sm:flex-initial bg-[#2E5A36] hover:bg-[#24472A] text-white font-mono text-xs uppercase px-4 py-2.5 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                        >
+                          <Check width={13} height={13} />
+                          <span>APPROVE &amp; PUBLISH</span>
+                        </button>
+                      )}
+
+                      {inspectingProduct.status === 'pending' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleReject(inspectingProduct._id || inspectingProduct.id);
+                            setInspectingProduct(null);
+                          }}
+                          className="flex-1 sm:flex-initial bg-[#8B263E] hover:bg-[#6D1E30] text-white font-mono text-xs uppercase px-4 py-2.5 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                        >
+                          <Xmark width={13} height={13} />
+                          <span>REJECT</span>
+                        </button>
+                      )}
+
+                      <Link
+                        to={`/product/${inspectingProduct._id || inspectingProduct.id}`}
+                        onClick={() => setInspectingProduct(null)}
+                        className="border border-[#2C2A29]/20 font-mono text-xs uppercase px-3 py-2.5 hover:bg-[#EFE8DC] text-center"
+                      >
+                        VIEW PIECE →
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })()}
+        </AnimatePresence>
       </div>
     </main>
   );

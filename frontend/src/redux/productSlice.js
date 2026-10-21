@@ -149,6 +149,20 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+      .addCase(getProductById.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.product = action.payload;
+          const targetId = action.payload._id || action.payload.id;
+          const existingIdx = state.products.findIndex(
+            (p) => (p._id || p.id) === targetId
+          );
+          if (existingIdx !== -1) {
+            state.products[existingIdx] = action.payload;
+          } else {
+            state.products.push(action.payload);
+          }
+        }
+      })
       .addCase(getAdminDashboard.fulfilled, (state, action) => {
         if (action.payload) {
           state.allAdminProducts = action.payload.products || [];

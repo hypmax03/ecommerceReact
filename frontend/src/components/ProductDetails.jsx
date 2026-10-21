@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { ShoppingBag, Check, Plus, Minus, ArrowLeft } from 'iconoir-react';
-import { deleteProduct } from '../redux/productSlice';
+import { deleteProduct, getProductById } from '../redux/productSlice';
 import { addToCart, openRemovalModal } from '../redux/cartSlice';
 import { sendFormspreeNotification } from '../utils/formspree';
 import Tape from './Tape';
@@ -15,14 +15,30 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { products } = useSelector((state) => state.product || { products: [] });
+  const { products, allAdminProducts, mySubmissions, product: singleProduct } = useSelector(
+    (state) => state.product || { products: [], allAdminProducts: [], mySubmissions: [], product: null }
+  );
+  const { user } = useSelector((state) => state.user || { user: null });
+  const isAdmin = user?.role === 'admin' || user?.email?.toLowerCase().includes('admin');
 
-  // Find product in live store or fallback collection
-  const allAvailable = products && products.length > 0 ? products : DRESS_COLLECTION_PRODUCTS;
+  const [fetching, setFetching] = useState(false);
+
+  // Search product across all available stores (admin list, public list, user submissions, fallback dresses)
   const product =
-    allAvailable.find((p) => (p._id || p.id) === id) ||
-    DRESS_COLLECTION_PRODUCTS.find((p) => (p._id || p.id) === id) ||
-    allAvailable[0];
+    allAdminProducts?.find((p) => String(p._id || p.id) === String(id)) ||
+    products?.find((p) => String(p._id || p.id) === String(id)) ||
+    mySubmissions?.find((p) => String(p._id || p.id) === String(id)) ||
+    (singleProduct && String(singleProduct._id || singleProduct.id) === String(id) ? singleProduct : null) ||
+    DRESS_COLLECTION_PRODUCTS.find((p) => String(p._id || p.id) === String(id));
+
+  // If not found in memory, fetch directly from backend API by ID
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (id && !product && !fetching) {
+      setFetching(true);
+      dispatch(getProductById(id)).finally(() => setFetching(false));
+    }
+  }, [id, product, dispatch, fetching]);
 
   const defaultImg =
     product?.images?.[0] ||
@@ -30,23 +46,50 @@ const ProductDetails = () => {
     product?.localImage ||
     '';
 
-  const [selectedSize, setSelectedSize] = useState(() => (product?.sizes ? product.sizes[0] : 'M'));
-  const [selectedColor, setSelectedColor] = useState(() => (product?.colors ? product.colors[0]?.name : 'Signature'));
+  const [selectedSize, setSelectedSize] = useState('M');
+  const [selectedColor, setSelectedColor] = useState('Signature');
   const [quantity, setQuantity] = useState(1);
-  const [activeImage, setActiveImage] = useState(() => defaultImg);
+  const [activeImage, setActiveImage] = useState(defaultImg);
   const [openAccordion, setOpenAccordion] = useState('provenance');
 
+  // Keep active image and size/color in sync with selected product
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [id]);
+    if (product) {
+      setActiveImage(product.images?.[0] || product.image || product.localImage || '');
+      if (product.sizes?.length) setSelectedSize(product.sizes[0]);
+      if (product.colors?.length) setSelectedColor(product.colors[0]?.name || 'Signature');
+    }
+  }, [product]);
+
+  if (fetching) {
+    return (
+      <div className="min-h-screen pt-36 pb-20 px-6 text-center bg-[#FAF7F2] flex flex-col items-center justify-center">
+        <span className="w-6 h-6 border-2 border-[#191817]/20 border-t-[#191817] rounded-full animate-spin mb-4" />
+        <h2 className="font-serif text-2xl text-[#191817]">Retrieving Archival Garment...</h2>
+        <span className="font-mono text-[10px] uppercase tracking-widest text-[#7A756F] mt-1">
+          DOCKET ID • {id}
+        </span>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
-      <div className="min-h-screen pt-36 pb-20 px-6 text-center bg-[#FAF7F2]">
-        <h2 className="font-serif text-3xl">Piece Not Found</h2>
-        <Link to="/products" className="font-mono text-xs text-[#A66551] underline mt-4 inline-block">
-          Return to Catalog
-        </Link>
+      <div className="min-h-screen pt-36 pb-20 px-6 text-center bg-[#FAF7F2] flex flex-col items-center justify-center">
+        <h2 className="font-serif text-3xl text-[#191817]">Piece Not Found</h2>
+        <p className="font-sans text-xs text-[#7A756F] mt-2 max-w-md mx-auto">
+          We could not locate docket #{id}. It may have been removed or relocated in the archive.
+        </p>
+        <div className="mt-6 flex gap-3">
+          <Link to="/products" className="bg-[#191817] text-[#FAF7F2] font-mono text-xs uppercase tracking-widest px-5 py-3 hover:bg-[#2C2A29]">
+            Return to Catalog
+          </Link>
+          {isAdmin && (
+            <Link to="/admin" className="border border-[#2C2A29]/20 font-mono text-xs uppercase tracking-widest px-5 py-3 hover:bg-[#F3EEE5]">
+              Admin Dashboard
+            </Link>
+          )}
+        </div>
       </div>
     );
   }
@@ -101,6 +144,25 @@ const ProductDetails = () => {
             REF: {product._id || product.id}
           </span>
         </div>
+
+        {/* Admin/Submitter Status Banner for Pending/Rejected Pieces */}
+        {product.status && product.status !== 'approved' && (
+          <div className="mb-8 p-3.5 bg-[#FAF7F2] border border-dashed border-[#A66551]/50 flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+            <div className="flex items-center gap-2.5">
+              <span className={`px-2 py-0.5 text-[9px] uppercase font-bold text-white ${product.status === 'pending' ? 'bg-[#A66551]' : 'bg-[#8B263E]'}`}>
+                {product.status}
+              </span>
+              <span className="text-[#5C5751]">
+                {product.submittedBy?.name ? `Submitted by ${product.submittedBy.name} (${product.submittedBy?.email || 'N/A'})` : 'Awaiting atelier curation approval'}
+              </span>
+            </div>
+            {isAdmin && (
+              <Link to="/admin" className="text-[#191817] underline hover:text-[#A66551] uppercase text-[10px] font-bold">
+                ← Manage in Admin Console
+              </Link>
+            )}
+          </div>
+        )}
 
         {/* 2 Column Editorial Layout (Left: Large Images, Right: Sticky Details) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">

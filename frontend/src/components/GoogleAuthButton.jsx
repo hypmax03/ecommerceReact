@@ -147,39 +147,41 @@ const GoogleAuthButton = ({
             </span>
           </button>
 
-          {/* Sandbox & Client ID Guide Helper */}
+          {/* Sandbox & Instant Access Helper */}
           {showSandboxPrompt && (
-            <div className="mt-2.5 p-3.5 bg-[#FAF7F2] border border-dashed border-[#2C2A29]/20 font-mono text-[11px] text-[#5C5751] space-y-2.5 animate-fadeIn">
+            <div className="mt-2.5 p-3.5 bg-[#FAF7F2] border border-[#2C2A29]/20 font-mono text-[11px] text-[#5C5751] space-y-3 animate-fadeIn">
               <div className="flex items-center justify-between border-b border-[#2C2A29]/10 pb-1.5">
                 <span className="text-[10px] uppercase font-bold text-[#191817] tracking-wider">
-                  GOOGLE IDENTITY PORTAL
+                  INSTANT ATELIER PASS
                 </span>
                 <span className="text-[9px] text-[#A66551] uppercase font-bold">READY</span>
               </div>
+              
               <p className="font-sans text-xs text-[#7A756F] leading-relaxed">
-                Connect instantly using your Google account or test email. To link production OAuth credentials, set <code className="bg-[#ECE7DD] px-1 py-0.5 text-[#191817]">VITE_GOOGLE_CLIENT_ID</code> in <code className="bg-[#ECE7DD] px-1 py-0.5 text-[#191817]">frontend/.env</code>.
+                Enter your email address to sign in immediately, or select a quick profile below.
               </p>
 
-              <div className="flex gap-2 pt-1">
+              <div className="flex gap-2">
                 <input
                   type="email"
                   value={customEmail}
                   onChange={(e) => setCustomEmail(e.target.value)}
-                  placeholder="name@gmail.com"
+                  onKeyDown={(e) => e.key === 'Enter' && handleSimulateGoogleLogin()}
+                  placeholder="yourname@gmail.com"
                   className="flex-1 bg-[#FDFCF9] border border-[#2C2A29]/25 px-2.5 py-1.5 font-sans text-xs focus:outline-none focus:border-[#191817]"
                 />
                 <button
                   type="button"
                   onClick={() => handleSimulateGoogleLogin()}
-                  className="bg-[#191817] text-[#FAF7F2] px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider font-bold hover:bg-[#2C2A29] cursor-pointer"
+                  className="bg-[#191817] text-[#FAF7F2] px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-wider font-bold hover:bg-[#2C2A29] cursor-pointer transition-colors"
                 >
-                  SIGN IN
+                  CONTINUE
                 </button>
               </div>
 
               <div className="flex justify-between items-center pt-1 border-t border-[#2C2A29]/10 text-[10px]">
-                <span className="text-[#7A756F]">Quick profiles:</span>
-                <div className="flex gap-2">
+                <span className="text-[#7A756F]">Quick Profiles:</span>
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => handleSimulateGoogleLogin('claire.atelier@gmail.com')}
@@ -187,7 +189,7 @@ const GoogleAuthButton = ({
                   >
                     Client
                   </button>
-                  <span>•</span>
+                  <span className="text-[#2C2A29]/30">•</span>
                   <button
                     type="button"
                     onClick={() => handleSimulateGoogleLogin('adminmax@gmail.com')}
@@ -197,6 +199,21 @@ const GoogleAuthButton = ({
                   </button>
                 </div>
               </div>
+
+              {/* Discreet Administrator / Production OAuth Guide */}
+              <details className="pt-1 text-[10px] text-[#8C867E] border-t border-[#2C2A29]/10 cursor-pointer">
+                <summary className="hover:text-[#191817] transition-colors font-mono uppercase tracking-wider">
+                  Admin Setup: Enable Native Google Popup
+                </summary>
+                <div className="mt-2 p-2 bg-[#F3EEE5]/60 rounded text-[10px] font-sans text-[#5C5751] space-y-1 leading-normal">
+                  <p>To enable the official Google One-Tap popup:</p>
+                  <ol className="list-decimal list-inside space-y-0.5">
+                    <li>Create an OAuth 2.0 Client ID in Google Cloud Console.</li>
+                    <li>Add your site origin to Authorized JavaScript origins.</li>
+                    <li>Set <span className="font-mono bg-white/70 px-1 py-0.2 text-[#191817]">VITE_GOOGLE_CLIENT_ID</span> in <span className="font-mono bg-white/70 px-1 py-0.2 text-[#191817]">frontend/.env</span>.</li>
+                  </ol>
+                </div>
+              </details>
             </div>
           )}
         </div>
