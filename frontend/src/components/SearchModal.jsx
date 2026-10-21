@@ -6,6 +6,7 @@ import { Search, Xmark, ArrowUpRight } from 'iconoir-react';
 import { toggleSearch } from '../redux/cartSlice';
 import Tape from './Tape';
 import HandwrittenNote from './HandwrittenNote';
+import ThemeImage from './ThemeImage';
 
 const curatedTags = [
   'Mulberry Silk',
@@ -149,10 +150,12 @@ const SearchModal = () => {
                       className="p-2.5 bg-[#FDFCF9] border border-[#2C2A29]/15 hover:border-[#191817] shadow-sm flex items-center gap-3 group transition-colors"
                     >
                       <div className="w-14 h-16 bg-[#ECE8DF] overflow-hidden flex-shrink-0">
-                        <img
+                        <ThemeImage
                           src={p.image}
                           alt={p.name}
-                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform"
+                          compact={true}
+                          wrapperClassName="w-full h-full"
+                          className="group-hover:scale-105 transition-transform"
                         />
                       </div>
                       <div className="min-w-0 flex-1">

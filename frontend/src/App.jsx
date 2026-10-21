@@ -41,10 +41,23 @@ function ScrollToTop() {
 
 function PageLoader() {
   return (
-    <div className="min-h-[55vh] flex flex-col items-center justify-center p-8 text-center">
-      <div className="w-9 h-9 border-2 border-[#191817]/20 border-t-[#8B2635] rounded-full animate-spin mb-4" />
-      <span className="font-serif italic text-xs tracking-[0.2em] text-[#7C7267] uppercase">
-        Curating Atelier Edition...
+    <div className="min-h-[55vh] flex flex-col items-center justify-center p-8 text-center select-none">
+      <div className="relative w-12 h-12 flex items-center justify-center mb-4">
+        <div className="absolute inset-0 rounded-full border border-dashed border-[#7A756F]/45 animate-spin-slow" />
+        <div className="absolute inset-1.5 rounded-full border border-[#2C2A29]/10" />
+        <div className="w-4 h-4 text-[#A66551] animate-film-pulse flex items-center justify-center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full">
+            <circle cx="12" cy="12" r="9" strokeWidth="1.2" strokeDasharray="3 2" />
+            <path d="M12 3v3m0 12v3M3 12h3m12 0h3m-3.5-6.5l-2 2m-7 7l-2 2m11 0l-2-2m-7-7l-2-2" strokeWidth="1" />
+            <circle cx="12" cy="12" r="2.5" fill="currentColor" fillOpacity="0.25" />
+          </svg>
+        </div>
+      </div>
+      <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#7A756F] font-medium block">
+        CURATING ATELIER EDITION...
+      </span>
+      <span className="font-handwriting text-xs text-[#A66551] mt-1 block">
+        considered archival pieces
       </span>
     </div>
   );

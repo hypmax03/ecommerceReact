@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ArrowLeft, ArrowUpRight } from 'iconoir-react';
 import { updateProduct } from '../redux/productSlice';
 import Tape from './Tape';
+import ThemeImage from './ThemeImage';
 import { ALL_CATEGORIES } from '../data/fashionProducts';
 
 const UpdateProduct = () => {
@@ -302,11 +303,14 @@ const UpdateProduct = () => {
                   {formData.image ? (
                     <div className="p-3 bg-[#F5EFE6] border border-[#2C2A29]/20 flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3 min-w-0">
-                        <img
-                          src={formData.image}
-                          alt="Primary preview"
-                          className="w-14 h-18 object-cover border border-[#2C2A29]/20 shadow-xs bg-[#ECE8DF] flex-shrink-0"
-                        />
+                        <div className="w-14 h-18 border border-[#2C2A29]/20 shadow-xs bg-[#ECE8DF] flex-shrink-0 overflow-hidden">
+                          <ThemeImage
+                            src={formData.image}
+                            alt="Primary preview"
+                            compact={true}
+                            wrapperClassName="w-full h-full"
+                          />
+                        </div>
                         <div className="min-w-0">
                           <span className="font-mono text-[10px] uppercase tracking-wider text-[#191817] font-bold block">
                             ✓ Current Image Attached
@@ -378,14 +382,14 @@ const UpdateProduct = () => {
                   />
                   {formData.image && (
                     <div className="mt-2 flex items-center gap-3 p-2 bg-[#F5EFE6] border border-[#2C2A29]/15">
-                      <img
-                        src={formData.image}
-                        alt="URL Preview"
-                        className="w-10 h-12 object-cover border border-[#2C2A29]/20 bg-[#ECE8DF]"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                        }}
-                      />
+                      <div className="w-10 h-12 border border-[#2C2A29]/20 bg-[#ECE8DF] overflow-hidden flex-shrink-0">
+                        <ThemeImage
+                          src={formData.image}
+                          alt="URL Preview"
+                          compact={true}
+                          wrapperClassName="w-full h-full"
+                        />
+                      </div>
                       <span className="font-mono text-[9px] text-[#7A756F]">URL Image Preview Loaded</span>
                     </div>
                   )}

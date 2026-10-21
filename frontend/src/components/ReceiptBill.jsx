@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Printer, Copy, Check, ArrowUpRight } from 'iconoir-react';
 import Tape from './Tape';
+import ThemeImage from './ThemeImage';
 
 const ReceiptBill = ({ receipt, onReset }) => {
   const [copied, setCopied] = useState(false);
@@ -198,12 +199,14 @@ const ReceiptBill = ({ receipt, onReset }) => {
                 <div key={item.key || idx} className="flex items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-2.5 min-w-0">
                     {item.image && (
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                        className="w-8 h-10 object-cover border border-[#2C2A29]/15 flex-shrink-0"
-                      />
+                      <div className="w-8 h-10 border border-[#2C2A29]/15 flex-shrink-0 overflow-hidden bg-[#ECE8DF]">
+                        <ThemeImage
+                          src={item.image}
+                          alt={item.name}
+                          compact={true}
+                          wrapperClassName="w-full h-full"
+                        />
+                      </div>
                     )}
                     <div className="min-w-0">
                       <p className="font-serif text-sm text-[#191817] truncate font-medium">

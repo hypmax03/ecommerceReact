@@ -18,6 +18,7 @@ import api from '../api/apiClient';
 import { removeFromCart, updateQuantity, clearCart, applyPromo, removePromo, setOrderNote } from '../redux/cartSlice';
 import Tape from '../components/Tape';
 import HandwrittenNote from '../components/HandwrittenNote';
+import ThemeImage from '../components/ThemeImage';
 import ReceiptBill from '../components/ReceiptBill';
 
 const createDocketId = () => {
@@ -240,16 +241,12 @@ const Cart = () => {
                 >
                   <div className="flex gap-4 items-center">
                     <div className="w-20 h-24 bg-[#ECE8DF] overflow-hidden border border-[#2C2A29]/10 flex-shrink-0 flex items-center justify-center">
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                          className="w-full h-full object-cover object-center"
-                        />
-                      ) : (
-                        <span className="font-mono text-[9px] text-[#7A756F]">[GARMENT]</span>
-                      )}
+                      <ThemeImage
+                        src={item.image}
+                        alt={item.name}
+                        compact={true}
+                        wrapperClassName="w-full h-full"
+                      />
                     </div>
                     <div>
                       <span className="font-mono text-[9px] uppercase tracking-widest text-[#7A756F]">

@@ -25,6 +25,7 @@ import {
 } from '../redux/cartSlice';
 import Tape from './Tape';
 import HandwrittenNote from './HandwrittenNote';
+import ThemeImage from './ThemeImage';
 
 const CartSection = () => {
   const dispatch = useDispatch();
@@ -231,18 +232,15 @@ const CartSection = () => {
                       >
                         <div className="space-y-3">
                           <div className="aspect-[3/4] bg-[#ECE8DF] overflow-hidden border border-[#2C2A29]/10 relative">
-                            {prodImg ? (
-                              <img
-                                src={prodImg}
-                                alt={prod.name}
-                                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center font-mono text-[9px] text-[#7A756F]">
-                                [ATELIER PIECE]
-                              </div>
-                            )}
-                            <div className="absolute top-2 left-2">
+                            <ThemeImage
+                              src={prodImg}
+                              alt={prod.name}
+                              wrapperClassName="w-full h-full"
+                              className="group-hover:scale-105 transition-transform duration-500"
+                              label="DEVELOPING..."
+                              subLabel="atelier recommendation"
+                            />
+                            <div className="absolute top-2 left-2 z-20">
                               <span className="font-mono text-[8px] bg-[#191817] text-[#FAF7F2] px-1.5 py-0.5 uppercase tracking-wider">
                                 {prod.gender}
                               </span>
@@ -326,17 +324,13 @@ const CartSection = () => {
                       {/* Left side: Photo & details */}
                       <div className="flex gap-4 sm:gap-5 items-center w-full sm:w-auto">
                         <div className="w-20 h-28 sm:w-24 sm:h-32 bg-[#ECE8DF] border border-[#2C2A29]/15 overflow-hidden flex-shrink-0 relative group">
-                          {item.image ? (
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center font-mono text-[9px] text-[#7A756F] text-center p-1">
-                              [ATELIER SWATCH]
-                            </div>
-                          )}
+                          <ThemeImage
+                            src={item.image}
+                            alt={item.name}
+                            compact={true}
+                            wrapperClassName="w-full h-full"
+                            className="group-hover:scale-105 transition-transform"
+                          />
                         </div>
 
                         <div className="space-y-1.5 flex-1 min-w-0">

@@ -7,6 +7,7 @@ import { addToCart, openRemovalModal } from '../redux/cartSlice';
 import { sendFormspreeNotification } from '../utils/formspree';
 import Tape from './Tape';
 import Polaroid from './Polaroid';
+import ThemeImage from './ThemeImage';
 import { DRESS_COLLECTION_PRODUCTS } from '../data/fashionProducts';
 
 const ProductDetails = () => {
@@ -113,10 +114,14 @@ const ProductDetails = () => {
               </div>
 
               <div className="aspect-[3/4] overflow-hidden bg-[#ECE8DF]">
-                <img
+                <ThemeImage
                   src={activeImage}
                   alt={product.name}
-                  className="w-full h-full object-cover object-center transition-all duration-500"
+                  priority={true}
+                  wrapperClassName="w-full h-full"
+                  className="transition-all duration-500"
+                  label="EXPOSING HIGH-RES PLATE..."
+                  subLabel="atelier collection plate"
                 />
               </div>
 
@@ -138,10 +143,11 @@ const ProductDetails = () => {
                   }`}
                 >
                   <div className="aspect-[4/5] bg-[#ECE8DF] overflow-hidden mb-1.5">
-                    <img
+                    <ThemeImage
                       src={img}
                       alt={`View ${idx + 1}`}
-                      className="w-full h-full object-cover object-center"
+                      compact={true}
+                      wrapperClassName="w-full h-full"
                     />
                   </div>
                   <span className="font-mono text-[8px] uppercase tracking-wider text-[#7A756F] block">

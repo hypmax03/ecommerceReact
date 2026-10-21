@@ -19,6 +19,7 @@ import { logoutUser } from '../redux/userSlice';
 import { getProduct, getAdminDashboard, getMySubmissions } from '../redux/productSlice';
 import { openRemovalModal } from '../redux/cartSlice';
 import Tape from '../components/Tape';
+import ThemeImage from '../components/ThemeImage';
 
 const Account = () => {
   const dispatch = useDispatch();
@@ -536,17 +537,12 @@ const Account = () => {
                       {/* Left: Thumbnail & Details */}
                       <div className="flex items-start gap-4">
                         <div className="w-16 h-20 bg-[#ECE8DF] border border-[#2C2A29]/10 overflow-hidden flex-shrink-0 relative">
-                          {img ? (
-                            <img
-                              src={img}
-                              alt={item.name}
-                              className="w-full h-full object-cover object-center"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center font-mono text-[8px] text-[#7A756F]">
-                              NO IMAGE
-                            </div>
-                          )}
+                          <ThemeImage
+                            src={img}
+                            alt={item.name}
+                            compact={true}
+                            wrapperClassName="w-full h-full"
+                          />
 
                           {isRejected && (
                             <div className="absolute top-0 right-0 bg-[#D94F65] text-white p-0.5">

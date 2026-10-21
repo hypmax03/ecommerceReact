@@ -5,6 +5,7 @@ import { Xmark, ShoppingBag, Check } from 'iconoir-react';
 import { setQuickViewProduct, addToCart } from '../redux/cartSlice';
 import Tape from './Tape';
 import HandwrittenNote from './HandwrittenNote';
+import ThemeImage from './ThemeImage';
 
 const QuickViewModal = () => {
   const dispatch = useDispatch();
@@ -68,12 +69,14 @@ const QuickViewModal = () => {
             {/* Left Photo View */}
             <div className="md:col-span-6">
               <div className="aspect-[3/4] bg-[#ECE8DF] border border-[#2C2A29]/15 overflow-hidden shadow-sm relative">
-                <img
+                <ThemeImage
                   src={product.images?.[0] || product.image || product.localImage}
                   alt={product.name}
-                  className="w-full h-full object-cover object-center"
+                  wrapperClassName="w-full h-full"
+                  label="DEVELOPING PREVIEW..."
+                  subLabel="quick dossier"
                 />
-                <div className="absolute bottom-2 left-2 bg-[#FAF7F2]/90 px-2 py-0.5 border border-[#2C2A29]/15 text-[8px] font-mono uppercase tracking-widest">
+                <div className="absolute bottom-2 left-2 bg-[#FAF7F2]/90 px-2 py-0.5 border border-[#2C2A29]/15 text-[8px] font-mono uppercase tracking-widest z-20">
                   {product.edition || 'PERMANENT COLLECTION'}
                 </div>
               </div>

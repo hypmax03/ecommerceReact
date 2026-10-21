@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { ArrowUpRight, Check, Mail, ArrowUp, Pin, Camera, Heart } from 'iconoir-react';
 import { openRemovalModal } from '../redux/cartSlice';
+import ThemeImage from './ThemeImage';
 
 const Footer = () => {
   const dispatch = useDispatch();
@@ -32,10 +33,14 @@ const Footer = () => {
         {/* Background Editorial Photographic Spread */}
         <div className="absolute inset-0 w-full h-full bg-[#181412]">
           {products?.[0] && (products[0].images?.[0] || products[0].image) && (
-            <img
+            <ThemeImage
               src={products[0].images?.[0] || products[0].image}
               alt={products[0].name || "Atelier Campaign"}
-              className="w-full h-full object-cover object-center filter brightness-[0.75] contrast-[1.04] transition-transform duration-1000 group-hover:scale-[1.02]"
+              dark={true}
+              wrapperClassName="w-full h-full"
+              className="filter brightness-[0.75] contrast-[1.04] transition-transform duration-1000 group-hover:scale-[1.02]"
+              label="DEVELOPING CAMPAIGN..."
+              subLabel="atelier edition"
             />
           )}
           {/* Subtle cinematic gradient overlays for high contrast typography */}

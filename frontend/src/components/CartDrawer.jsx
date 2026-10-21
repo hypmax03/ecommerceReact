@@ -6,6 +6,7 @@ import { Xmark, Trash, Plus, Minus, ArrowUpRight, ShoppingBag } from 'iconoir-re
 import { toggleCart, removeFromCart, updateQuantity } from '../redux/cartSlice';
 import Tape from './Tape';
 import HandwrittenNote from './HandwrittenNote';
+import ThemeImage from './ThemeImage';
 
 const CartDrawer = () => {
   const dispatch = useDispatch();
@@ -136,16 +137,12 @@ const CartDrawer = () => {
                   >
                     {/* Item Thumbnail */}
                     <div className="w-20 h-24 flex-shrink-0 bg-[#ECE8DF] overflow-hidden border border-[#2C2A29]/10 flex items-center justify-center">
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                          className="w-full h-full object-cover object-center"
-                        />
-                      ) : (
-                        <span className="font-mono text-[9px] text-[#7A756F]">[ATELIER SWATCH]</span>
-                      )}
+                      <ThemeImage
+                        src={item.image}
+                        alt={item.name}
+                        compact={true}
+                        wrapperClassName="w-full h-full"
+                      />
                     </div>
 
                     {/* Item Details */}

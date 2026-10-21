@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Tape from './Tape';
+import ThemeImage from './ThemeImage';
 
 const Polaroid = ({
   image,
@@ -45,22 +46,15 @@ const Polaroid = ({
 
       {/* Photo Frame Container */}
       <div className={`relative w-full ${aspect} overflow-hidden bg-[#ECE8DF] border border-black/5 flex items-center justify-center`}>
-        {image ? (
-          <img
-            src={image}
-            alt={caption || 'Polaroid journal memory'}
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-            className="w-full h-full object-cover object-center filter saturate-[0.92] contrast-[1.03] transition-transform duration-700 group-hover:scale-105"
-            loading="lazy"
-          />
-        ) : (
-          <div className="p-4 text-center font-mono text-[10px] uppercase tracking-widest text-[#7A756F]">
-            [GARMENT PLATE]
-          </div>
-        )}
-        <div className="absolute inset-0 bg-amber-950/5 mix-blend-multiply pointer-events-none" />
+        <ThemeImage
+          src={image}
+          alt={caption || 'Polaroid journal memory'}
+          wrapperClassName="w-full h-full"
+          className="filter saturate-[0.92] contrast-[1.03] transition-transform duration-700 group-hover:scale-105"
+          label="EXPOSING FILM..."
+          subLabel="polaroid plate"
+        />
+        <div className="absolute inset-0 bg-amber-950/5 mix-blend-multiply pointer-events-none z-10" />
       </div>
 
       {/* Handwritten Caption Area at Bottom */}

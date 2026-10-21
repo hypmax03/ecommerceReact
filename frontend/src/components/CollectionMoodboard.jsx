@@ -5,6 +5,7 @@ import { ArrowUpRight } from 'iconoir-react';
 import Tape from './Tape';
 import Polaroid from './Polaroid';
 import HandwrittenNote from './HandwrittenNote';
+import ThemeImage from './ThemeImage';
 
 const moodboardItems = [
   {
@@ -162,11 +163,13 @@ const CollectionMoodboard = () => {
                 </div>
 
                 <div className="aspect-[4/5] overflow-hidden bg-[#ECE8DF]">
-                  <img
+                  <ThemeImage
                     src={item.image}
                     alt={item.title}
-                    className="w-full h-full object-cover object-center filter contrast-[1.02] transition-transform duration-700 group-hover:scale-105"
-                    loading="lazy"
+                    wrapperClassName="w-full h-full"
+                    className="filter contrast-[1.02] transition-transform duration-700 group-hover:scale-105"
+                    label="EXPOSING PIN..."
+                    subLabel="moodboard plate"
                   />
                 </div>
 

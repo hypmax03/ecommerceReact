@@ -5,6 +5,7 @@ import { Xmark, Mail, CheckCircle, Trash } from 'iconoir-react';
 import { closeRemovalModal, showToast } from '../redux/cartSlice';
 import { sendFormspreeNotification } from '../utils/formspree';
 import Tape from './Tape';
+import ThemeImage from './ThemeImage';
 
 export default function RemovalModal() {
   const dispatch = useDispatch();
@@ -190,11 +191,14 @@ export default function RemovalModal() {
               {product && (
                 <div className="p-3 bg-[#F5EFE6] border border-[#2C2A29]/15 flex items-center gap-3">
                   {(product.images?.[0] || product.image) && (
-                    <img
-                      src={product.images?.[0] || product.image}
-                      alt={product.name}
-                      className="w-12 h-14 object-cover border border-[#2C2A29]/20 flex-shrink-0"
-                    />
+                    <div className="w-12 h-14 border border-[#2C2A29]/20 flex-shrink-0 overflow-hidden bg-[#ECE8DF]">
+                      <ThemeImage
+                        src={product.images?.[0] || product.image}
+                        alt={product.name}
+                        compact={true}
+                        wrapperClassName="w-full h-full"
+                      />
+                    </div>
                   )}
                   <div className="min-w-0 flex-1">
                     <span className="font-serif text-sm text-[#191817] font-bold block truncate">

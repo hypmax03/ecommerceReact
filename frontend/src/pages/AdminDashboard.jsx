@@ -20,6 +20,7 @@ import {
 } from '../redux/productSlice';
 import { sendFormspreeNotification } from '../utils/formspree';
 import Tape from '../components/Tape';
+import ThemeImage from '../components/ThemeImage';
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -360,17 +361,12 @@ const AdminDashboard = () => {
                     {/* Thumbnail */}
                     <div className="md:col-span-2">
                       <div className="aspect-[3/4] bg-[#ECE8DF] border border-[#2C2A29]/10 overflow-hidden relative">
-                        {mainImage ? (
-                          <img
-                            src={mainImage}
-                            alt={product.name}
-                            className="w-full h-full object-cover object-center"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center font-mono text-[9px] text-[#7A756F]">
-                            NO IMAGE
-                          </div>
-                        )}
+                        <ThemeImage
+                          src={mainImage}
+                          alt={product.name}
+                          compact={true}
+                          wrapperClassName="w-full h-full"
+                        />
                         <span
                           className={`absolute top-1.5 left-1.5 font-mono text-[8px] uppercase px-1.5 py-0.5 font-bold ${
                             product.status === 'approved'

@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { ShoppingBag, Eye, ArrowUpRight } from 'iconoir-react';
 import { addToCart, setQuickViewProduct } from '../redux/cartSlice';
 import Tape from './Tape';
+import ThemeImage from './ThemeImage';
 
 const ProductCard = ({ product, index = 0, priority = false }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -79,38 +80,35 @@ const ProductCard = ({ product, index = 0, priority = false }) => {
           className="relative block w-full aspect-[3/4] overflow-hidden bg-[#ECE8DF] cursor-pointer"
         >
           {/* Primary Image */}
-          {productImage ? (
-            <img
-              src={productImage}
-              alt={product.name}
-              loading={priority ? 'eager' : 'lazy'}
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-              className={`w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-105 ${
-                productHoverImage && isHovered ? 'opacity-0' : 'opacity-100'
-              }`}
-            />
-          ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center font-mono text-[10px] text-[#7A756F] uppercase tracking-widest">
-              <span>[GARMENT PLATE]</span>
-              <span className="font-handwriting text-xs text-[#A66551] mt-1 normal-case tracking-normal">atelier piece</span>
-            </div>
-          )}
+          <ThemeImage
+            src={productImage}
+            alt={product.name}
+            priority={priority}
+            wrapperClassName="w-full h-full"
+            className={`transition-all duration-700 ease-out group-hover:scale-105 ${
+              productHoverImage && isHovered ? 'opacity-0' : ''
+            }`}
+            label="DEVELOPING..."
+            subLabel="garment plate"
+          />
 
           {/* Secondary Crossfade Image */}
           {productHoverImage && (
-            <img
-              src={productHoverImage}
-              alt={`${product.name} alternate view`}
-              loading="lazy"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-              className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-105 ${
-                isHovered ? 'opacity-100' : 'opacity-0'
+            <div
+              className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-out ${
+                isHovered ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
               }`}
-            />
+            >
+              <ThemeImage
+                src={productHoverImage}
+                alt={`${product.name} alternate view`}
+                loading="lazy"
+                wrapperClassName="w-full h-full"
+                className="transition-transform duration-700 ease-out group-hover:scale-105"
+                label="ALTERNATE LOOK..."
+                subLabel="atelier view"
+              />
+            </div>
           )}
 
           {/* Badge Stamps */}

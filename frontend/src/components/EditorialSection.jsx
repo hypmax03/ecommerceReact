@@ -6,6 +6,7 @@ import { ArrowUpRight } from 'iconoir-react';
 import Tape from './Tape';
 import HandwrittenNote from './HandwrittenNote';
 import Polaroid from './Polaroid';
+import ThemeImage from './ThemeImage';
 
 const EditorialSection = () => {
   const sectionRef = useRef(null);
@@ -60,11 +61,13 @@ const EditorialSection = () => {
               className="bg-[#FDFCF9] p-4 sm:p-5 border border-[#2C2A29]/15 shadow-[0_20px_50px_rgba(0,0,0,0.1)] -rotate-1 relative"
             >
               <div className="aspect-[16/11] overflow-hidden bg-[#ECE8DF]">
-                <img
+                <ThemeImage
                   src={editorialImg}
                   alt={editorialItem.name || "Editorial garment"}
-                  className="w-full h-full object-cover object-[center_25%] filter saturate-[0.95]"
-                  loading="lazy"
+                  wrapperClassName="w-full h-full"
+                  className="object-[center_25%] filter saturate-[0.95]"
+                  label="DEVELOPING EDITORIAL SPREAD..."
+                  subLabel="atelier collection plate"
                 />
               </div>
 

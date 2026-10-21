@@ -6,6 +6,7 @@ import { ArrowUpRight, Plus } from 'iconoir-react';
 import Tape from './Tape';
 import Polaroid from './Polaroid';
 import HandwrittenNote from './HandwrittenNote';
+import ThemeImage from './ThemeImage';
 
 const HeroScrapbook = () => {
   const containerRef = useRef(null);
@@ -135,13 +136,14 @@ const HeroScrapbook = () => {
 
                     {/* Primary Image Container */}
                     <Link to={`/product/${mainProduct._id || mainProduct.id}`} className="block aspect-[4/5] overflow-hidden bg-[#ECE8DF]">
-                      <img
+                      <ThemeImage
                         src={mainImgUrl}
                         alt={mainProduct.name}
-                        onError={(e) => {
-                          e.currentTarget.style.opacity = '0';
-                        }}
-                        className="w-full h-full object-cover object-center filter contrast-[1.02] hover:scale-105 transition-transform duration-700"
+                        priority={true}
+                        wrapperClassName="w-full h-full"
+                        className="filter contrast-[1.02] hover:scale-105 transition-transform duration-700"
+                        label="DEVELOPING HERO LOOK..."
+                        subLabel="atelier collection plate"
                       />
                     </Link>
 

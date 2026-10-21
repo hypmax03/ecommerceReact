@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'iconoir-react';
 import Tape from './Tape';
 import HandwrittenNote from './HandwrittenNote';
+import ThemeImage from './ThemeImage';
 
 const HorizontalCollection = () => {
   const scrollRef = useRef(null);
@@ -110,21 +111,14 @@ const HorizontalCollection = () => {
                 to={`/product/${item._id || item.id}`}
                 className="block aspect-[4/5] overflow-hidden bg-[#ECE8DF] relative"
               >
-                {imgUrl ? (
-                  <img
-                    src={imgUrl}
-                    alt={item.name}
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                    className="w-full h-full object-cover object-center filter contrast-[1.02] transition-transform duration-700 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center font-mono text-xs text-[#7A756F]">
-                    [Atelier Plate]
-                  </div>
-                )}
+                <ThemeImage
+                  src={imgUrl}
+                  alt={item.name}
+                  wrapperClassName="w-full h-full"
+                  className="filter contrast-[1.02] transition-transform duration-700 group-hover:scale-105"
+                  label="DEVELOPING LOOK..."
+                  subLabel="runway plate"
+                />
               </Link>
 
               {/* Look Narrative Details */}
