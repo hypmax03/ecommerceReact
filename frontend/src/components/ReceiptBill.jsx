@@ -24,8 +24,6 @@ const ReceiptBill = ({ receipt, onReset }) => {
     promo = null,
     orderNote = '',
     paymentMethod = 'razorpay',
-    razorpayPaymentId = '',
-    razorpayOrderId = '',
     cardLast4 = '',
     paymentStatus = 'paid',
     orderDate = new Date(),
@@ -132,11 +130,10 @@ const ReceiptBill = ({ receipt, onReset }) => {
             initial={{ scale: 3.5, opacity: 0, rotate: -35 }}
             animate={{ scale: 1, opacity: 1, rotate: -9 }}
             transition={{ delay: 1.5, duration: 0.45, type: 'spring', stiffness: 220, damping: 14 }}
-            className={`absolute top-14 right-4 sm:right-8 border-2 border-dashed px-3 py-1.5 font-mono uppercase tracking-[0.25em] text-[10px] sm:text-xs font-bold rounded-sm pointer-events-none select-none shadow-sm z-20 ${
-              paymentStatus === 'cod_due'
-                ? 'border-[#7A756F] text-[#5C5751] bg-[#FAF7F2]/90'
-                : 'border-[#A66551] text-[#A66551] bg-[#FAF7F2]/90'
-            }`}
+            className={`absolute top-14 right-4 sm:right-8 border-2 border-dashed px-3 py-1.5 font-mono uppercase tracking-[0.25em] text-[10px] sm:text-xs font-bold rounded-sm pointer-events-none select-none shadow-sm z-20 ${paymentStatus === 'cod_due'
+              ? 'border-[#7A756F] text-[#5C5751] bg-[#FAF7F2]/90'
+              : 'border-[#A66551] text-[#A66551] bg-[#FAF7F2]/90'
+              }`}
           >
             {paymentStatus === 'cod_due' ? 'COD ARRIVAL' : '✓ PAID IN FULL'}
             <span className="block text-[8px] tracking-widest text-[#7A756F]">
@@ -175,22 +172,6 @@ const ReceiptBill = ({ receipt, onReset }) => {
               <div className="flex justify-between items-center">
                 <span className="text-[#7A756F]">SETTLEMENT:</span>
                 <span className="font-bold text-[#191817]">{getPaymentLabel()}</span>
-              </div>
-              {razorpayPaymentId && (
-                <div className="flex justify-between items-center text-[10px]">
-                  <span className="text-[#7A756F]">RAZORPAY ID:</span>
-                  <span className="text-emerald-800 font-bold tracking-wider">{razorpayPaymentId}</span>
-                </div>
-              )}
-              {razorpayOrderId && (
-                <div className="flex justify-between items-center text-[10px]">
-                  <span className="text-[#7A756F]">GATEWAY REF:</span>
-                  <span className="text-[#5C5751]">{razorpayOrderId}</span>
-                </div>
-              )}
-              <div className="flex justify-between items-center">
-                <span className="text-[#7A756F]">AUTH CODE:</span>
-                <span className="text-[#5C5751]">{razorpayPaymentId ? `RZP-${razorpayPaymentId.slice(-6).toUpperCase()}` : 'TXN-EL-9948271'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[#7A756F]">DISPATCH:</span>
