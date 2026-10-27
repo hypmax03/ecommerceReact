@@ -167,99 +167,81 @@ const Cart = () => {
       const { orderId, amount, currency, keyId, isSandbox } = createOrderRes.data;
 
       // 2. Ensure Razorpay Checkout SDK is ready
-      await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+      const scriptLoaded = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
 
-      if (window.Razorpay && !isSandbox) {
-        const options = {
-          key: keyId || import.meta.env.VITE_RAZORPAY_KEY_ID,
-          amount: amount,
-          currency: currency || 'INR',
-          name: 'ELORA ATELIER',
-          description: `Order Settlement • Docket ${generatedDocketId}`,
-          order_id: orderId,
-          handler: async function (response) {
-            try {
-              // 3. Verify Payment Signature on Backend
-              const verifyRes = await api.post('/api/order/razorpay/verify-payment', {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                orderDetails: orderPayload,
-              });
-
-              const confirmedOrder = verifyRes.data?.order || {
-                ...orderPayload,
-                paymentStatus: 'paid',
-                razorpayOrderId: response.razorpay_order_id,
-                razorpayPaymentId: response.razorpay_payment_id,
-                razorpaySignature: response.razorpay_signature,
-                orderDate: new Date(),
-              };
-
-              const ordersKey = `atelier_orders_${clientEmail.trim() || 'guest'}`;
-              const previousOrders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
-              localStorage.setItem(ordersKey, JSON.stringify([confirmedOrder, ...previousOrders]));
-
-              setReceiptData(confirmedOrder);
-              setIsOrdered(true);
-              dispatch(clearCart());
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            } catch (vErr) {
-              setCheckoutError(vErr.response?.data?.message || 'Payment verification failed');
-            } finally {
-              setIsProcessing(false);
-            }
-          },
-          prefill: {
-            name: clientName.trim(),
-            email: clientEmail.trim(),
-            contact: clientPhone.trim(),
-          },
-          theme: {
-            color: '#191817',
-          },
-          modal: {
-            ondismiss: function () {
-              setIsProcessing(false);
-              setCheckoutError('Payment session cancelled. Your bag items remain saved.');
-            },
-          },
-        };
-
-        const rzpInstance = new window.Razorpay(options);
-        rzpInstance.on('payment.failed', function (resp) {
-          setIsProcessing(false);
-          setCheckoutError(resp.error?.description || 'Payment authorization failed');
-        });
-        rzpInstance.open();
-      } else {
-        // Fallback / Development sandbox mode when Razorpay credentials are not yet set in .env
-        const simulatedPaymentId = `pay_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`;
-        const verifyRes = await api.post('/api/order/razorpay/verify-payment', {
-          razorpay_order_id: orderId,
-          razorpay_payment_id: simulatedPaymentId,
-          razorpay_signature: 'test_signature_valid',
-          orderDetails: orderPayload,
-        });
-
-        const confirmedOrder = verifyRes.data?.order || {
-          ...orderPayload,
-          paymentStatus: 'paid',
-          razorpayOrderId: orderId,
-          razorpayPaymentId: simulatedPaymentId,
-          orderDate: new Date(),
-        };
-
-        const ordersKey = `atelier_orders_${clientEmail.trim() || 'guest'}`;
-        const previousOrders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
-        localStorage.setItem(ordersKey, JSON.stringify([confirmedOrder, ...previousOrders]));
-
-        setReceiptData(confirmedOrder);
-        setIsOrdered(true);
-        dispatch(clearCart());
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setIsProcessing(false);
+      if (!scriptLoaded || !window.Razorpay) {
+        throw new Error('Razorpay secure checkout SDK could not be loaded. Please disable any ad blockers and try again.');
       }
+
+      const activeKey =
+        keyId && keyId !== 'rzp_test_elora_sandbox'
+          ? keyId
+          : import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_TrEB2gTkre3jX2';
+
+      const isRealRazorpayOrder = orderId && !orderId.startsWith('order_test_') && !isSandbox;
+
+      const options = {
+        key: activeKey,
+        amount: amount,
+        currency: currency || 'INR',
+        name: 'ELORA ATELIER',
+        description: `Order Settlement • Docket ${generatedDocketId}`,
+        ...(isRealRazorpayOrder ? { order_id: orderId } : {}),
+        handler: async function (response) {
+          try {
+            // 3. Verify Payment Signature on Backend
+            const verifyRes = await api.post('/api/order/razorpay/verify-payment', {
+              razorpay_order_id: response.razorpay_order_id || orderId,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature || 'verified_client_payment',
+              orderDetails: orderPayload,
+            });
+
+            const confirmedOrder = verifyRes.data?.order || {
+              ...orderPayload,
+              paymentStatus: 'paid',
+              razorpayOrderId: response.razorpay_order_id || orderId,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              orderDate: new Date(),
+            };
+
+            const ordersKey = `atelier_orders_${clientEmail.trim() || 'guest'}`;
+            const previousOrders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
+            localStorage.setItem(ordersKey, JSON.stringify([confirmedOrder, ...previousOrders]));
+
+            setReceiptData(confirmedOrder);
+            setIsOrdered(true);
+            dispatch(clearCart());
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } catch (vErr) {
+            setCheckoutError(vErr.response?.data?.message || 'Payment verification failed');
+          } finally {
+            setIsProcessing(false);
+          }
+        },
+        prefill: {
+          name: clientName.trim(),
+          email: clientEmail.trim(),
+          contact: clientPhone.trim(),
+        },
+        theme: {
+          color: '#191817',
+        },
+        modal: {
+          ondismiss: function () {
+            setIsProcessing(false);
+            setCheckoutError('Payment session cancelled. Your bag items remain saved.');
+          },
+        },
+      };
+
+      const rzpInstance = new window.Razorpay(options);
+      rzpInstance.on('payment.failed', function (resp) {
+        setIsProcessing(false);
+        setCheckoutError(resp.error?.description || 'Payment authorization failed');
+      });
+      rzpInstance.open();
     } catch (err) {
       console.error('Razorpay checkout error:', err);
       setCheckoutError(err.response?.data?.message || err.message || 'Payment processing error');
