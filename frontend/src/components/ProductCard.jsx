@@ -12,9 +12,13 @@ const ProductCard = ({ product, index = 0, priority = false }) => {
 
   if (!product) return null;
 
+  const isOutOfStock =
+    product.stock !== undefined && product.stock !== null && Number(product.stock) <= 0;
+
   const handleQuickAdd = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isOutOfStock) return;
     dispatch(
       addToCart({
         product,
@@ -113,11 +117,15 @@ const ProductCard = ({ product, index = 0, priority = false }) => {
           )}
 
           {/* Badge Stamps */}
-          {product.isNew && (
-            <span className="absolute top-2 left-2 bg-[#191817] text-[#FAF7F2] font-mono text-[8px] uppercase tracking-widest px-2 py-0.5 z-10">
+          {isOutOfStock ? (
+            <span className="absolute top-2 right-2 bg-[#D94F65] text-white font-mono text-[8px] uppercase tracking-widest px-2 py-0.5 z-10 font-bold shadow-xs">
+              OUT OF STOCK
+            </span>
+          ) : product.isNew ? (
+            <span className="absolute top-2 left-2 bg-[#191817] text-[#FAF7F2] font-mono text-[8px] uppercase tracking-widest px-2 py-0.5 z-10 font-semibold">
               NEW ARRIVAL
             </span>
-          )}
+          ) : null}
 
           {/* Hover Action Strip */}
           <div className="absolute inset-x-2 bottom-2 flex items-center justify-between gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-20">
@@ -129,14 +137,17 @@ const ProductCard = ({ product, index = 0, priority = false }) => {
               <Eye width={12} height={12} />
               <span>QUICK VIEW</span>
             </button>
-            <button
-              type="button"
-              onClick={handleQuickAdd}
-              className="bg-[#191817] hover:bg-[#2C2A29] text-[#FAF7F2] p-2 flex items-center justify-center transition-colors shadow-sm cursor-pointer"
-              aria-label="Add to bag"
-            >
-              <ShoppingBag width={13} height={13} />
-            </button>
+            {!isOutOfStock && (
+              <button
+                type="button"
+                onClick={handleQuickAdd}
+                className="bg-[#191817] hover:bg-[#2C2A29] text-[#FAF7F2] p-2 flex items-center justify-center transition-colors shadow-sm cursor-pointer"
+                aria-label="Add to bag"
+                title="Quick Add to Bag"
+              >
+                <ShoppingBag width={13} height={13} />
+              </button>
+            )}
           </div>
         </Link>
 
@@ -151,9 +162,16 @@ const ProductCard = ({ product, index = 0, priority = false }) => {
 
           {/* Price & View Action */}
           <div className="pt-2 border-t border-dashed border-[#2C2A29]/10 flex items-center justify-between">
-            <span className="font-mono text-xs font-bold text-[#191817]">
-              ₹{product.price?.toLocaleString('en-IN')}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-xs font-bold text-[#191817]">
+                ₹{product.price?.toLocaleString('en-IN')}
+              </span>
+              {isOutOfStock && (
+                <span className="font-mono text-[8px] text-[#D94F65] uppercase font-bold">
+                  [SOLD OUT]
+                </span>
+              )}
+            </div>
 
             <Link
               to={`/product/${product._id || product.id}`}

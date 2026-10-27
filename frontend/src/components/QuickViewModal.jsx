@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Xmark, ShoppingBag, Check } from 'iconoir-react';
+import { Xmark, ShoppingBag, Check, ArrowUpRight } from 'iconoir-react';
 import { setQuickViewProduct, addToCart } from '../redux/cartSlice';
 import Tape from './Tape';
 import HandwrittenNote from './HandwrittenNote';
@@ -9,6 +10,7 @@ import ThemeImage from './ThemeImage';
 
 const QuickViewModal = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const product = useSelector((state) => state.cart?.quickViewProduct);
 
   const [selectedSize, setSelectedSize] = useState(() => (product?.sizes ? product.sizes[0] : 'M'));
@@ -17,11 +19,15 @@ const QuickViewModal = () => {
 
   if (!product) return null;
 
+  const isOutOfStock =
+    product.stock !== undefined && product.stock !== null && Number(product.stock) <= 0;
+
   const handleClose = () => {
     dispatch(setQuickViewProduct(null));
   };
 
   const handleAddToCart = () => {
+    if (isOutOfStock) return;
     dispatch(
       addToCart({
         product,
@@ -31,6 +37,20 @@ const QuickViewModal = () => {
       })
     );
     handleClose();
+  };
+
+  const handleBuyNow = () => {
+    if (isOutOfStock) return;
+    dispatch(
+      addToCart({
+        product,
+        size: selectedSize,
+        color: selectedColor,
+        quantity,
+      })
+    );
+    handleClose();
+    navigate('/cart');
   };
 
   return (
@@ -91,9 +111,20 @@ const QuickViewModal = () => {
                 <h3 className="font-serif text-2xl sm:text-3xl text-[#191817] font-normal leading-snug">
                   {product.name}
                 </h3>
-                <p className="font-mono text-base font-bold text-[#191817] mt-1">
-                  ₹{product.price?.toLocaleString('en-IN')}
-                </p>
+                <div className="flex items-center justify-between flex-wrap gap-2 mt-1">
+                  <p className="font-mono text-base font-bold text-[#191817]">
+                    ₹{product.price?.toLocaleString('en-IN')}
+                  </p>
+                  {isOutOfStock ? (
+                    <span className="font-mono text-[9px] uppercase font-bold px-2 py-0.5 bg-[#D94F65] text-white">
+                      OUT OF STOCK
+                    </span>
+                  ) : product.stock !== undefined && Number(product.stock) <= 3 ? (
+                    <span className="font-mono text-[9px] uppercase font-bold px-2 py-0.5 bg-[#FFF5E6] text-[#A66551] border border-[#A66551]/30">
+                      ONLY {product.stock} LEFT
+                    </span>
+                  ) : null}
+                </div>
               </div>
 
               {/* Description */}
@@ -162,16 +193,43 @@ const QuickViewModal = () => {
                 </div>
               </div>
 
-              {/* Add to Bag Button */}
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={handleAddToCart}
-                  className="w-full bg-[#191817] hover:bg-[#2C2A29] text-[#FAF7F2] font-mono text-xs uppercase tracking-[0.2em] py-3.5 flex items-center justify-center gap-2 shadow-md transition-colors"
-                >
-                  <ShoppingBag width={14} height={14} />
-                  <span>ADD TO SHOPPING BAG</span>
-                </button>
+              {/* Dual Action Buttons: Add to Bag + Buy Now */}
+              <div className="pt-2 space-y-2">
+                <div className="flex flex-col sm:flex-row gap-2.5">
+                  <button
+                    type="button"
+                    disabled={isOutOfStock}
+                    onClick={handleAddToCart}
+                    className={`flex-1 font-mono text-xs uppercase tracking-[0.15em] py-3 flex items-center justify-center gap-2 transition-all ${
+                      isOutOfStock
+                        ? 'bg-[#E5DFD5] text-[#8C867D] border border-[#D1C9BC] cursor-not-allowed'
+                        : 'bg-[#FAF7F2] hover:bg-[#EFE8DC] text-[#191817] border-2 border-[#191817] cursor-pointer shadow-xs'
+                    }`}
+                  >
+                    <ShoppingBag width={14} height={14} />
+                    <span>{isOutOfStock ? 'OUT OF STOCK' : 'ADD TO BAG'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={isOutOfStock}
+                    onClick={handleBuyNow}
+                    className={`flex-1 font-mono text-xs uppercase tracking-[0.15em] py-3 flex items-center justify-center gap-2 transition-all font-bold ${
+                      isOutOfStock
+                        ? 'bg-[#C8C2B7] text-[#7A756F] cursor-not-allowed hidden sm:flex'
+                        : 'bg-[#191817] hover:bg-[#2C2A29] text-[#FAF7F2] shadow-md cursor-pointer'
+                    }`}
+                  >
+                    <ArrowUpRight width={14} height={14} />
+                    <span>{isOutOfStock ? 'UNAVAILABLE' : 'BUY NOW'}</span>
+                  </button>
+                </div>
+
+                {isOutOfStock && (
+                  <p className="text-[10px] font-mono text-[#D94F65] text-center pt-1">
+                    This creation is currently sold out in the atelier.
+                  </p>
+                )}
               </div>
 
               <div className="text-center pt-1">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { ShoppingBag, Check, Plus, Minus, ArrowLeft } from 'iconoir-react';
+import { ShoppingBag, Check, Plus, Minus, ArrowLeft, ArrowUpRight } from 'iconoir-react';
 import { deleteProduct, getProductById } from '../redux/productSlice';
 import { addToCart, openRemovalModal } from '../redux/cartSlice';
 import { sendFormspreeNotification } from '../utils/formspree';
@@ -100,7 +100,12 @@ const ProductDetails = () => {
     product.hoverImage,
   ].filter(Boolean);
 
+  const isOutOfStock =
+    product?.stock !== undefined && product?.stock !== null && Number(product.stock) <= 0;
+  const stockCount = Math.max(0, Number(product?.stock ?? 1));
+
   const handleAddToCart = () => {
+    if (isOutOfStock) return;
     dispatch(
       addToCart({
         product,
@@ -109,6 +114,19 @@ const ProductDetails = () => {
         quantity,
       })
     );
+  };
+
+  const handleBuyNow = () => {
+    if (isOutOfStock) return;
+    dispatch(
+      addToCart({
+        product,
+        size: selectedSize,
+        color: selectedColor,
+        quantity,
+      })
+    );
+    navigate('/cart');
   };
 
   const handleDelete = () => {
@@ -258,13 +276,30 @@ const ProductDetails = () => {
                   {product.name}
                 </h1>
 
-                <div className="mt-3 flex items-baseline gap-3">
-                  <span className="font-mono text-2xl font-bold text-[#191817]">
-                    ₹{product.price?.toLocaleString('en-IN')}
-                  </span>
-                  <span className="font-mono text-[10px] text-[#7A756F] uppercase">
-                    (INCL. ALL TAXES)
-                  </span>
+                <div className="mt-3 flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-mono text-2xl font-bold text-[#191817]">
+                      ₹{product.price?.toLocaleString('en-IN')}
+                    </span>
+                    <span className="font-mono text-[10px] text-[#7A756F] uppercase">
+                      (INCL. ALL TAXES)
+                    </span>
+                  </div>
+
+                  {/* Stock Status Badge */}
+                  {isOutOfStock ? (
+                    <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase font-bold tracking-wider px-3 py-1 bg-[#D94F65] text-white shadow-xs">
+                      ● OUT OF STOCK
+                    </span>
+                  ) : stockCount <= 3 ? (
+                    <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-[#FFF5E6] text-[#A66551] border border-[#A66551]/30">
+                      ⚡ ONLY {stockCount} PIECES LEFT
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 bg-[#E8F3EA] text-[#2E5A36] border border-[#2E5A36]/30">
+                      ✓ IN STOCK ({stockCount} AVAILABLE)
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -334,38 +369,76 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              {/* Quantity Stepper & ADD TO BAG */}
-              <div className="pt-4 flex flex-col sm:flex-row gap-3">
-                <div className="flex items-center border border-[#2C2A29]/20 bg-[#FAF7F2] px-2 h-12">
+              {/* Quantity Stepper & ADD TO BAG / BUY NOW */}
+              <div className="pt-4 space-y-3">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  {/* Quantity Stepper */}
+                  <div
+                    className={`flex items-center border border-[#2C2A29]/20 bg-[#FAF7F2] px-2 h-12 ${
+                      isOutOfStock ? 'opacity-40 pointer-events-none' : ''
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      disabled={isOutOfStock}
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="p-2 hover:bg-[#EFE8DC] text-[#191817] disabled:cursor-not-allowed"
+                      aria-label="Decrease quantity"
+                    >
+                      <Minus width={12} height={12} />
+                    </button>
+                    <span className="font-mono text-sm px-4 font-bold">
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      disabled={isOutOfStock || (stockCount > 0 && quantity >= stockCount)}
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="p-2 hover:bg-[#EFE8DC] text-[#191817] disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Increase quantity"
+                    >
+                      <Plus width={12} height={12} />
+                    </button>
+                  </div>
+
+                  {/* ADD TO SHOPPING BAG BUTTON */}
                   <button
                     type="button"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-2 hover:bg-[#EFE8DC] text-[#191817]"
-                    aria-label="Decrease quantity"
+                    disabled={isOutOfStock}
+                    onClick={handleAddToCart}
+                    className={`flex-1 font-mono text-xs uppercase tracking-[0.2em] h-12 flex items-center justify-center gap-2.5 transition-all ${
+                      isOutOfStock
+                        ? 'bg-[#E5DFD5] text-[#8C867D] border border-[#D1C9BC] cursor-not-allowed'
+                        : 'bg-[#FAF7F2] hover:bg-[#EFE8DC] text-[#191817] border-2 border-[#191817] cursor-pointer shadow-sm hover:-translate-y-0.5'
+                    }`}
                   >
-                    <Minus width={12} height={12} />
+                    <ShoppingBag width={15} height={15} />
+                    <span>{isOutOfStock ? 'OUT OF STOCK' : 'ADD TO BAG'}</span>
                   </button>
-                  <span className="font-mono text-sm px-4 font-bold">
-                    {quantity}
-                  </span>
+
+                  {/* BUY NOW BUTTON (Direct Checkout) */}
                   <button
                     type="button"
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="p-2 hover:bg-[#EFE8DC] text-[#191817]"
-                    aria-label="Increase quantity"
+                    disabled={isOutOfStock}
+                    onClick={handleBuyNow}
+                    className={`flex-1 font-mono text-xs uppercase tracking-[0.2em] h-12 flex items-center justify-center gap-2.5 transition-all font-bold ${
+                      isOutOfStock
+                        ? 'bg-[#C8C2B7] text-[#7A756F] cursor-not-allowed opacity-60'
+                        : 'bg-[#191817] hover:bg-[#2C2A29] text-[#FAF7F2] shadow-lg hover:-translate-y-0.5 cursor-pointer'
+                    }`}
                   >
-                    <Plus width={12} height={12} />
+                    <ArrowUpRight width={15} height={15} />
+                    <span>{isOutOfStock ? 'UNAVAILABLE' : 'BUY NOW'}</span>
                   </button>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleAddToCart}
-                  className="flex-1 bg-[#191817] hover:bg-[#2C2A29] text-[#FAF7F2] font-mono text-xs uppercase tracking-[0.2em] h-12 flex items-center justify-center gap-2.5 shadow-lg transition-transform hover:-translate-y-0.5"
-                >
-                  <ShoppingBag width={15} height={15} />
-                  <span>ADD TO SHOPPING BAG</span>
-                </button>
+                {/* Out of Stock Callout */}
+                {isOutOfStock && (
+                  <div className="bg-[#FFF5F6] border border-[#D94F65]/30 p-3 text-xs font-mono text-[#8B263E] flex items-center gap-2">
+                    <span className="font-bold">STATUS:</span>
+                    <span>This atelier piece is currently sold out. Check back soon for archive replenishment.</span>
+                  </div>
+                )}
               </div>
 
               {/* Admin & Creator Actions */}

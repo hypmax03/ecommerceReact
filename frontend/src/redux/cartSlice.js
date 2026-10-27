@@ -26,6 +26,11 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const { product, size = "M", color, quantity = 1 } = action.payload;
+      if (!product) return;
+      if (product.stock !== undefined && product.stock !== null && Number(product.stock) <= 0) {
+        return;
+      }
+
       const chosenColor = color || (product.colors && product.colors[0]?.name) || "Signature";
       const itemKey = `${product._id || product.id}_${size}_${chosenColor}`;
 
@@ -34,7 +39,14 @@ const cartSlice = createSlice({
 
       const existingIndex = state.items.findIndex((item) => item.key === itemKey);
       if (existingIndex > -1) {
-        state.items[existingIndex].quantity += quantity;
+        const availableStock =
+          product.stock !== undefined && product.stock !== null
+            ? Number(product.stock)
+            : state.items[existingIndex].stock || 99;
+        state.items[existingIndex].quantity = Math.min(
+          availableStock,
+          state.items[existingIndex].quantity + quantity
+        );
       } else {
         state.items.push({
           key: itemKey,
@@ -47,6 +59,8 @@ const cartSlice = createSlice({
           size,
           color: chosenColor,
           quantity,
+          stock:
+            product.stock !== undefined && product.stock !== null ? Number(product.stock) : 10,
           material: product.material || "",
           edition: product.edition || "COLLECTION 2026",
         });
@@ -80,10 +94,12 @@ const cartSlice = createSlice({
       const { key, delta } = action.payload;
       const target = state.items.find((item) => item.key === key);
       if (target) {
+        const maxStock =
+          target.stock !== undefined && target.stock !== null ? Number(target.stock) : 99;
         const newQty = target.quantity + delta;
         if (newQty <= 0) {
           state.items = state.items.filter((item) => item.key !== key);
-        } else {
+        } else if (delta < 0 || newQty <= maxStock) {
           target.quantity = newQty;
         }
       }
